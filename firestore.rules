@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function userPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+    function isAdmin() {
+      return signedIn() && exists(userPath()) && get(userPath()).data.role == 'admin';
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow update: if signedIn() && (request.auth.uid == uid || isAdmin());
+    }
+    match /site/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /rooms/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn();
+      allow update: if signedIn();
+      allow delete: if signedIn() && (isAdmin() || resource.data.hostId == request.auth.uid);
+    }
+    match /matches/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn();
+      allow update: if signedIn();
+    }
+  }
+}
