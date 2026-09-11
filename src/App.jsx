@@ -1,0 +1,32 @@
+import { Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout.jsx';
+import Protected from './components/Protected.jsx';
+import Home from './screens/Home.jsx';
+import Auth from './screens/Auth.jsx';
+import GameInfo from './screens/GameInfo.jsx';
+import Lobby from './screens/Lobby.jsx';
+import Room from './screens/Room.jsx';
+import Profile from './screens/Profile.jsx';
+import Leaderboard from './screens/Leaderboard.jsx';
+import Admin from './screens/Admin.jsx';
+import Settings from './screens/Settings.jsx';
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/sign-in" element={<Auth mode="login" />} />
+        <Route path="/register" element={<Auth mode="register" />} />
+        <Route path="/games/:gameId" element={<GameInfo />} />
+        <Route path="/leaderboards" element={<Leaderboard />} />
+        <Route path="/leaderboards/:gameId" element={<Leaderboard />} />
+        <Route path="/lobby" element={<Protected><Lobby /></Protected>} />
+        <Route path="/rooms/:code" element={<Protected><Room /></Protected>} />
+        <Route path="/players/:uid" element={<Protected><Profile /></Protected>} />
+        <Route path="/settings" element={<Protected><Settings /></Protected>} />
+        <Route path="/admin" element={<Protected admin><Admin /></Protected>} />
+      </Route>
+    </Routes>
+  );
+}
