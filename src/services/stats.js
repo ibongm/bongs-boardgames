@@ -1,66 +1,73 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, runTransaction, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase.js';
 import { emptyGameStats, emptyLifetime, ratingDelta } from '../lib/codes.js';
+import { publicProfilePayload } from './users.js';
 
 function bump(stats, key) {
   return { ...stats, [key]: (stats[key] || 0) + 1, played: (stats.played || 0) + 1 };
 }
 
-export async function applyMatchResult(match) {
-  if (!match.result || match.statsApplied) return;
-  const humans = (match.seats || []).filter((seat) => seat.type === 'human' && seat.uid);
-  const hasTwoHumans = humans.length >= 2;
-  const winnerSeat = match.result.draw ? null : match.result.winner;
-  const ratings = {};
+function nextRating(match, uid, won, lost) {
+  const snapshot = match.ratingSnapshot || {};
+  const playerIds = match.playerIds || [];
+  const oppId = playerIds.find((id) => id !== uid);
+  const mine = snapshot[uid] ?? 1000;
+  const opp = snapshot[oppId] ?? 1000;
+  if (match.result?.draw) return mine + ratingDelta(mine, opp, true);
+  if (won) return mine + ratingDelta(mine, opp, false);
+  if (lost) return mine - ratingDelta(opp, mine, false);
+  return mine;
+}
 
-  if (hasTwoHumans && winnerSeat !== null) {
-    const winner = match.seats[winnerSeat];
-    const loser = match.seats[winnerSeat === 0 ? 1 : 0];
-    if (winner?.uid && loser?.uid) {
-      const [wDoc, lDoc] = await Promise.all([
-        getDoc(doc(db, 'users', winner.uid)),
-        getDoc(doc(db, 'users', loser.uid)),
-      ]);
-      const wStats = wDoc.data()?.games?.[match.gameId] || emptyGameStats();
-      const lStats = lDoc.data()?.games?.[match.gameId] || emptyGameStats();
-      const delta = ratingDelta(wStats.rating, lStats.rating, false);
-      ratings[winner.uid] = (wStats.rating || 1000) + delta;
-      ratings[loser.uid] = (lStats.rating || 1000) - delta;
-    }
-  }
+export async function applyOwnMatchResult(match, uid) {
+  if (!db || !match?.id || !match.result || !uid) return;
+  const playerIds = match.playerIds || [];
+  if (playerIds.length < 2 || !playerIds.includes(uid)) return;
+  if (match.statsAppliedBy?.[uid]) return;
 
-  if (hasTwoHumans && match.result.draw) {
-    const [a, b] = humans;
-    const [aDoc, bDoc] = await Promise.all([
-      getDoc(doc(db, 'users', a.uid)),
-      getDoc(doc(db, 'users', b.uid)),
-    ]);
-    const aStats = aDoc.data()?.games?.[match.gameId] || emptyGameStats();
-    const bStats = bDoc.data()?.games?.[match.gameId] || emptyGameStats();
-    const delta = ratingDelta(aStats.rating, bStats.rating, true);
-    ratings[a.uid] = (aStats.rating || 1000) + delta;
-    ratings[b.uid] = (bStats.rating || 1000) - delta;
-  }
+  const matchRef = doc(db, 'matches', match.id);
+  const userRef = doc(db, 'users', uid);
+  let published = null;
 
-  for (let index = 0; index < match.seats.length; index += 1) {
-    const seat = match.seats[index];
-    if (seat.type !== 'human' || !seat.uid) continue;
-    const ref = doc(db, 'users', seat.uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) continue;
-    const data = snap.data();
+  await runTransaction(db, async (tx) => {
+    const matchSnap = await tx.get(matchRef);
+    const userSnap = await tx.get(userRef);
+    if (!matchSnap.exists() || !userSnap.exists()) return;
+    const live = matchSnap.data();
+    if (!live.result) return;
+    if ((live.playerIds || []).length < 2) return;
+    if ((live.statsAppliedBy || {})[uid]) return;
+    if (!(live.playerIds || []).includes(uid)) return;
+
+    const data = userSnap.data();
+    const gameId = live.gameId;
     const life = data.stats || emptyLifetime();
-    const perGame = { ...(data.games?.[match.gameId] || emptyGameStats()) };
-    const vsBots = (match.seats || []).some((other) => other.type === 'bot');
-    const won = winnerSeat === index;
-    const lost = winnerSeat !== null && winnerSeat !== index;
+    const perGame = { ...(data.games?.[gameId] || emptyGameStats()) };
+    const mySeat = live.playerSeats?.[uid];
+    const winnerSeat = live.result.draw ? null : live.result.winner;
+    const won = winnerSeat === mySeat;
+    const lost = winnerSeat !== null && winnerSeat !== mySeat;
     const nextLife = bump(life, won ? 'wins' : lost ? 'losses' : 'draws');
     const nextGame = bump(perGame, won ? 'wins' : lost ? 'losses' : 'draws');
-    if (won && vsBots) nextGame.winsVsBots = (nextGame.winsVsBots || 0) + 1;
-    if (won && hasTwoHumans) nextGame.winsVsHumans = (nextGame.winsVsHumans || 0) + 1;
-    if (ratings[seat.uid] !== undefined) nextGame.rating = ratings[seat.uid];
-    await updateDoc(ref, { stats: nextLife, [`games.${match.gameId}`]: nextGame });
-  }
+    if (won) nextGame.winsVsHumans = (nextGame.winsVsHumans || 0) + 1;
+    nextGame.rating = nextRating(live, uid, won, lost);
 
-  await updateDoc(doc(db, 'matches', match.id), { statsApplied: true });
+    published = {
+      displayName: data.displayName,
+      role: data.role || 'player',
+      stats: nextLife,
+      games: { ...(data.games || {}), [gameId]: nextGame },
+    };
+
+    tx.update(userRef, { stats: nextLife, [`games.${gameId}`]: nextGame });
+    tx.update(matchRef, { [`statsAppliedBy.${uid}`]: true });
+  });
+
+  if (published) {
+    try {
+      await setDoc(doc(db, 'publicProfiles', uid), publicProfilePayload(published), { merge: true });
+    } catch {
+      /* ignore until public profile rules are live */
+    }
+  }
 }

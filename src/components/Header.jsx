@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 
 const linkClass = ({ isActive }) =>
-  `px-2 py-1 rounded-md text-sm ${isActive ? 'bg-gold/20 text-gold' : 'text-cream/80 hover:text-cream'}`;
+  `px-2 py-2 rounded-md text-sm min-h-11 inline-flex items-center ${isActive ? 'bg-gold/20 text-gold' : 'text-cream/80 hover:text-cream'}`;
 
 export default function Header() {
   const site = useSite();
@@ -23,11 +23,11 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-2 text-sm">
           {firebaseUser ? (
             <>
-              <Link to="/settings" className="text-cream/80 hover:text-cream">{profile?.displayName || 'Player'}</Link>
-              <button type="button" onClick={logout} className="text-gold hover:underline">Sign out</button>
+              <Link to="/settings" className="text-cream/80 hover:text-cream py-2">{profile?.displayName || 'Player'}</Link>
+              <button type="button" onClick={logout} className="text-gold hover:underline py-2">Sign out</button>
             </>
           ) : (
-            <Link to="/sign-in" className="text-gold hover:underline">Sign in</Link>
+            <Link to="/sign-in" className="text-gold hover:underline py-2">Sign in</Link>
           )}
         </div>
       </div>

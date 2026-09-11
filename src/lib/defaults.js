@@ -1,6 +1,6 @@
 export const defaultSite = {
   homeTitle: "Bong's Board Games",
-  tagline: 'Take a seat. Play a round. Fill empty chairs with bots.',
+  tagline: 'Play a bot instantly. Sign in when you want a table with someone.',
   footer: 'A small table for turn-based games. More titles will arrive over time.',
   games: {
     'tic-tac-toe': {

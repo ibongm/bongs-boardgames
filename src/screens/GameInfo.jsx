@@ -18,6 +18,8 @@ export default function GameInfo() {
 
   if (!game || copy.published === false) return <p>That game is not available.</p>;
 
+  const Board = game.Board;
+
   async function onCreate(event) {
     event.preventDefault();
     if (!firebaseUser) {
@@ -41,17 +43,41 @@ export default function GameInfo() {
       <p className="font-display text-4xl text-gold">{copy.title || game.meta.title}</p>
       <p className="mt-3 text-cream/80">{copy.blurb}</p>
       <p className="mt-2 text-sm text-cream/60">{game.meta.seats} seats · humans and bots</p>
+
+      <div className="mt-8 pointer-events-none max-w-xs">
+        <Board state={game.meta.previewState} canPlay={false} onMove={() => {}} interactive={false} />
+      </div>
+
+      <Link
+        to={`/play/${gameId}`}
+        className="mt-8 inline-flex items-center justify-center bg-gold text-ink font-semibold rounded-md px-5 py-3 min-h-11"
+      >
+        Play vs bot
+      </Link>
+      <p className="mt-2 text-xs text-cream/50">Instant, no account, does not count toward ratings.</p>
+
       <form onSubmit={onCreate} className="mt-8 space-y-3 bg-walnut border border-gold/20 rounded-2xl p-5">
+        <p className="font-display text-xl text-gold">Host a table</p>
+        <p className="text-sm text-cream/70">
+          Rated only when two people sit down. A bot in the other chair is still just practice.
+        </p>
         <label className="block text-sm text-cream/70">
           Optional room password
-          <input className="mt-1 w-full rounded-md px-3 py-2 text-ink" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Leave blank for an open room" />
+          <input
+            className="mt-1 w-full rounded-md px-3 py-2 text-ink min-h-11"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Leave blank for an open room"
+          />
         </label>
         {error && <p className="text-sm text-parchment">{error}</p>}
-        <button type="submit" disabled={!firebaseReady} className="bg-gold text-ink font-semibold rounded-md px-4 py-2">
-          Create room
+        <button type="submit" disabled={!firebaseReady} className="bg-gold text-ink font-semibold rounded-md px-4 py-3 min-h-11">
+          {firebaseUser ? 'Create room' : 'Sign in to create a room'}
         </button>
       </form>
-      <Link to="/lobby" className="inline-block mt-4 text-gold text-sm">Open lobby</Link>
+      <Link to="/lobby" className="inline-block mt-4 text-gold text-sm">
+        Open lobby
+      </Link>
     </div>
   );
 }

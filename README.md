@@ -1,8 +1,11 @@
 # Bong's Board Games
 
-Public tabletop rooms for Tic-Tac-Toe and Connect Four. Sign in, create or join a room, and fill empty seats with bots.
+Public tabletop for Tic-Tac-Toe and Connect Four.
 
+- Guests can play any title versus a bot. Those games never count.
+- Ranked tables require an account. Stats and Elo only apply when two human players sat down.
 - Repository: https://github.com/ibongm/bongs-boardgames
+- Live: https://bongs-boardgames.vercel.app
 - Firebase project: `bongs-boardgames-55d28`
 - Admin email: `ivanm.ploce@gmail.com`
 

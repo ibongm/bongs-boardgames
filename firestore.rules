@@ -4,32 +4,54 @@ service cloud.firestore {
     function signedIn() {
       return request.auth != null;
     }
-    function userPath() {
-      return /databases/$(database)/documents/users/$(request.auth.uid);
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
     }
     function isAdmin() {
-      return signedIn() && exists(userPath()) && get(userPath()).data.role == 'admin';
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    function roomIdentityIntact() {
+      return request.resource.data.hostId == resource.data.hostId
+        && request.resource.data.code == resource.data.code
+        && request.resource.data.gameId == resource.data.gameId;
     }
 
     match /users/{uid} {
-      allow read: if signedIn();
-      allow create: if signedIn() && request.auth.uid == uid;
-      allow update: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid) || isAdmin();
     }
+
+    match /publicProfiles/{uid} {
+      allow read: if true;
+      allow create, update: if isOwner(uid);
+    }
+
     match /site/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
+
     match /rooms/{id} {
       allow read: if signedIn();
-      allow create: if signedIn();
-      allow update: if signedIn();
+      allow create: if signedIn() && request.resource.data.hostId == request.auth.uid;
+      allow update: if signedIn() && roomIdentityIntact() && (
+        isAdmin()
+        || resource.data.hostId == request.auth.uid
+        || request.auth.uid in resource.data.participantIds
+        || resource.data.status == 'waiting'
+      );
       allow delete: if signedIn() && (isAdmin() || resource.data.hostId == request.auth.uid);
     }
+
     match /matches/{id} {
       allow read: if signedIn();
       allow create: if signedIn();
-      allow update: if signedIn();
+      allow update: if signedIn() && (
+        isAdmin() || request.auth.uid in resource.data.playerIds
+      );
     }
   }
 }

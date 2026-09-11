@@ -8,8 +8,8 @@ import {
   limit,
   onSnapshot,
   query,
+  runTransaction,
   serverTimestamp,
-  updateDoc,
   where,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase.js';
@@ -21,6 +21,24 @@ const roomsCol = () => collection(db, 'rooms');
 
 export function emptySeat() {
   return { uid: null, name: null, type: 'empty', difficulty: null, lastSeen: null, disconnectedAt: null };
+}
+
+export async function withRoom(roomId, mutator) {
+  const ref = doc(db, 'rooms', roomId);
+  let next = null;
+  await runTransaction(db, async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists()) throw new Error('Room not found');
+    const room = { id: snap.id, ...snap.data() };
+    const patch = mutator(room);
+    if (!patch) {
+      next = room;
+      return;
+    }
+    tx.update(ref, patch);
+    next = { ...room, ...patch };
+  });
+  return next;
 }
 
 export async function createRoom({ host, gameId, password }) {
@@ -41,6 +59,7 @@ export async function createRoom({ host, gameId, password }) {
     code,
     gameId,
     hostId: host.uid,
+    participantIds: [host.uid],
     passwordHash,
     status: 'waiting',
     seats,
@@ -76,10 +95,6 @@ export function watchRoom(roomId, callback) {
 export async function getRoom(roomId) {
   const snap = await getDoc(doc(db, 'rooms', roomId));
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-}
-
-export async function updateRoom(roomId, patch) {
-  await updateDoc(doc(db, 'rooms', roomId), patch);
 }
 
 export async function closeRoom(roomId) {

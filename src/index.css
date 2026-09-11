@@ -1,6 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1c1410;
+  --color-walnut: #2a1f18;
+  --color-felt: #1f4a38;
+  --color-felt-deep: #163528;
+  --color-cream: #f4ead6;
+  --color-parchment: #e7d7b8;
+  --color-gold: #c4a35a;
+  --color-rust: #a3543a;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
+  --shadow-table: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
 
 html,
 body,
@@ -14,9 +26,16 @@ body {
     #1c1410;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
 
 .felt-panel {

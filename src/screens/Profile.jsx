@@ -8,12 +8,24 @@ import { emptyGameStats, emptyLifetime } from '../lib/codes.js';
 export default function Profile() {
   const { uid } = useParams();
   const [user, setUser] = useState(null);
+  const [missing, setMissing] = useState(false);
   const site = useSite();
 
   useEffect(() => {
-    getUser(uid).then(setUser);
+    let alive = true;
+    setMissing(false);
+    setUser(null);
+    getUser(uid).then((found) => {
+      if (!alive) return;
+      setUser(found);
+      setMissing(!found);
+    });
+    return () => {
+      alive = false;
+    };
   }, [uid]);
 
+  if (missing) return <p className="text-cream/70">Player not found.</p>;
   if (!user) return <p>Loading profile…</p>;
   const life = user.stats || emptyLifetime();
   const rate = life.played ? Math.round((life.wins / life.played) * 100) : 0;
@@ -36,7 +48,7 @@ export default function Profile() {
             <article key={game.meta.id} className="bg-walnut border border-gold/20 rounded-2xl p-4">
               <p className="font-display text-xl text-gold">{title}</p>
               <p className="text-sm text-cream/80 mt-2">
-                Rating {stats.rating} · {stats.played} played · {stats.wins} wins ({stats.winsVsHumans} vs humans, {stats.winsVsBots} vs bots)
+                Rating {stats.rating} · {stats.played} rated games · {stats.winsVsHumans || 0} wins vs people
               </p>
             </article>
           );
