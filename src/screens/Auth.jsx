@@ -24,30 +24,30 @@ export default function Auth({ mode }) {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-walnut border border-gold/20 rounded-2xl p-6">
-      <h1 className="font-display text-3xl text-gold">{mode === 'register' ? 'Create an account' : 'Sign in'}</h1>
+    <div className="max-w-md mx-auto paper-card rounded-3xl p-7">
+      <h1 className="font-display text-4xl text-gold tracking-tight">{mode === 'register' ? 'Create an account' : 'Sign in'}</h1>
       {!firebaseReady && (
-        <p className="mt-3 text-sm text-parchment">Firebase keys are missing, so sign-in is disabled.</p>
+        <p className="mt-3 text-sm text-ink/60">Firebase keys are missing, so sign-in is disabled.</p>
       )}
       <form className="mt-6 space-y-3" onSubmit={onSubmit}>
         {mode === 'register' && (
-          <input className="w-full rounded-md px-3 py-2 text-ink" placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
+          <input className="w-full rounded-lg px-3 py-2 min-h-11" placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
         )}
-        <input className="w-full rounded-md px-3 py-2 text-ink" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input className="w-full rounded-md px-3 py-2 text-ink" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        {error && <p className="text-sm text-rust bg-cream/90 rounded px-2 py-1">{error}</p>}
-        <button type="submit" disabled={!firebaseReady} className="w-full bg-gold text-ink font-semibold rounded-md py-2">
+        <input className="w-full rounded-lg px-3 py-2 min-h-11" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input className="w-full rounded-lg px-3 py-2 min-h-11" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        {error && <p className="text-sm text-gold">{error}</p>}
+        <button type="submit" disabled={!firebaseReady} className="btn btn-primary w-full">
           {mode === 'register' ? 'Register' : 'Sign in'}
         </button>
       </form>
-      <button type="button" disabled={!firebaseReady} onClick={() => loginGoogle().catch((err) => setError(err.message))} className="w-full mt-3 border border-gold/40 rounded-md py-2 text-cream">
+      <button type="button" disabled={!firebaseReady} onClick={() => loginGoogle().catch((err) => setError(err.message))} className="btn btn-ghost w-full mt-3">
         Continue with Google
       </button>
-      <p className="mt-4 text-sm text-cream/70">
+      <p className="mt-4 text-sm text-ink/60">
         {mode === 'register' ? (
-          <>Already registered? <Link to="/sign-in" className="text-gold">Sign in</Link></>
+          <>Already registered? <Link to="/sign-in" className="text-gold underline-offset-4 hover:underline">Sign in</Link></>
         ) : (
-          <>New here? <Link to="/register" className="text-gold">Create an account</Link></>
+          <>New here? <Link to="/register" className="text-gold underline-offset-4 hover:underline">Create an account</Link></>
         )}
       </p>
     </div>

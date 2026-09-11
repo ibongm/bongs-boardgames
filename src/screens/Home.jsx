@@ -12,21 +12,21 @@ export default function Home() {
     .sort((a, b) => (a.copy?.order || 0) - (b.copy?.order || 0));
   return (
     <div>
-      <p className="font-display text-4xl md:text-5xl text-gold">{site.homeTitle}</p>
-      <p className="mt-4 max-w-2xl text-lg text-cream/80 leading-relaxed">{site.tagline}</p>
-      <div className="mt-10 grid gap-4 sm:grid-cols-2">
+      <p className="font-display text-5xl md:text-6xl text-gold tracking-tight leading-[0.95]">{site.homeTitle}</p>
+      <p className="mt-5 max-w-xl text-lg text-ink/70 leading-relaxed">{site.tagline}</p>
+      <div className="mt-12 grid gap-5 sm:grid-cols-2">
         {cards.map((card) => (
           <GameCard key={card.id} id={card.id} copy={card.copy} />
         ))}
       </div>
-      <p className="mt-8 text-sm text-cream/60">
+      <p className="mt-10 text-sm text-ink/50">
         Bot games are practice and never hit the board.{' '}
         {firebaseUser ? (
-          <Link to="/lobby" className="text-gold">
+          <Link to="/lobby" className="text-gold underline-offset-4 hover:underline">
             Open the lobby
           </Link>
         ) : (
-          <Link to="/sign-in" className="text-gold">
+          <Link to="/sign-in" className="text-gold underline-offset-4 hover:underline">
             Sign in to play a person
           </Link>
         )}

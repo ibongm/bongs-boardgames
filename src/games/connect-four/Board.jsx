@@ -1,14 +1,15 @@
 export default function ConnectFourBoard({ state, canPlay, onMove, interactive = true }) {
   const cols = state.board[0].length;
   return (
-    <div className="felt-panel rounded-2xl p-3 shadow-table w-full max-w-md mx-auto">
+    <div className="felt-panel rounded-3xl p-3 w-full max-w-md mx-auto">
       {interactive && (
         <div className="grid grid-cols-7 gap-1 mb-2">
           {Array.from({ length: cols }, (_, col) => (
             <button
               key={col}
               type="button"
-              className="h-8 min-h-8 rounded-md bg-gold/20 text-cream text-xs font-semibold hover:bg-gold/40"
+              aria-label={`Drop in column ${col + 1}`}
+              className="min-h-11 rounded-lg bg-cream/15 text-cream text-xs font-semibold hover:bg-cream/30"
               disabled={!canPlay || state.board[0][col] !== null}
               onClick={() => onMove(col)}
             >
@@ -22,10 +23,8 @@ export default function ConnectFourBoard({ state, canPlay, onMove, interactive =
           <div key={r} className="grid grid-cols-7 gap-1">
             {row.map((cell, c) => (
               <div
-                key={`${r}-${c}`}
-                className={`aspect-square rounded-full border border-black/20 ${
-                  cell === 0 ? 'bg-cream' : cell === 1 ? 'bg-rust' : 'bg-felt-deep'
-                }`}
+                key={`${r}-${c}-${cell}`}
+                className={`disc ${cell === 0 ? 'disc-ivory' : cell === 1 ? 'disc-ink' : 'disc-empty'}`}
               />
             ))}
           </div>

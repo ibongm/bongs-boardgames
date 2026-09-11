@@ -16,14 +16,14 @@ export default function Settings() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="max-w-md bg-walnut border border-gold/20 rounded-2xl p-5">
-      <h1 className="font-display text-3xl text-gold">Profile settings</h1>
-      <label className="block mt-5 text-sm text-cream/70">
+    <form onSubmit={onSubmit} className="max-w-md paper-card rounded-3xl p-6">
+      <h1 className="font-display text-4xl text-gold tracking-tight">Profile settings</h1>
+      <label className="block mt-5 text-sm text-ink/65">
         Display name
-        <input className="mt-1 w-full rounded-md px-3 py-2 text-ink min-h-11" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input className="mt-1 w-full rounded-lg px-3 py-2 min-h-11" value={name} onChange={(e) => setName(e.target.value)} required />
       </label>
-      <p className="mt-3 text-xs text-cream/50">{firebaseUser?.email || profile.email}</p>
-      <button type="submit" className="mt-4 bg-gold text-ink font-semibold rounded-md px-4 py-2 min-h-11">Save</button>
+      <p className="mt-3 text-xs text-ink/45">{firebaseUser?.email || profile.email}</p>
+      <button type="submit" className="btn btn-primary mt-4">Save</button>
       {saved && <p className="mt-2 text-sm text-gold">Saved.</p>}
     </form>
   );

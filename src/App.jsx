@@ -13,7 +13,7 @@ import Admin from './screens/Admin.jsx';
 import Settings from './screens/Settings.jsx';
 
 function NotFound() {
-  return <p className="text-cream/70">That page is not on this table.</p>;
+  return <p className="text-ink/60">That page is not on this table.</p>;
 }
 
 export default function App() {

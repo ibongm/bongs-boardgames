@@ -103,16 +103,16 @@ export default function Room() {
 
   if (needsPassword) {
     return (
-      <form onSubmit={onUnlock} className="max-w-sm bg-walnut p-5 rounded-2xl border border-gold/20">
-        <p className="font-display text-2xl text-gold">Password required</p>
+      <form onSubmit={onUnlock} className="max-w-sm paper-card p-6 rounded-3xl">
+        <p className="font-display text-3xl text-gold tracking-tight">Password required</p>
         <input
-          className="mt-4 w-full rounded-md px-3 py-2 text-ink min-h-11"
+          className="mt-4 w-full rounded-lg px-3 py-2 min-h-11"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <p className="mt-2 text-sm">{error}</p>}
-        <button type="submit" className="mt-3 bg-gold text-ink font-semibold rounded-md px-4 py-2 min-h-11">
+        <button type="submit" className="btn btn-primary mt-4">
           Enter
         </button>
       </form>
@@ -131,11 +131,11 @@ export default function Room() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
       <section>
-        <p className="text-sm text-cream/60">
+        <p className="text-xs uppercase tracking-[0.16em] text-ink/45">
           Room <span className="font-mono text-gold">{room.code}</span>
           {rated ? ' · rated' : ' · unrated practice'}
         </p>
-        <h1 className="font-display text-3xl text-gold mt-1">{game.meta.title}</h1>
+        <h1 className="font-display text-4xl text-gold tracking-tight mt-1">{game.meta.title}</h1>
         {room.status === 'playing' && match && (
           <div className="mt-6">
             <Board
@@ -143,7 +143,7 @@ export default function Room() {
               canPlay={canPlay}
               onMove={(move) => playMove(match, room, move, firebaseUser.uid).catch((err) => setError(err.message))}
             />
-            <p className="mt-4 text-center text-cream/80">
+            <p className="mt-4 text-center font-display text-2xl text-gold">
               {match.result
                 ? match.result.draw
                   ? 'Draw.'
@@ -153,20 +153,20 @@ export default function Room() {
           </div>
         )}
         {room.status === 'waiting' && (
-          <p className="mt-6 text-cream/70">Waiting for the host to start. Fill seats with people or bots.</p>
+          <p className="mt-6 text-ink/65">Waiting for the host to start. Fill seats with people or bots.</p>
         )}
         {room.status === 'finished' && match && (
           <div className="mt-6">
             <Board state={match.state} canPlay={false} onMove={() => {}} />
-            <button type="button" className="mt-4 text-gold" onClick={() => navigate('/lobby')}>
+            <button type="button" className="mt-4 text-gold underline-offset-4 hover:underline" onClick={() => navigate('/lobby')}>
               Back to lobby
             </button>
           </div>
         )}
-        {error && <p className="mt-3 text-sm text-parchment">{error}</p>}
+        {error && <p className="mt-3 text-sm text-gold">{error}</p>}
       </section>
-      <aside className="bg-walnut border border-gold/20 rounded-2xl p-4 h-fit">
-        <p className="text-xs uppercase tracking-wide text-cream/50">Seats</p>
+      <aside className="paper-card rounded-3xl p-5 h-fit">
+        <p className="text-xs uppercase tracking-[0.14em] text-ink/45">Seats</p>
         <ul className="mt-3 space-y-2">
           {(room.seats || []).map((seat, index) => (
             <li key={index} className="flex items-center justify-between gap-2 text-sm">
@@ -176,7 +176,7 @@ export default function Room() {
                 {waitMs(seat) !== null && seat.type === 'human' ? ` · wait ${waitMs(seat)}s` : ''}
               </span>
               {isHost && room.status === 'waiting' && seat.type !== 'empty' && seat.uid !== firebaseUser.uid && (
-                <button type="button" className="text-gold" onClick={() => removeSeat(room.id, index)}>
+                <button type="button" className="text-gold underline-offset-4 hover:underline" onClick={() => removeSeat(room.id, index)}>
                   Remove
                 </button>
               )}
@@ -186,7 +186,7 @@ export default function Room() {
         {isHost && room.status === 'waiting' && (
           <div className="mt-4 space-y-2">
             <select
-              className="w-full rounded-md px-2 py-2 text-ink min-h-11"
+              className="w-full rounded-lg px-2 py-2 min-h-11"
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
             >
@@ -194,20 +194,20 @@ export default function Room() {
               <option value="medium">Medium bot</option>
               <option value="hard">Hard bot</option>
             </select>
-            <button type="button" className="w-full border border-gold/40 rounded-md py-2 min-h-11" onClick={() => addBot(room.id, difficulty)}>
+            <button type="button" className="btn btn-ghost w-full" onClick={() => addBot(room.id, difficulty)}>
               Add bot
             </button>
             <button
               type="button"
-              className="w-full bg-gold text-ink font-semibold rounded-md py-2 min-h-11"
+              className="btn btn-primary w-full"
               onClick={() => startRoom(room.id).catch((err) => setError(err.message))}
             >
               Start game
             </button>
           </div>
         )}
-        <p className="text-xs uppercase tracking-wide text-cream/50 mt-5">Spectators</p>
-        <ul className="mt-2 text-sm text-cream/80">
+        <p className="text-xs uppercase tracking-[0.14em] text-ink/45 mt-5">Spectators</p>
+        <ul className="mt-2 text-sm text-ink/70">
           {(room.spectators || []).length ? room.spectators.map((s) => <li key={s.uid}>{s.name}</li>) : <li>None</li>}
         </ul>
       </aside>

@@ -40,42 +40,39 @@ export default function GameInfo() {
 
   return (
     <div className="max-w-xl">
-      <p className="font-display text-4xl text-gold">{copy.title || game.meta.title}</p>
-      <p className="mt-3 text-cream/80">{copy.blurb}</p>
-      <p className="mt-2 text-sm text-cream/60">{game.meta.seats} seats · humans and bots</p>
+      <p className="font-display text-5xl text-gold tracking-tight">{copy.title || game.meta.title}</p>
+      <p className="mt-3 text-ink/70">{copy.blurb}</p>
+      <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/40">{game.meta.seats} seats · humans and bots</p>
 
       <div className="mt-8 pointer-events-none max-w-xs">
         <Board state={game.meta.previewState} canPlay={false} onMove={() => {}} interactive={false} />
       </div>
 
-      <Link
-        to={`/play/${gameId}`}
-        className="mt-8 inline-flex items-center justify-center bg-gold text-ink font-semibold rounded-md px-5 py-3 min-h-11"
-      >
+      <Link to={`/play/${gameId}`} className="btn btn-primary mt-8">
         Play vs bot
       </Link>
-      <p className="mt-2 text-xs text-cream/50">Instant, no account, does not count toward ratings.</p>
+      <p className="mt-2 text-xs text-ink/45">Instant, no account, does not count toward ratings.</p>
 
-      <form onSubmit={onCreate} className="mt-8 space-y-3 bg-walnut border border-gold/20 rounded-2xl p-5">
-        <p className="font-display text-xl text-gold">Host a table</p>
-        <p className="text-sm text-cream/70">
+      <form onSubmit={onCreate} className="mt-8 space-y-3 paper-card rounded-3xl p-6">
+        <p className="font-display text-2xl text-gold tracking-tight">Host a table</p>
+        <p className="text-sm text-ink/65">
           Rated only when two people sit down. A bot in the other chair is still just practice.
         </p>
-        <label className="block text-sm text-cream/70">
+        <label className="block text-sm text-ink/65">
           Optional room password
           <input
-            className="mt-1 w-full rounded-md px-3 py-2 text-ink min-h-11"
+            className="mt-1 w-full rounded-lg px-3 py-2 min-h-11"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Leave blank for an open room"
           />
         </label>
-        {error && <p className="text-sm text-parchment">{error}</p>}
-        <button type="submit" disabled={!firebaseReady} className="bg-gold text-ink font-semibold rounded-md px-4 py-3 min-h-11">
+        {error && <p className="text-sm text-gold">{error}</p>}
+        <button type="submit" disabled={!firebaseReady} className="btn btn-primary">
           {firebaseUser ? 'Create room' : 'Sign in to create a room'}
         </button>
       </form>
-      <Link to="/lobby" className="inline-block mt-4 text-gold text-sm">
+      <Link to="/lobby" className="inline-block mt-4 text-gold text-sm underline-offset-4 hover:underline">
         Open lobby
       </Link>
     </div>

@@ -30,21 +30,21 @@ export default function Lobby() {
 
   return (
     <div>
-      <h1 className="font-display text-4xl text-gold">Lobby</h1>
+      <h1 className="font-display text-5xl text-gold tracking-tight">Lobby</h1>
       <form onSubmit={joinCode} className="mt-6 flex flex-col sm:flex-row gap-2 max-w-lg">
-        <input className="flex-1 rounded-md px-3 py-2 text-ink uppercase" placeholder="Room code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
-        <button type="submit" className="bg-gold text-ink font-semibold rounded-md px-4 py-2">Join by code</button>
+        <input className="flex-1 rounded-lg px-3 py-2 min-h-11 uppercase" placeholder="Room code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
+        <button type="submit" className="btn btn-primary">Join by code</button>
       </form>
-      {error && <p className="mt-2 text-sm text-parchment">{error}</p>}
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-gold/20">
+      {error && <p className="mt-2 text-sm text-gold">{error}</p>}
+      <div className="mt-8 overflow-x-auto rounded-3xl paper-card">
         <table className="w-full text-sm text-left">
-          <thead className="bg-walnut text-cream/70">
+          <thead className="text-ink/50">
             <tr>
-              <th className="px-3 py-2">Code</th>
-              <th className="px-3 py-2">Game</th>
-              <th className="px-3 py-2">Seats</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2"></th>
+              <th className="px-4 py-3 font-semibold">Code</th>
+              <th className="px-4 py-3 font-semibold">Game</th>
+              <th className="px-4 py-3 font-semibold">Seats</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
+              <th className="px-4 py-3 font-semibold"></th>
             </tr>
           </thead>
           <tbody>
@@ -53,17 +53,17 @@ export default function Lobby() {
               const title = site.games[room.gameId]?.title || getGame(room.gameId)?.meta.title;
               return (
                 <tr key={room.id} className="border-t border-gold/10">
-                  <td className="px-3 py-2 font-mono">{room.code}{room.passwordHash ? ' 🔒' : ''}</td>
-                  <td className="px-3 py-2">{title}</td>
-                  <td className="px-3 py-2">{filled}/{room.seats?.length || 0}</td>
-                  <td className="px-3 py-2 capitalize">{room.status}</td>
-                  <td className="px-3 py-2"><Link to={`/rooms/${room.code}`} className="text-gold">Open</Link></td>
+                  <td className="px-4 py-3 font-mono">{room.code}{room.passwordHash ? ' · locked' : ''}</td>
+                  <td className="px-4 py-3">{title}</td>
+                  <td className="px-4 py-3 tabular-nums">{filled}/{room.seats?.length || 0}</td>
+                  <td className="px-4 py-3 capitalize">{room.status}</td>
+                  <td className="px-4 py-3"><Link to={`/rooms/${room.code}`} className="text-gold underline-offset-4 hover:underline">Open</Link></td>
                 </tr>
               );
             })}
             {!rooms.length && (
               <tr>
-                <td className="px-3 py-6 text-cream/50" colSpan={5}>No open rooms. Create one from a game page.</td>
+                <td className="px-4 py-8 text-ink/45" colSpan={5}>No open rooms. Create one from a game page.</td>
               </tr>
             )}
           </tbody>

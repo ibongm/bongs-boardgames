@@ -44,7 +44,7 @@ export default function Play() {
   }, [game, state, status, difficulty, seed]);
 
   if (!game || copy.published === false || !state) {
-    return <p className="text-cream/70">That game is not available.</p>;
+    return <p className="text-ink/60">That game is not available.</p>;
   }
 
   const Board = game.Board;
@@ -73,9 +73,9 @@ export default function Play() {
 
   return (
     <div className="max-w-xl mx-auto">
-      <p className="text-sm text-cream/60">Practice table · vs bot · unrated</p>
-      <h1 className="font-display text-4xl text-gold mt-1">{title}</h1>
-      <p className="mt-3 text-cream/75">{copy.blurb}</p>
+      <p className="text-xs uppercase tracking-[0.16em] text-ink/45">Practice · vs bot · unrated</p>
+      <h1 className="font-display text-5xl text-gold tracking-tight mt-2">{title}</h1>
+      <p className="mt-3 text-ink/70">{copy.blurb}</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {DIFFICULTIES.map((item) => (
@@ -83,8 +83,8 @@ export default function Play() {
             key={item.id}
             type="button"
             onClick={() => setDifficulty(item.id)}
-            className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-              difficulty === item.id ? 'bg-gold text-ink' : 'border border-gold/30 text-cream'
+            className={`px-4 py-2 rounded-full text-sm font-semibold min-h-11 ${
+              difficulty === item.id ? 'bg-gold text-cream' : 'btn-ghost'
             }`}
           >
             {item.label}
@@ -94,21 +94,17 @@ export default function Play() {
 
       <div className="mt-8">
         <Board state={state} canPlay={humanTurn} onMove={onMove} />
-        <p className="mt-4 text-center font-display text-2xl text-gold">{headline}</p>
+        <p className="mt-5 text-center font-display text-3xl text-gold tracking-tight">{headline}</p>
         <div className="mt-5 flex flex-col sm:flex-row gap-2 justify-center">
-          <button type="button" onClick={newGame} className="bg-gold text-ink font-semibold rounded-md px-4 py-3 min-h-11">
+          <button type="button" onClick={newGame} className="btn btn-primary">
             New game
           </button>
           {firebaseUser ? (
-            <Link to={`/games/${gameId}`} className="border border-gold/40 rounded-md px-4 py-3 text-center min-h-11">
+            <Link to={`/games/${gameId}`} className="btn btn-ghost">
               Play a person
             </Link>
           ) : (
-            <Link
-              to="/sign-in"
-              state={{ from: `/games/${gameId}` }}
-              className="border border-gold/40 rounded-md px-4 py-3 text-center min-h-11"
-            >
+            <Link to="/sign-in" state={{ from: `/games/${gameId}` }} className="btn btn-ghost">
               Sign in to play a person
             </Link>
           )}
