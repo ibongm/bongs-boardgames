@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { TYPE_COLORS } from './names.js';
+import { CARD_BACK, DISTRICT_PHOTO, ROLE_PHOTO } from './photos.js';
 
 const TYPE_FILL = {
   noble: '#c4a35a',
@@ -9,15 +10,6 @@ const TYPE_FILL = {
   unique: '#6b4a8a',
   role: '#6b1c28',
 };
-
-const PHOTO_STEMS = new Set([
-  'manor', 'castle', 'palace', 'temple', 'church', 'monastery', 'cathedral',
-  'tavern', 'market', 'trading-post', 'docks', 'harbor', 'town-hall',
-  'watchtower', 'prison', 'battlefield', 'fortress',
-  'dragon-gate', 'haunted-quarter', 'imperial-treasury', 'keep', 'laboratory',
-  'library', 'map-room', 'school-of-magic', 'smithy', 'statue',
-  'assassin', 'thief', 'magician', 'king', 'bishop', 'merchant', 'architect', 'warlord',
-]);
 
 const GLYPH = {
   manor: 'M18 70 V42 L40 26 L62 42 V70 H18 M30 70 V52 H50 V70',
@@ -93,16 +85,14 @@ function PhotoOrGlyph({ src, color, d, banner, className = '' }) {
 export function DistrictPicture({ stem, type, className = '' }) {
   const color = TYPE_FILL[type] || TYPE_COLORS[type] || '#6b1c28';
   const d = GLYPH[stem] || GLYPH.manor;
-  const src = PHOTO_STEMS.has(stem) ? `/citadels/${stem}.jpg` : null;
-  return <PhotoOrGlyph src={src} color={color} d={d} className={className} />;
+  return <PhotoOrGlyph src={DISTRICT_PHOTO[stem]} color={color} d={d} className={className} />;
 }
 
 export function RolePicture({ roleId, className = '' }) {
   const d = GLYPH[roleId] || GLYPH.king;
-  const src = PHOTO_STEMS.has(roleId) ? `/citadels/${roleId}.jpg` : null;
-  return <PhotoOrGlyph src={src} color={TYPE_FILL.role} d={d} banner className={className} />;
+  return <PhotoOrGlyph src={ROLE_PHOTO[roleId]} color={TYPE_FILL.role} d={d} banner className={className} />;
 }
 
 export function HiddenPicture({ className = '' }) {
-  return <PhotoOrGlyph src="/citadels/back.jpg" color="#8a5a5e" d="M24 50 H56 M40 34 V66" className={className} />;
+  return <PhotoOrGlyph src={CARD_BACK} color="#8a5a5e" d="M24 50 H56 M40 34 V66" className={className} />;
 }
