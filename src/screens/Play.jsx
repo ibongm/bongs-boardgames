@@ -104,6 +104,171 @@ export default function Play() {
 
   const wide = maxSeats > 2;
 
+  if (gameId === 'pioneer') {
+    const pioneerSidebarTop = (
+      <div className="bg-cream border border-gold/25 rounded-2xl p-3.5 space-y-3 shadow-xs">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold">Practice Table · Unrated</p>
+            <h1 className="font-display text-2xl text-gold">{title}</h1>
+          </div>
+          <button
+            type="button"
+            className="border border-gold/40 hover:bg-gold/10 rounded-xl px-3 py-1.5 text-xs font-semibold min-h-9 text-ink"
+            onClick={() => setRulesOpen(true)}
+          >
+            Rules
+          </button>
+        </div>
+
+        {/* Difficulty pills */}
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold mb-1">Bot Difficulty</p>
+          <div className="flex gap-1.5">
+            {DIFFICULTIES.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setDifficulty(item.id)}
+                className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold min-h-9 transition-colors ${
+                  difficulty === item.id ? 'bg-gold text-cream shadow-xs' : 'border border-gold/30 text-ink hover:bg-gold/5'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Table size & Map Layout */}
+        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gold/15">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold mb-1">Seats</p>
+            <div className="flex gap-1">
+              {[3, 4].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setSeatCount(n)}
+                  className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 ${
+                    seatCount === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold mb-1">Map</p>
+            <div className="flex gap-1">
+              <button
+                type="button"
+                onClick={() => setMapId('map_balanced')}
+                className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 ${
+                  mapId === 'map_balanced' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                }`}
+                title="Balanced Isle: fixed beginner layout"
+              >
+                Balanced
+              </button>
+              {firebaseUser ? (
+                <button
+                  type="button"
+                  onClick={() => setMapId('map_shuffled')}
+                  className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 ${
+                    mapId === 'map_shuffled' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  }`}
+                  title="Random Isle: procedural island layout"
+                >
+                  Random
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 border border-gold/20 text-ink/35 cursor-not-allowed bg-walnut/5"
+                  title="Sign in to unlock Random Isle"
+                >
+                  Random 🔒
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {isAdmin && (
+          <label className="flex items-center gap-1.5 text-xs text-ink/75 pt-1">
+            <input
+              type="checkbox"
+              checked={testMode}
+              onChange={(e) => {
+                const on = e.target.checked;
+                setTestMode(on);
+                try {
+                  localStorage.setItem('bbg-test-mode', on ? '1' : '0');
+                } catch {}
+              }}
+            />
+            <span>Test mode (no bot timer)</span>
+          </label>
+        )}
+      </div>
+    );
+
+    const pioneerSidebarBottom = (
+      <div className="bg-cream border border-gold/25 rounded-2xl p-3 space-y-2 text-center shadow-xs">
+        <p className="font-display text-base font-semibold text-gold">{headline}</p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={newGame}
+            className="flex-1 bg-gold text-cream font-semibold rounded-xl py-2 px-3 text-xs min-h-10 hover:bg-gold/90 shadow-xs"
+          >
+            New game
+          </button>
+          {firebaseUser ? (
+            <Link
+              to={`/games/${gameId}`}
+              className="flex-1 border border-gold/40 rounded-xl py-2 px-3 text-xs text-center min-h-10 text-ink hover:bg-gold/5 flex items-center justify-center font-medium"
+            >
+              Play a person
+            </Link>
+          ) : (
+            <Link
+              to="/sign-in"
+              state={{ from: `/games/${gameId}` }}
+              className="flex-1 border border-gold/40 rounded-xl py-2 px-3 text-xs text-center min-h-10 text-ink hover:bg-gold/5 flex items-center justify-center font-medium"
+            >
+              Sign in to play
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+
+    return (
+      <div className="w-full">
+        <Board
+          state={state}
+          canPlay={humanTurn}
+          onMove={onMove}
+          viewerSeat={viewerSeat}
+          sidebarTop={pioneerSidebarTop}
+          sidebarBottom={pioneerSidebarBottom}
+        />
+        <RulesModal
+          gameId={gameId}
+          copy={copy}
+          open={rulesOpen}
+          onClose={() => setRulesOpen(false)}
+          matchInfo={`Practice table · you vs ${seatCount - 1}× ${difficulty} bot. Unrated. A live-table leaver is replaced by a Medium bot after ${disconnectSec} seconds.`}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={wide ? 'max-w-4xl mx-auto' : 'max-w-xl mx-auto'}>
       <p className="text-sm text-ink/70">Practice table · vs bot · unrated</p>

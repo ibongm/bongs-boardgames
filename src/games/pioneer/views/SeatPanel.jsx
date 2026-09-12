@@ -7,7 +7,7 @@ export default function SeatPanel({
   grandGarrisonSeat = null,
 }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
       {players.map((p, seat) => {
         const isTurn = (actorSeat !== undefined && actorSeat !== null ? actorSeat : turn) === seat;
         const isViewer = viewerSeat === seat;

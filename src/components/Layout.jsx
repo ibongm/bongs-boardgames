@@ -13,7 +13,7 @@ export default function Layout() {
           Firebase is not configured yet. Accounts and rooms need environment variables. See the README.
         </div>
       )}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 sm:py-6">
         <Outlet />
       </main>
       <footer className="border-t border-gold/20 text-ink/70 text-sm px-4 py-6 text-center">{site.footer}</footer>

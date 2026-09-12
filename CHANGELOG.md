@@ -1,5 +1,48 @@
 # Changelog
 
+### [2026-09-12] - Document Pioneer Zero-Scroll Split Layout in Product Log
+- **Files Changed**:
+  - `docs/SITE.md` (Modified)
+- **Details**:
+  - Documented Pioneer's desktop two-column zero-scroll layout with left sidebar and right-side interactive board arena.
+
+### [2026-09-12] - Pioneer Zero-Scroll Split Layout in Practice Screen
+- **Files Changed**:
+  - `src/screens/Play.jsx` (Modified)
+- **Details**:
+  - Integrated Pioneer practice table controls (difficulty selector, table size, map layout, rules trigger, test mode, and match buttons) into `sidebarTop` and `sidebarBottom` slots of the board component, enabling an unencumbered side-by-side desktop arena view.
+
+### [2026-09-12] - Responsive Two-Column Split Layout in PioneerBoard
+- **Files Changed**:
+  - `src/games/pioneer/Board.jsx` (Modified)
+- **Details**:
+  - Restructured Pioneer tabletop layout into a desktop two-column split (`flex-col lg:flex-row`), grouping player seat summaries, hand resource chips, build cheatsheet, and activity log in a left sidebar, with the turn status banner, contextual action bar, and island HexBoard in a dedicated right arena. Supported `sidebarTop` and `sidebarBottom` prop injection.
+
+### [2026-09-12] - Viewport Height Constraint on HexBoard Container
+- **Files Changed**:
+  - `src/games/pioneer/views/HexBoard.jsx` (Modified)
+- **Details**:
+  - Bound the HexBoard container to `max-w-[min(100%,calc(100vh-160px))]` to ensure the entire SVG island fits comfortably within desktop viewports without requiring vertical page scrolling.
+
+### [2026-09-12] - Adapt SeatPanel Grid for Desktop Sidebar
+- **Files Changed**:
+  - `src/games/pioneer/views/SeatPanel.jsx` (Modified)
+- **Details**:
+  - Configured responsive grid (`grid-cols-2 sm:grid-cols-4 lg:grid-cols-2`) so player status cards arrange cleanly inside desktop sidebars and horizontal mobile strips.
+
+### [2026-09-12] - Compact Island Activity Log Sizing
+- **Files Changed**:
+  - `src/games/pioneer/views/Log.jsx` (Modified)
+- **Details**:
+  - Reduced match log container height to `h-32 sm:h-36` with refined typography and entry counters for space efficiency within desktop sidebars.
+
+### [2026-09-12] - Expand Desktop Container Width to max-w-7xl
+- **Files Changed**:
+  - `src/components/Layout.jsx` (Modified)
+  - `src/components/Header.jsx` (Modified)
+- **Details**:
+  - Expanded main layout and header container widths from `max-w-6xl` to `max-w-7xl` and adjusted vertical padding to `py-4 sm:py-6` to support rich two-column tabletop board game viewports.
+
 ### [2026-09-12] - Null-Safe Fallback in useAuth Context Hook
 - **Files Changed**:
   - `src/context/AuthContext.jsx` (Modified)

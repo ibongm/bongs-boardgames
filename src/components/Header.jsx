@@ -10,7 +10,7 @@ export default function Header() {
   const { profile, firebaseUser, logout, isAdmin } = useAuth();
   return (
     <header className="border-b border-cream/15 bg-gold sticky top-0 z-20">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
         <Link to="/" className="font-display text-xl text-cream shrink-0">
           {site.homeTitle}
         </Link>

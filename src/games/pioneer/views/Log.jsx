@@ -8,9 +8,12 @@ export default function Log({ log = [] }) {
   }, [log.length]);
 
   return (
-    <div className="bg-cream/70 border border-gold/25 rounded-2xl p-3 h-48 flex flex-col">
-      <p className="text-xs uppercase tracking-wider font-semibold text-ink/55 mb-2">Island Log</p>
-      <div className="flex-1 overflow-y-auto space-y-1.5 text-xs text-ink/80 pr-1">
+    <div className="bg-cream/80 border border-gold/25 rounded-2xl p-2.5 h-32 sm:h-36 flex flex-col">
+      <div className="flex items-center justify-between mb-1.5">
+        <p className="text-[11px] uppercase tracking-wider font-semibold text-ink/55">Island Log</p>
+        <span className="text-[10px] text-ink/45 font-mono">{log.length} entries</span>
+      </div>
+      <div className="flex-1 overflow-y-auto space-y-1 text-[11px] text-ink/80 pr-1">
         {log.map((entry, idx) => (
           <p key={idx} className="leading-snug">
             <span className="text-ink/40 mr-1.5 font-mono">#{idx + 1}</span>

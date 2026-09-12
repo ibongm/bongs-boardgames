@@ -37,7 +37,7 @@ export default function HexBoard({
   }, [state.hexes]);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl border border-gold/30 bg-[#ded3be] shadow-inner flex flex-col items-center">
+    <div className="relative w-full max-w-[min(100%,calc(100vh-160px))] overflow-hidden rounded-3xl border border-gold/30 bg-[#ded3be] shadow-inner flex flex-col items-center">
       {/* Zoom controls */}
       {interactive && (
         <div className="absolute top-3 right-3 z-20 flex gap-1 bg-cream/90 backdrop-blur-xs p-1 rounded-xl border border-gold/30 shadow-xs">

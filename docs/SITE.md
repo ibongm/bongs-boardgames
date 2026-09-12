@@ -53,7 +53,7 @@ Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-em
 
 Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Body, cards, and the rules modal use ink on cream. Cream text stays on the burgundy header and filled primary buttons. Display face is Source Serif 4. Districts, characters, and other seats open a popup with art and the card or player text. Official card photos for all 8 characters, card back, 17 basic districts, and 10 unique districts are extracted from the official demo cards sheet.
 
-Pioneer ships complete 5th-edition-style island settlement rules (3–4 seats, 10 Victory Points): pointy-top hex grid, Balanced Isle printed starts, Random Isle spiral placement, 2d6 production, roll of 7 discard/Bandit/steal, maritime and domestic trading, contextual building (roads, settlements, cities), Breakthrough deck with hidden Charters, Longest Route, and Grand Garrison.
+Pioneer ships complete 5th-edition-style island settlement rules (3–4 seats, 10 Victory Points): pointy-top hex grid, Balanced Isle printed starts, Random Isle spiral placement, 2d6 production, roll of 7 discard/Bandit/steal, maritime and domestic trading, contextual building (roads, settlements, cities), Breakthrough deck with hidden Charters, Longest Route, and Grand Garrison. On desktop, Pioneer renders in a zero-scroll two-column split view with match options, seat badges, hand resources, and log on the left, and the board arena with action bar on the right.
 
 ## Play
 
