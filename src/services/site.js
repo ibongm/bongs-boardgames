@@ -5,7 +5,16 @@ import { defaultSite } from '../lib/defaults.js';
 const siteRef = () => doc(db, 'site', 'content');
 
 export function mergeSite(data) {
-  return { ...defaultSite, ...data, games: { ...defaultSite.games, ...(data?.games || {}) } };
+  const games = { ...defaultSite.games };
+  for (const [id, copy] of Object.entries(data?.games || {})) {
+    games[id] = { ...(games[id] || {}), ...copy };
+  }
+  return {
+    ...defaultSite,
+    ...data,
+    shelves: { ...defaultSite.shelves, ...(data?.shelves || {}) },
+    games,
+  };
 }
 
 export async function loadSite() {
