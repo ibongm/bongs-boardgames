@@ -1,3 +1,2 @@
-export const ROLE_PHOTO = {};
-export const DISTRICT_PHOTO = {};
-export const CARD_BACK = '';
+export { ROLE_PHOTO } from './photosRoles.js';
+export { DISTRICT_PHOTO, CARD_BACK } from './photosDistricts.js';
