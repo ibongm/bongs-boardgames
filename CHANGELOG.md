@@ -2,6 +2,7 @@
 
 ## 2026-09-12
 
+- Citadels cards, characters, and seats are illustrated and tappable. A popup shows the picture plus the official first-game text. Opening another player shows their gold, hand size, revealed role, and city.
 - Citadels table copy uses ink on cream so ranks, seats, and empty cities stay readable on the light theme. Titles use Source Serif 4 instead of Cormorant Garamond.
 - Citadels Rules modal now carries the first-game draft, gather, build, eight characters, fourteen uniques, and scoring from the attached rulebook, plus the site guest/bot/45s notes.
 - Citadels (working title): first-game eight characters and fourteen unique districts. Practice vs bots on `/play/citadels`. Host picks 4, 5, or 6 seats. Guests practice only; they may spectate live tables. Disconnect wait 45 seconds. Home card published, not featured.
