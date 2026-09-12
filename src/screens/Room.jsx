@@ -117,7 +117,7 @@ export default function Room() {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <p className="mt-2 text-sm">{error}</p>}
-        <button type="submit" className="mt-3 bg-gold text-ink font-semibold rounded-md px-4 py-2 min-h-11">
+        <button type="submit" className="mt-3 bg-gold text-cream font-semibold rounded-md px-4 py-2 min-h-11">
           Enter
         </button>
       </form>
@@ -138,7 +138,7 @@ export default function Room() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
       <section>
-        <p className="text-sm text-cream/60">
+        <p className="text-sm text-ink/70">
           Room <span className="font-mono text-gold">{room.code}</span>
           {rated ? ' · rated' : ' · unrated practice'}
         </p>
@@ -158,7 +158,7 @@ export default function Room() {
               viewerSeat={mySeatIndex < 0 ? 0 : mySeatIndex}
               onMove={(move) => playMove(match, room, move, firebaseUser.uid).catch((err) => setError(err.message))}
             />
-            <p className="mt-4 text-center text-cream/80">
+            <p className="mt-4 text-center text-ink/80">
               {match.result
                 ? match.result.draw
                   ? 'Draw.'
@@ -168,7 +168,7 @@ export default function Room() {
           </div>
         )}
         {room.status === 'waiting' && (
-          <p className="mt-6 text-cream/70">Waiting for the host to start. Fill seats with people or bots.</p>
+          <p className="mt-6 text-ink/70">Waiting for the host to start. Fill seats with people or bots.</p>
         )}
         {room.status === 'finished' && match && (
           <div className="mt-6">
@@ -181,7 +181,7 @@ export default function Room() {
         {error && <p className="mt-3 text-sm text-parchment">{error}</p>}
       </section>
       <aside className="bg-walnut border border-gold/20 rounded-2xl p-4 h-fit">
-        <p className="text-xs uppercase tracking-wide text-cream/50">Seats</p>
+        <p className="text-xs uppercase tracking-wide text-ink/55">Seats</p>
         <ul className="mt-3 space-y-2">
           {(room.seats || []).map((seat, index) => (
             <li key={index} className="flex items-center justify-between gap-2 text-sm">
@@ -199,7 +199,7 @@ export default function Room() {
           ))}
         </ul>
         {(isHost || isAdmin) && (
-          <label className="mt-4 flex items-start gap-2 text-sm text-cream/80">
+          <label className="mt-4 flex items-start gap-2 text-sm text-ink/80">
             <input
               type="checkbox"
               className="mt-1"
@@ -225,15 +225,15 @@ export default function Room() {
             </button>
             <button
               type="button"
-              className="w-full bg-gold text-ink font-semibold rounded-md py-2 min-h-11"
+              className="w-full bg-gold text-cream font-semibold rounded-md py-2 min-h-11"
               onClick={() => startRoom(room.id).catch((err) => setError(err.message))}
             >
               Start game
             </button>
           </div>
         )}
-        <p className="text-xs uppercase tracking-wide text-cream/50 mt-5">Spectators</p>
-        <ul className="mt-2 text-sm text-cream/80">
+        <p className="text-xs uppercase tracking-wide text-ink/55 mt-5">Spectators</p>
+        <ul className="mt-2 text-sm text-ink/80">
           {(room.spectators || []).length ? room.spectators.map((s) => <li key={s.uid}>{s.name}</li>) : <li>None</li>}
         </ul>
       </aside>
