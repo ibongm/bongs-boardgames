@@ -2,7 +2,9 @@
 
 ## 2026-09-12
 
-- Citadels now uses the official first-game card pictures from the attached sheet (characters, district types, uniques that appear on that sheet). Factory, Quarry, Thieves' Den, and Wishing Well stay on the line-art fallback until those scans exist. The 3-cost military district shows as Barracks.
+- Citadels end screen lists every point source per seat (district values, five-type bonus, completed city, Treasury / Map Room / Statue / Wishing Well). The live table shows a round banner, labelled character strip, named city tiles, and a boxed action row.
+- Site body, cards, modals, seats, and footers use ink on cream. Cream type stays on the burgundy header and filled primary buttons only.
+- Citadels now uses the official first-game card pictures from the attached sheet. Factory, Quarry, Thieves' Den, and Wishing Well use painted cards in the same format. The 3-cost military district shows as Barracks.
 - Admin test mode: on a practice table, signed-in admins can tick “Test mode — no bot timer, play every seat.” On a live room, host or admin can tick “Test table — no disconnect timer.”
 
 - Citadels cards, characters, and seats are illustrated and tappable. A popup shows the picture plus the official first-game text. Opening another player shows their gold, hand size, revealed role, and city.
