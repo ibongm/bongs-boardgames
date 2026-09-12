@@ -23,6 +23,8 @@ export default function HexBoard({
   interactive = true,
 }) {
   const [zoom, setZoom] = useState(1);
+  if (!state) return null;
+
   const isBanditPhase = state.phase === 'bandit' && state.turn === viewerSeat;
   const isSetup = state.phase === 'setup' && state.turn === viewerSeat;
   const isMain = state.phase === 'main' && state.turn === viewerSeat;
@@ -223,8 +225,8 @@ export default function HexBoard({
             const pB = INTERSECTIONS[path.intB];
             if (!pA || !pB) return null;
 
-            const road = state.paths[path.id];
-            const player = road ? state.players[road.seat] : null;
+            const road = state.paths?.[path.id];
+            const player = road && state.players ? state.players[road.seat] : null;
             const isRoadLegal = interactive && canPlay && isMain && canBuildRoad(state, viewerSeat, path.id, state.freeRoads > 0);
             const isSelected = selectedElement?.id === path.id;
 
@@ -306,8 +308,8 @@ export default function HexBoard({
 
           {/* 54 Intersections (Settlements / Cities) */}
           {Object.values(INTERSECTIONS).map((intObj) => {
-            const building = state.intersections[intObj.id];
-            const player = building ? state.players[building.seat] : null;
+            const building = state.intersections?.[intObj.id];
+            const player = building && state.players ? state.players[building.seat] : null;
             const isSettlementLegal = interactive && canPlay && isMain && canBuildSettlement(state, viewerSeat, intObj.id, false);
             const isCityLegal = interactive && canPlay && isMain && canBuildCity(state, viewerSeat, intObj.id);
             const isSetupLegal = interactive && canPlay && isSetup && canBuildSettlement(state, viewerSeat, intObj.id, true);

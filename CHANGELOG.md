@@ -1,5 +1,29 @@
 # Changelog
 
+### [2026-09-12] - Null-Safe Fallback in useAuth Context Hook
+- **Files Changed**:
+  - `src/context/AuthContext.jsx` (Modified)
+- **Details**:
+  - Returned an empty object fallback from `useAuth()` to prevent destructuring exceptions when components access auth state during context initialization.
+
+### [2026-09-12] - Complete PreviewState Population for Pioneer
+- **Files Changed**:
+  - `src/games/pioneer/meta.js` (Modified)
+- **Details**:
+  - Populated `previewState` with `createState({ seatCount: 4, mapId: 'map_balanced' })` so that hexes, intersections, paths, and trading posts are fully realized for home shelf game card previews.
+
+### [2026-09-12] - Compact Preview Mode for PioneerBoard
+- **Files Changed**:
+  - `src/games/pioneer/Board.jsx` (Modified)
+- **Details**:
+  - Rendered isolated `<HexBoard />` in compact preview mode when `interactive === false`, preventing docks, seat panels, and match modals from rendering inside small home card previews.
+
+### [2026-09-12] - HexBoard Null Checks and Property Guards
+- **Files Changed**:
+  - `src/games/pioneer/views/HexBoard.jsx` (Modified)
+- **Details**:
+  - Added null guard for board state and optional chaining for `state.paths`, `state.intersections`, `state.hexes`, and `state.players` to prevent uncaught runtime errors during preview and card rendering.
+
 ### [2026-09-12] - Document Pioneer in Product Log
 - **Files Changed**:
   - `docs/SITE.md` (Modified)

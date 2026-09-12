@@ -23,9 +23,22 @@ export default function PioneerBoard({
 
   if (!state) return null;
 
+  if (!interactive) {
+    return (
+      <div className="w-full flex items-center justify-center pointer-events-none">
+        <HexBoard
+          state={state}
+          canPlay={false}
+          viewerSeat={viewerSeat}
+          interactive={false}
+        />
+      </div>
+    );
+  }
+
   const currentActorSeat = state.actorSeat !== undefined && state.actorSeat !== null ? state.actorSeat : state.turn;
-  const actorPlayer = state.players[currentActorSeat];
-  const viewerPlayer = state.players[viewerSeat] || state.players[0];
+  const actorPlayer = state.players?.[currentActorSeat];
+  const viewerPlayer = state.players?.[viewerSeat] || state.players?.[0];
   const isMyTurn = canPlay && currentActorSeat === viewerSeat;
   const isGameOver = state.phase === 'gameover' || state.winner !== null;
 

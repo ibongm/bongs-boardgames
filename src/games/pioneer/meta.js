@@ -1,4 +1,24 @@
-// Metadata and preview state for Pioneer
+import { createState } from './engine.js';
+
+function createPreviewState() {
+  const s = createState({ seatCount: 4, mapId: 'map_balanced' });
+  s.phase = 'main';
+  s.turn = 0;
+  s.actorSeat = 0;
+  s.dice = [3, 5];
+  s.longestRouteSeat = 0;
+  if (s.players?.[0]) {
+    s.players[0].name = 'You';
+    s.players[0].resources = { wood: 2, clay: 1, sheep: 1, wheat: 1, stone: 0 };
+    s.players[0].victoryPoints = 4;
+    s.players[0].publicVP = 4;
+    s.players[0].cardCount = 5;
+    s.players[0].playedGuards = 1;
+    s.players[0].routeLength = 5;
+    s.players[0].hiddenCards = ['guard'];
+  }
+  return s;
+}
 
 export const meta = {
   id: 'pioneer',
@@ -10,89 +30,5 @@ export const meta = {
   colors: ['#c2410c', '#1d4ed8', '#d97706', '#15803d'],
   colorNames: ['Amber', 'Sapphire', 'Topaz', 'Emerald'],
   colorSymbols: ['●', '■', '▲', '◆'],
-  previewState: {
-    revision: 14,
-    seatCount: 4,
-    mapId: 'map_balanced',
-    phase: 'main',
-    turn: 0,
-    actorSeat: 0,
-    dice: [3, 5],
-    banditHexId: 'hex_9',
-    longestRouteSeat: 0,
-    grandGarrisonSeat: null,
-    players: [
-      {
-        seat: 0,
-        name: 'You',
-        color: '#c2410c',
-        symbol: '●',
-        victoryPoints: 4,
-        publicVP: 4,
-        cardCount: 5,
-        playedGuards: 1,
-        routeLength: 5,
-        resources: { wood: 2, clay: 1, sheep: 1, wheat: 1, stone: 0 },
-        hiddenCards: ['guard'],
-        roadsLeft: 11,
-        settlementsLeft: 3,
-        citiesLeft: 4,
-      },
-      {
-        seat: 1,
-        name: 'Bot 1',
-        color: '#1d4ed8',
-        symbol: '■',
-        victoryPoints: 3,
-        publicVP: 3,
-        cardCount: 4,
-        playedGuards: 2,
-        routeLength: 3,
-        resources: { wood: 0, clay: 0, sheep: 0, wheat: 0, stone: 0 },
-        hiddenCards: ['hidden'],
-        roadsLeft: 13,
-        settlementsLeft: 3,
-        citiesLeft: 4,
-      },
-      {
-        seat: 2,
-        name: 'Bot 2',
-        color: '#d97706',
-        symbol: '▲',
-        victoryPoints: 2,
-        publicVP: 2,
-        cardCount: 6,
-        playedGuards: 0,
-        routeLength: 2,
-        resources: { wood: 0, clay: 0, sheep: 0, wheat: 0, stone: 0 },
-        hiddenCards: [],
-        roadsLeft: 13,
-        settlementsLeft: 3,
-        citiesLeft: 4,
-      },
-      {
-        seat: 3,
-        name: 'Bot 3',
-        color: '#15803d',
-        symbol: '◆',
-        victoryPoints: 3,
-        publicVP: 3,
-        cardCount: 3,
-        playedGuards: 1,
-        routeLength: 4,
-        resources: { wood: 0, clay: 0, sheep: 0, wheat: 0, stone: 0 },
-        hiddenCards: ['hidden'],
-        roadsLeft: 12,
-        settlementsLeft: 3,
-        citiesLeft: 4,
-      },
-    ],
-    winner: null,
-    draw: false,
-    log: [
-      { text: 'Match started on Balanced Isle.' },
-      { text: 'You rolled 8 (3 + 5).' },
-      { text: 'Produced: Forest, Mountains.' },
-    ],
-  },
+  previewState: createPreviewState(),
 };
