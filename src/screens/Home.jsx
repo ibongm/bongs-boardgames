@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <div>
       <p className="font-display text-4xl md:text-5xl text-gold">{site.homeTitle}</p>
-      <p className="mt-4 max-w-2xl text-lg text-cream/80 leading-relaxed">{site.tagline}</p>
+      <p className="mt-4 max-w-2xl text-lg text-ink/80 leading-relaxed">{site.tagline}</p>
 
       <HomeShelf title={labels.featured || 'Featured'} items={featured} />
       <HomeShelf title={labels.newest || 'New'} items={newest} />
@@ -83,14 +83,14 @@ export default function Home() {
       <HomeShelf title={labels.yourMost || 'Your most played'} items={yourMost} />
       <HomeShelf title={labels.lastPlayed || 'Last played'} items={lastPlayed} />
 
-      <p className="mt-8 text-sm text-cream/60">
+      <p className="mt-8 text-sm text-ink/65">
         Bot games are practice and never hit the board.{' '}
         {firebaseUser ? (
-          <Link to="/lobby" className="text-gold">
+          <Link to="/lobby" className="text-gold font-semibold">
             Open the lobby
           </Link>
         ) : (
-          <Link to="/sign-in" className="text-gold">
+          <Link to="/sign-in" className="text-gold font-semibold">
             Sign in to play a person
           </Link>
         )}

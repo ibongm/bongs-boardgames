@@ -22,6 +22,7 @@ Public tabletop rooms plus instant bot practice. English only. Playable on phone
 - English only.
 - On a finished rated match, write `lastPlayedAt` and site aggregates.
 - Featured / New are badges and can also be their own rows.
+- On the light page, body and card copy use ink. Cream text is only for the burgundy header and filled primary buttons.
 
 ## Security (current)
 
@@ -52,6 +53,8 @@ Each card: preview board, Featured/New badges, title, “Similar to …”, blur
 Shipped: Tic-Tac-Toe (2), Connect Four (2).
 
 Per-game Admin fields: title, blurb, similarTo, published, featured, releasedAt, newUntil, howToPlay, rulesDetails, order.
+
+Admin lists games as rows. Clicking a row opens the existing modal with that game's fields.
 
 ## Rules
 

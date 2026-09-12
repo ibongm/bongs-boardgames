@@ -2,6 +2,8 @@
 
 ## 2026-09-12
 
+- Light-theme copy on cards, home, and modals uses ink instead of cream so titles and blurbs stay readable.
+- Admin games are a compact list. Clicking a title opens a popup editor.
 - Players can no longer write `role`, `disabled`, `stats`, or `games` on their private user document. Only display name (and email to match the signed-in account) may change. Admin role on first create is limited to `ivanm.ploce@gmail.com`.
 - Rated Elo and play counts now live on `publicProfiles`. The private user doc is identity and privileges only.
 - Match creates require the signed-in player to be in `playerIds`. Match updates freeze game/room/player identity, write `result` once, and after the result only allow stats flags.
