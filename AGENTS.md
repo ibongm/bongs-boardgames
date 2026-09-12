@@ -11,7 +11,9 @@ English-only public tabletop site. Playable on phones and PCs.
 
 Product log: `docs/SITE.md`. Changelog: `CHANGELOG.md`. Update both when behaviour or presentation changes.
 
-If `Pioneer-Build-Plan.docx` or `docs/PIONEER.md` is in this repo or the parent artifacts folder, treat it as the Pioneer implementation spec. Do not invent product decisions that contradict it or this file.
+## What the site is
+
+Public rooms plus instant bot practice. Guests may play versus a bot; those games never count. Ranked tables require an account. Stats and Elo apply only when two signed-in humans sat down.
 
 ## Standing rules
 
@@ -23,86 +25,54 @@ If `Pioneer-Build-Plan.docx` or `docs/PIONEER.md` is in this repo or the parent 
 - Public home shelves for everyone; personal shelves only after sign-in.
 - Featured / New are badges and can also be their own rows.
 - On a finished rated match, write `lastPlayedAt` and site aggregates.
+- English only.
 - Do not commit `.env` secrets. Use `.env.example` only.
-- Do not use CATAN, Catan, Settlers of Catan, Klaus Teuber, Catan Studio, or the rising-sun mark in UI, metadata, README, or rules copy.
 
-## Games already shipped
+## Home
 
-- Tic-Tac-Toe (`tic-tac-toe`), 2 players.
-- Connect Four (`connect-four`), 2 players.
+Rows, in order. Empty rows are hidden. A game may appear in more than one row.
+
+1. Featured (up to 6) — Admin `featured`
+2. New (up to 6) — `releasedAt` + 30 days, or `newUntil` if set
+3. Most popular (up to 6) — finished rated matches (`stats/games`)
+4. Most players (up to 6) — unique humans who finished that title
+5. Your most played (3) — signed-in, by that player's play count
+6. Last played (3) — signed-in, by `lastPlayedAt`
+
+Each card: preview board, Featured/New badges, title, “Similar to …”, blurb, player count, optional personal hint, Play vs bot / Tables & rules.
+
+## Games
+
+Shipped: Tic-Tac-Toe (`tic-tac-toe`, 2 players), Connect Four (`connect-four`, 2 players).
 
 Each game lives under `src/games/<id>/` with `meta.js`, `engine.js`, `ai.js`, `rules.js`, `Board.jsx`. Register in `src/games/registry.js` as `{ meta, engine, ai, rules, Board }`.
 
-Auth: Google + email/password. Display name is chosen by the player and editable on profile. Sign-in is required to create or join a Firebase room for the shipped titles.
+Per-game Admin fields: title, blurb, similarTo, published, featured, releasedAt, newUntil, howToPlay, rulesDetails, order. Unpublished games must not appear on home shelves.
 
-Rooms: public by default; join via lobby list and room code; optional host password; spectators allowed; host may add bots in lobby only (Easy / Medium / Hard). Mid-game disconnect for shipped titles: wait 30 seconds, then replace with a Medium bot. Ratings only when two or more signed-in humans are in `playerIds`. Practice vs bot on `/play/:gameId` is unrated.
+## Rules
 
-## Pioneer (third title — unpublished)
+One popup, two layers: How to play, then Details. Same modal on the game page, the practice table, and a live or finished room. Live rooms add a “This match” strip (seats, bot difficulty, 30-second disconnect replacement).
 
-Slug: `pioneer`. Folder: `src/games/pioneer/`. Keep `published: false` in `src/lib/defaults.js` until the owner asks for a home card. Do not add Pioneer to home shelves.
+Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-empty.
 
-### Product locks
+## Auth, rooms, and play
 
-- 3–4 seats. Host picks the count. No official two-player variant.
-- Combined trade and build after the roll.
-- Maps: **Balanced Isle** (hover: best for beginners) and **Random Isle** (signed-in).
-- Guests play Balanced Isle versus bots only on `/play/pioneer`.
-- Guests may spectate any public table.
-- Guests never sit at a human table.
-- A guest who signs in while already in the Pioneer lobby immediately unlocks Random Isle and human seats. Do not lose the seat-count draft.
-- Build by clicking a path or intersection, showing legal options, then confirming. No Build group in the action bar.
-- Domestic trade: mixed-card offers. The want-side may be blank so opponents can counter.
-- Pioneer disconnect: 45 seconds, then a bot takes the seat and inherits pieces, resources, and cards. Other titles stay at 30 seconds.
-- Rated when two or more signed-in humans are in the match. Guest-versus-bots and practice are unrated.
-- Expansions are out of v1. Keep modules and rule-set fields extensible.
+- Sign-in required to create or join a Firebase room.
+- Google + email/password. Display name is chosen by the player and editable on profile.
+- Public lobby plus room code. Optional host password.
+- Spectators allowed.
+- Host may add bots in the lobby only (Easy / Medium / Hard).
+- Mid-game disconnect: wait 30 seconds, then replace the human with a Medium bot.
+- Practice vs bot on `/play/:gameId` is public and unrated.
+- Ratings only when two or more signed-in humans are in `playerIds`.
 
-### Glossary (player-facing names only)
+## After a match
 
-| Concept | Public name | Internal id |
-|---|---|---|
-| Game | Pioneer | `pioneer` |
-| Beginner map | Balanced Isle | `map_balanced` |
-| Variable map | Random Isle | `map_shuffled` |
-| Resources | Wood, clay, sheep, wheat, stone | `wood` `clay` `sheep` `wheat` `stone` |
-| Terrain | Forest, Hills, Pasture, Fields, Mountains, Desert | matching slugs |
-| Pieces | Road, settlement, city | `road` `settlement` `city` |
-| Deck | Breakthrough cards | `breakthrough` |
-| Effects | Guard, Rich Yield, Trade Dominance, Road Building | `guard` `rich_yield` `trade_dominance` `road_building` |
-| Hidden VP cards | Charter (Forum, Archive, Exchange, Academy, Keep) | `charter` |
-| Robber piece | Bandit | `bandit` |
-| Harbours | Trading posts | `post` |
-| Longest Road | Longest Route | `longest_route` |
-| Largest Army | Grand Garrison | `grand_garrison` |
-| Distance rule | Spacing rule | `spacing` |
-
-Do not put lumber, ore, wool, grain, knight, robber, harbour, Longest Road, or Largest Army in player-facing copy.
-
-### Engine
-
-Tic-Tac-Toe’s `applyMove(state, cellIndex)` is too small. Pioneer exports a pure engine (no Firebase imports):
-
-- `createState({ seatCount, map, seed, colors })`
-- `applyAction(state, action, actorSeat)`
-- `legalActions(state, actorSeat)`
-- `publicView(state, viewerSeat | 'spectator')`
-- `status(state)`
-- thin `applyMove` adapter so existing `playMove` can pass action objects
-
-Turn flips only on `{ type: 'endTurn' }`. Win at 10 or more points on the active player’s own turn. Charters stay hidden until that declaration.
-
-Hands and unplayed Breakthroughs are hidden. Spectators and opponents see counts only. Do not store full opponent hands on a publicly readable match document.
-
-### Platform hooks Pioneer needs
-
-- `meta.seatsMin = 3`, `meta.seatsMax = 4`, `meta.disconnectMs = 45000`. Keep `meta.seats = 2` on the shipped games.
-- `createRoom` accepts `{ seatCount, mapId }`. Start only when every configured seat is filled.
-- `/play/pioneer` stays public. Default practice: 4 seats, human seat 0, bots fill the rest, Balanced Isle, unrated.
-- Spectating may be public; sitting at a human table still requires a signed-in account.
-- Do not regress Tic-Tac-Toe or Connect Four.
+Win / loss / draw on the profile. Per-game leaderboard. Store `games.{id}.lastPlayedAt` on the player. Increment site-wide `stats/games` counters used by home shelves.
 
 ## How to work in this repo
 
-1. Read `docs/SITE.md`, this file, and the Pioneer brief before editing.
-2. For Pioneer, stay in plan mode until the owner approves. First implementation stays `published: false`.
+1. Read `docs/SITE.md` and this file before editing.
+2. Match existing patterns in `src/games/`, `src/services/`, and `src/screens/`.
 3. After a behaviour change, update `docs/SITE.md` and `CHANGELOG.md`.
-4. Do not set Pioneer `published: true` or add a home card unless the owner explicitly asks.
+4. Do not regress Tic-Tac-Toe or Connect Four.
