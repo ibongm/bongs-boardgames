@@ -8,10 +8,16 @@ import * as c4Engine from './connect-four/engine.js';
 import * as c4Ai from './connect-four/ai.js';
 import { rules as c4Rules } from './connect-four/rules.js';
 import ConnectFourBoard from './connect-four/Board.jsx';
+import { meta as citadelsMeta } from './citadels/meta.js';
+import * as citadelsEngine from './citadels/engine.js';
+import * as citadelsAi from './citadels/ai.js';
+import { rules as citadelsRules } from './citadels/rules.js';
+import CitadelsBoard from './citadels/Board.jsx';
 
 export const games = {
   'tic-tac-toe': { meta: tttMeta, engine: tttEngine, ai: tttAi, rules: tttRules, Board: TicTacToeBoard },
   'connect-four': { meta: c4Meta, engine: c4Engine, ai: c4Ai, rules: c4Rules, Board: ConnectFourBoard },
+  citadels: { meta: citadelsMeta, engine: citadelsEngine, ai: citadelsAi, rules: citadelsRules, Board: CitadelsBoard },
 };
 
 export function listGames() {

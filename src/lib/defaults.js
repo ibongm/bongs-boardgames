@@ -35,5 +35,17 @@ export const defaultSite = {
       rulesDetails: '',
       order: 2,
     },
+    citadels: {
+      title: 'Citadels',
+      blurb: 'Draft a hidden role each round and build the richest city.',
+      similarTo: 'role-draft city builder',
+      published: true,
+      featured: false,
+      releasedAt: '2026-09-12',
+      newUntil: '',
+      howToPlay: '',
+      rulesDetails: '',
+      order: 3,
+    },
   },
 };

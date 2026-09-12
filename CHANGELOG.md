@@ -2,17 +2,14 @@
 
 ## 2026-09-12
 
-- Light-theme copy on cards, home, and modals uses ink instead of cream so titles and blurbs stay readable.
-- Admin games are a compact list. Clicking a title opens a popup editor.
-- Players can no longer write `role`, `disabled`, `stats`, or `games` on their private user document. Only display name (and email to match the signed-in account) may change. Admin role on first create is limited to `ivanm.ploce@gmail.com`.
-- Rated Elo and play counts now live on `publicProfiles`. The private user doc is identity and privileges only.
-- Match creates require the signed-in player to be in `playerIds`. Match updates freeze game/room/player identity, write `result` once, and after the result only allow stats flags.
-- Room creates must be hosted by the signer. Waiting rooms can no longer be edited by arbitrary signed-in users unless they are joining (`participantIds`). Host, code, game, password hash, and createdAt are frozen.
+- Citadels (working title): first-game eight characters and fourteen unique districts. Practice vs bots on `/play/citadels`. Host picks 4, 5, or 6 seats. Guests practice only; they may spectate live tables. Disconnect wait 45 seconds. Home card published, not featured.
+- Rooms and practice tables now honour per-game seat ranges and disconnect timers.
+
 - Home is shelves: Featured, New, Most popular, Most players, Your most played (3), Last played (3). Other public shelves cap at 6. Empty shelves hide.
 - Game cards show “Similar to …” under the title, plus Featured / New badges.
 - Admin can edit featured, releasedAt, newUntil, similarTo, how-to-play, and details.
 - New badge lasts 30 days from releasedAt unless newUntil is set.
-- Rules modal (how to play + details) on the game page, practice table, and live/finished room.
+- Rules modal (how to play + details) on the game page, the practice table, and live/finished room.
 - Finished rated matches store lastPlayedAt and increment site aggregates.
 - Product description lives in `docs/SITE.md`. Future behaviour changes should be logged here and there.
 
