@@ -14,7 +14,7 @@ export const DISTRICT_TEXT = {
   'town-hall': 'The grandest Trade district. Worth 5 gold to build.',
   watchtower: 'A Military district. Counts for the Warlord.',
   prison: 'A Military district. Counts for the Warlord.',
-  battlefield: 'A Military district. Counts for the Warlord.',
+  battlefield: 'Barracks. A Military district. Counts for the Warlord.',
   fortress: 'The grandest Military district. Worth 5 gold to build.',
   'dragon-gate': 'Unique. Costs 6 gold. At the end of the game it scores 8 points instead of 6.',
   factory: 'Unique. Other unique districts you build cost 1 less gold (minimum 1). The Factory itself is not discounted.',
