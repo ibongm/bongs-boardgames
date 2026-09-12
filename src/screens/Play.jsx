@@ -71,7 +71,7 @@ export default function Play() {
   }, [game, state, status, difficulty, seed, actor, testMode]);
 
   if (!game || copy.published === false || !state) {
-    return <p className="text-cream/70">That game is not available.</p>;
+    return <p className="text-ink/70">That game is not available.</p>;
   }
 
   const Board = game.Board;
@@ -105,15 +105,15 @@ export default function Play() {
 
   return (
     <div className={wide ? 'max-w-4xl mx-auto' : 'max-w-xl mx-auto'}>
-      <p className="text-sm text-cream/60">Practice table · vs bot · unrated</p>
+      <p className="text-sm text-ink/70">Practice table · vs bot · unrated</p>
       <div className="flex flex-wrap items-center gap-3 mt-1">
         <h1 className="font-display text-4xl text-gold">{title}</h1>
         <button type="button" className="border border-gold/40 rounded-md px-3 py-2 text-sm min-h-11" onClick={() => setRulesOpen(true)}>
           Rules
         </button>
       </div>
-      {copy.similarTo && <p className="mt-1 text-cream/50">Similar to {copy.similarTo}</p>}
-      <p className="mt-3 text-cream/75">{copy.blurb}</p>
+      {copy.similarTo && <p className="mt-1 text-ink/55">Similar to {copy.similarTo}</p>}
+      <p className="mt-3 text-ink/80">{copy.blurb}</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {DIFFICULTIES.map((item) => (
@@ -122,7 +122,7 @@ export default function Play() {
             type="button"
             onClick={() => setDifficulty(item.id)}
             className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-              difficulty === item.id ? 'bg-gold text-ink' : 'border border-gold/30 text-cream'
+              difficulty === item.id ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
             }`}
           >
             {item.label}
@@ -130,7 +130,7 @@ export default function Play() {
         ))}
       </div>
       {isAdmin && (
-        <label className="mt-3 flex items-center gap-2 text-sm text-cream/80">
+        <label className="mt-3 flex items-center gap-2 text-sm text-ink/80">
           <input
             type="checkbox"
             checked={testMode}
@@ -155,7 +155,7 @@ export default function Play() {
               type="button"
               onClick={() => setSeatCount(n)}
               className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                seatCount === n ? 'bg-gold text-ink' : 'border border-gold/30 text-cream'
+                seatCount === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
               }`}
             >
               {n} seats
@@ -168,7 +168,7 @@ export default function Play() {
         <Board state={state} canPlay={humanTurn} onMove={onMove} viewerSeat={viewerSeat} />
         <p className="mt-4 text-center font-display text-2xl text-gold">{headline}</p>
         <div className="mt-5 flex flex-col sm:flex-row gap-2 justify-center">
-          <button type="button" onClick={newGame} className="bg-gold text-ink font-semibold rounded-md px-4 py-3 min-h-11">
+          <button type="button" onClick={newGame} className="bg-gold text-cream font-semibold rounded-md px-4 py-3 min-h-11">
             New game
           </button>
           {firebaseUser ? (
