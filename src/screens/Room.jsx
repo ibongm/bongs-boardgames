@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useSite } from '../context/SiteContext.jsx';
 import { getGame } from '../games/registry.js';
 import { findRoomByCode, verifyPassword, watchRoom } from '../services/rooms.js';
 import { watchMatch } from '../services/matches.js';
 import { applyOwnMatchResult } from '../services/stats.js';
+import RulesModal from '../components/RulesModal.jsx';
 import {
   addBot,
   heartbeat,
@@ -19,6 +21,7 @@ import {
 export default function Room() {
   const { code } = useParams();
   const { firebaseUser, profile } = useAuth();
+  const site = useSite();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [match, setMatch] = useState(null);
@@ -26,6 +29,7 @@ export default function Room() {
   const [unlocked, setUnlocked] = useState(false);
   const [error, setError] = useState('');
   const [difficulty, setDifficulty] = useState('medium');
+  const [rulesOpen, setRulesOpen] = useState(false);
   const joined = useRef(false);
 
   useEffect(() => {
@@ -105,23 +109,15 @@ export default function Room() {
     return (
       <form onSubmit={onUnlock} className="max-w-sm paper-card p-6 rounded-3xl">
         <p className="font-display text-3xl text-gold tracking-tight">Password required</p>
-        <input
-          className="mt-4 w-full rounded-lg px-3 py-2 min-h-11"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <input className="mt-4 w-full rounded-lg px-3 py-2 min-h-11" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         {error && <p className="mt-2 text-sm">{error}</p>}
-        <button type="submit" className="btn btn-primary mt-4">
-          Enter
-        </button>
+        <button type="submit" className="btn btn-primary mt-4">Enter</button>
       </form>
     );
   }
 
   const Board = game.Board;
-  const canPlay =
-    room.status === 'playing' && match && !match.result && match.seats[match.state.turn]?.uid === firebaseUser.uid;
+  const canPlay = room.status === 'playing' && match && !match.result && match.seats[match.state.turn]?.uid === firebaseUser.uid;
   const waitMs = (seat) => {
     if (!seat.disconnectedAt) return null;
     return Math.max(0, 30 - Math.floor((Date.now() - seat.disconnectedAt) / 1000));
@@ -135,20 +131,17 @@ export default function Room() {
           Room <span className="font-mono text-gold">{room.code}</span>
           {rated ? ' · rated' : ' · unrated practice'}
         </p>
-        <h1 className="font-display text-4xl text-gold tracking-tight mt-1">{game.meta.title}</h1>
+        <div className="mt-1 flex flex-wrap items-center gap-3">
+          <h1 className="font-display text-4xl text-gold tracking-tight">{game.meta.title}</h1>
+          {(room.status === 'playing' || room.status === 'finished') && (
+            <button type="button" className="btn btn-ghost" onClick={() => setRulesOpen(true)}>Rules</button>
+          )}
+        </div>
         {room.status === 'playing' && match && (
           <div className="mt-6">
-            <Board
-              state={match.state}
-              canPlay={canPlay}
-              onMove={(move) => playMove(match, room, move, firebaseUser.uid).catch((err) => setError(err.message))}
-            />
+            <Board state={match.state} canPlay={canPlay} onMove={(move) => playMove(match, room, move, firebaseUser.uid).catch((err) => setError(err.message))} />
             <p className="mt-4 text-center font-display text-2xl text-gold">
-              {match.result
-                ? match.result.draw
-                  ? 'Draw.'
-                  : `${match.seats[match.result.winner]?.name} wins.`
-                : `${match.seats[match.state.turn]?.name}'s turn`}
+              {match.result ? (match.result.draw ? 'Draw.' : `${match.seats[match.result.winner]?.name} wins.`) : `${match.seats[match.state.turn]?.name}'s turn`}
             </p>
           </div>
         )}
@@ -158,9 +151,7 @@ export default function Room() {
         {room.status === 'finished' && match && (
           <div className="mt-6">
             <Board state={match.state} canPlay={false} onMove={() => {}} />
-            <button type="button" className="mt-4 text-gold underline-offset-4 hover:underline" onClick={() => navigate('/lobby')}>
-              Back to lobby
-            </button>
+            <button type="button" className="mt-4 text-gold underline-offset-4 hover:underline" onClick={() => navigate('/lobby')}>Back to lobby</button>
           </div>
         )}
         {error && <p className="mt-3 text-sm text-gold">{error}</p>}
@@ -176,34 +167,20 @@ export default function Room() {
                 {waitMs(seat) !== null && seat.type === 'human' ? ` · wait ${waitMs(seat)}s` : ''}
               </span>
               {isHost && room.status === 'waiting' && seat.type !== 'empty' && seat.uid !== firebaseUser.uid && (
-                <button type="button" className="text-gold underline-offset-4 hover:underline" onClick={() => removeSeat(room.id, index)}>
-                  Remove
-                </button>
+                <button type="button" className="text-gold underline-offset-4 hover:underline" onClick={() => removeSeat(room.id, index)}>Remove</button>
               )}
             </li>
           ))}
         </ul>
         {isHost && room.status === 'waiting' && (
           <div className="mt-4 space-y-2">
-            <select
-              className="w-full rounded-lg px-2 py-2 min-h-11"
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-            >
+            <select className="w-full rounded-lg px-2 py-2 min-h-11" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
               <option value="easy">Easy bot</option>
               <option value="medium">Medium bot</option>
               <option value="hard">Hard bot</option>
             </select>
-            <button type="button" className="btn btn-ghost w-full" onClick={() => addBot(room.id, difficulty)}>
-              Add bot
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary w-full"
-              onClick={() => startRoom(room.id).catch((err) => setError(err.message))}
-            >
-              Start game
-            </button>
+            <button type="button" className="btn btn-ghost w-full" onClick={() => addBot(room.id, difficulty)}>Add bot</button>
+            <button type="button" className="btn btn-primary w-full" onClick={() => startRoom(room.id).catch((err) => setError(err.message))}>Start game</button>
           </div>
         )}
         <p className="text-xs uppercase tracking-[0.14em] text-ink/45 mt-5">Spectators</p>
@@ -211,6 +188,17 @@ export default function Room() {
           {(room.spectators || []).length ? room.spectators.map((s) => <li key={s.uid}>{s.name}</li>) : <li>None</li>}
         </ul>
       </aside>
+      <RulesModal
+        gameId={room.gameId}
+        copy={site.games[room.gameId]}
+        open={rulesOpen}
+        onClose={() => setRulesOpen(false)}
+        matchInfo={(match?.seats || room.seats || [])
+          .filter((seat) => seat.type !== 'empty')
+          .map((seat) => `${seat.name}${seat.type === 'bot' ? ` (${seat.difficulty || 'medium'} bot)` : ''}`)
+          .concat(['A leaver is replaced by a Medium bot after 30 seconds.'])
+          .join(' · ')}
+      />
     </div>
   );
 }
