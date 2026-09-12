@@ -50,7 +50,7 @@ One popup, two layers: How to play, then Details. Same modal on the game page, t
 
 Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-empty.
 
-Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Body, cards, and the rules modal use ink on cream. Cream text stays on the burgundy header and filled primary buttons. Display face is Source Serif 4. Districts, characters, and other seats open a popup with art and the card or player text.
+Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Body, cards, and the rules modal use ink on cream. Cream text stays on the burgundy header and filled primary buttons. Display face is Source Serif 4. Districts, characters, and other seats open a popup with art and the card or player text. Official card photos for all 8 characters, card back, 17 basic districts, and 10 unique districts are extracted from the official demo cards sheet.
 
 ## Play
 

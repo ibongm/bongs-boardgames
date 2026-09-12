@@ -1,6 +1,53 @@
 # Changelog
 
+### [2026-09-12] - Extract and Add Citadels Card Artwork from Demo Cards PDF
+- **Files Changed**:
+  - `docs/SITE.md` (Modified)
+  - `src/games/citadels/photos/back.js` (Modified)
+  - `src/games/citadels/photos/district-battlefield.js` (Modified)
+  - `src/games/citadels/photos/district-castle.js` (Modified)
+  - `src/games/citadels/photos/district-cathedral.js` (Modified)
+  - `src/games/citadels/photos/district-church.js` (Modified)
+  - `src/games/citadels/photos/district-docks.js` (Modified)
+  - `src/games/citadels/photos/district-dragon-gate.js` (Modified)
+  - `src/games/citadels/photos/district-fortress.js` (Modified)
+  - `src/games/citadels/photos/district-harbor.js` (Modified)
+  - `src/games/citadels/photos/district-haunted-quarter.js` (Modified)
+  - `src/games/citadels/photos/district-imperial-treasury.js` (Modified)
+  - `src/games/citadels/photos/district-keep.js` (Modified)
+  - `src/games/citadels/photos/district-laboratory.js` (Modified)
+  - `src/games/citadels/photos/district-library.js` (Modified)
+  - `src/games/citadels/photos/district-manor.js` (Modified)
+  - `src/games/citadels/photos/district-map-room.js` (Modified)
+  - `src/games/citadels/photos/district-market.js` (Modified)
+  - `src/games/citadels/photos/district-monastery.js` (Modified)
+  - `src/games/citadels/photos/district-palace.js` (Modified)
+  - `src/games/citadels/photos/district-prison.js` (Modified)
+  - `src/games/citadels/photos/district-school-of-magic.js` (Modified)
+  - `src/games/citadels/photos/district-smithy.js` (Modified)
+  - `src/games/citadels/photos/district-statue.js` (Modified)
+  - `src/games/citadels/photos/district-tavern.js` (Modified)
+  - `src/games/citadels/photos/district-temple.js` (Modified)
+  - `src/games/citadels/photos/district-thieves-den.js` (Modified)
+  - `src/games/citadels/photos/district-town-hall.js` (Modified)
+  - `src/games/citadels/photos/district-trading-post.js` (Modified)
+  - `src/games/citadels/photos/district-watchtower.js` (Modified)
+  - `src/games/citadels/photos/role-architect.js` (Modified)
+  - `src/games/citadels/photos/role-assassin.js` (Modified)
+  - `src/games/citadels/photos/role-bishop.js` (Modified)
+  - `src/games/citadels/photos/role-king.js` (Modified)
+  - `src/games/citadels/photos/role-magician.js` (Modified)
+  - `src/games/citadels/photos/role-merchant.js` (Modified)
+  - `src/games/citadels/photos/role-thief.js` (Modified)
+  - `src/games/citadels/photos/role-warlord.js` (Modified)
+- **Details**:
+  - Extracted 36 official cards and card back from `citadels_demo_cards_en.pdf` at 300 DPI with precise card bounding box alignment.
+  - Replaced corrupted/truncated base64 JPEGs for Magician, Bishop, and Warlord character cards, resolving decode errors and grey artifact blocks.
+  - Added full JPEG card photos for all 17 basic districts and 10 unique districts from the PDF demo set.
+  - Cleared corrupted base64 in `district-thieves-den.js` to cleanly fall back to the SVG glyph without image decoding errors.
+
 ## 2026-09-12
+
 
 - Citadels end screen lists every point source per seat (district values, five-type bonus, completed city, Treasury / Map Room / Statue / Wishing Well). The live table shows a round banner, labelled character strip, named city tiles, and a boxed action row.
 - Site body, cards, modals, seats, and footers use ink on cream. Cream type stays on the burgundy header and filled primary buttons only.
