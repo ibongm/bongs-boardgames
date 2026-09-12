@@ -6,6 +6,10 @@ import { watchLobby, closeRoom } from '../services/rooms.js';
 import { listGames } from '../games/registry.js';
 import { firebaseReady } from '../lib/firebase.js';
 
+function patchGame(copy, id, entry, field, value) {
+  return { ...copy, games: { ...copy.games, [id]: { ...entry, [field]: value } } };
+}
+
 export default function Admin() {
   const site = useSite();
   const [copy, setCopy] = useState(site);
@@ -37,28 +41,25 @@ export default function Admin() {
         <textarea className="w-full rounded-lg px-3 py-2" rows={2} value={copy.tagline} onChange={(e) => setCopy({ ...copy, tagline: e.target.value })} />
         <textarea className="w-full rounded-lg px-3 py-2" rows={2} value={copy.footer} onChange={(e) => setCopy({ ...copy, footer: e.target.value })} />
         {listGames().map((game) => {
-          const entry = copy.games[game.meta.id] || {};
+          const id = game.meta.id;
+          const entry = copy.games[id] || {};
           return (
-            <fieldset key={game.meta.id} className="border border-gold/20 rounded-xl p-3">
+            <fieldset key={id} className="border border-gold/20 rounded-xl p-3 space-y-2">
               <legend className="px-1 text-gold">{game.meta.title}</legend>
-              <input
-                className="w-full rounded-lg px-3 py-2 mb-2 min-h-11"
-                value={entry.title || ''}
-                onChange={(e) => setCopy({ ...copy, games: { ...copy.games, [game.meta.id]: { ...entry, title: e.target.value } } })}
-              />
-              <textarea
-                className="w-full rounded-lg px-3 py-2"
-                rows={2}
-                value={entry.blurb || ''}
-                onChange={(e) => setCopy({ ...copy, games: { ...copy.games, [game.meta.id]: { ...entry, blurb: e.target.value } } })}
-              />
-              <label className="mt-2 flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={entry.published !== false}
-                  onChange={(e) => setCopy({ ...copy, games: { ...copy.games, [game.meta.id]: { ...entry, published: e.target.checked } } })}
-                />
+              <input className="w-full rounded-lg px-3 py-2 min-h-11" value={entry.title || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'title', e.target.value))} />
+              <textarea className="w-full rounded-lg px-3 py-2" rows={2} value={entry.blurb || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'blurb', e.target.value))} />
+              <input className="w-full rounded-lg px-3 py-2 min-h-11" placeholder="Similar to" value={entry.similarTo || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'similarTo', e.target.value))} />
+              <input className="w-full rounded-lg px-3 py-2 min-h-11" placeholder="Released YYYY-MM-DD" value={entry.releasedAt || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'releasedAt', e.target.value))} />
+              <input className="w-full rounded-lg px-3 py-2 min-h-11" placeholder="New until YYYY-MM-DD (optional)" value={entry.newUntil || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'newUntil', e.target.value))} />
+              <textarea className="w-full rounded-lg px-3 py-2" rows={4} placeholder="How to play override" value={entry.howToPlay || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'howToPlay', e.target.value))} />
+              <textarea className="w-full rounded-lg px-3 py-2" rows={4} placeholder="Details override" value={entry.rulesDetails || ''} onChange={(e) => setCopy(patchGame(copy, id, entry, 'rulesDetails', e.target.value))} />
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={entry.published !== false} onChange={(e) => setCopy(patchGame(copy, id, entry, 'published', e.target.checked))} />
                 Published
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={Boolean(entry.featured)} onChange={(e) => setCopy(patchGame(copy, id, entry, 'featured', e.target.checked))} />
+                Featured
               </label>
             </fieldset>
           );
