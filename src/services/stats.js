@@ -28,11 +28,13 @@ export async function applyOwnMatchResult(match, uid) {
 
   const matchRef = doc(db, 'matches', match.id);
   const userRef = doc(db, 'users', uid);
+  const pubRef = doc(db, 'publicProfiles', uid);
   let published = null;
 
   await runTransaction(db, async (tx) => {
     const matchSnap = await tx.get(matchRef);
     const userSnap = await tx.get(userRef);
+    const pubSnap = await tx.get(pubRef);
     if (!matchSnap.exists() || !userSnap.exists()) return;
     const live = matchSnap.data();
     if (!live.result) return;
@@ -40,10 +42,11 @@ export async function applyOwnMatchResult(match, uid) {
     if ((live.statsAppliedBy || {})[uid]) return;
     if (!(live.playerIds || []).includes(uid)) return;
 
-    const data = userSnap.data();
+    const account = userSnap.data();
+    const visible = pubSnap.exists() ? pubSnap.data() : account;
     const gameId = live.gameId;
-    const life = data.stats || emptyLifetime();
-    const perGame = { ...(data.games?.[gameId] || emptyGameStats()) };
+    const life = visible.stats || emptyLifetime();
+    const perGame = { ...(visible.games?.[gameId] || emptyGameStats()) };
     const mySeat = live.playerSeats?.[uid];
     const winnerSeat = live.result.draw ? null : live.result.winner;
     const won = winnerSeat === mySeat;
@@ -57,34 +60,27 @@ export async function applyOwnMatchResult(match, uid) {
     const popularityNeeded = !live.popularityCounted;
 
     published = {
-      displayName: data.displayName,
-      role: data.role || 'player',
+      displayName: visible.displayName || account.displayName,
+      role: account.role === 'admin' ? 'admin' : 'player',
       stats: nextLife,
-      games: { ...(data.games || {}), [gameId]: nextGame },
+      games: { ...(visible.games || {}), [gameId]: nextGame },
     };
 
     const matchPatch = { [`statsAppliedBy.${uid}`]: true };
     if (popularityNeeded) matchPatch.popularityCounted = true;
-    tx.update(userRef, { stats: nextLife, [`games.${gameId}`]: nextGame });
+    tx.set(pubRef, publicProfilePayload(published), { merge: true });
     tx.update(matchRef, matchPatch);
     published = { ...published, firstTime, countPopularity: popularityNeeded, gameId };
   });
 
-  if (published) {
+  if (published && (published.countPopularity || published.firstTime)) {
     try {
-      await setDoc(doc(db, 'publicProfiles', uid), publicProfilePayload(published), { merge: true });
+      await recordFinishedMatch(published.gameId, {
+        countMatch: published.countPopularity,
+        firstTimeForPlayer: published.firstTime,
+      });
     } catch {
-      /* ignore until public profile rules are live */
-    }
-    if (published.countPopularity || published.firstTime) {
-      try {
-        await recordFinishedMatch(published.gameId, {
-          countMatch: published.countPopularity,
-          firstTimeForPlayer: published.firstTime,
-        });
-      } catch {
-        /* stats doc rules may not be live yet */
-      }
+      /* stats doc rules may not be live yet */
     }
   }
 }

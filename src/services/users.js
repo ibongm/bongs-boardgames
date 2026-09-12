@@ -33,7 +33,23 @@ async function writePublicProfile(uid, data) {
   try {
     await setDoc(doc(db, 'publicProfiles', uid), publicProfilePayload(data), { merge: true });
   } catch {
-    // Rules may not be deployed yet; ranked play still works off the private user doc.
+    // Rules may not be deployed yet; ranked play still works off the public profile once live.
+  }
+}
+
+async function readPublicStats(uid, fallback) {
+  try {
+    const pub = await getDoc(doc(db, 'publicProfiles', uid));
+    if (!pub.exists()) return fallback;
+    const data = pub.data();
+    return {
+      ...fallback,
+      stats: data.stats || fallback.stats,
+      games: data.games || fallback.games,
+      displayName: data.displayName || fallback.displayName,
+    };
+  } catch {
+    return fallback;
   }
 }
 
@@ -61,12 +77,19 @@ export async function ensureUserDocument(firebaseUser) {
   const data = snap.data();
   const patch = {};
   if (shouldAdmin && data.role !== 'admin') patch.role = 'admin';
-  if (!data.games) patch.games = gameStatsMap();
-  if (!data.stats) patch.stats = emptyLifetime();
   if (email && data.email !== email) patch.email = email;
-  if (Object.keys(patch).length) await updateDoc(ref, patch);
-  const merged = { id: firebaseUser.uid, ...data, ...patch };
-  await writePublicProfile(firebaseUser.uid, merged);
+  if (Object.keys(patch).length) {
+    try {
+      await updateDoc(ref, patch);
+    } catch {
+      /* role/email may already be set; ignore rule rejects */
+    }
+  }
+  const merged = await readPublicStats(firebaseUser.uid, {
+    id: firebaseUser.uid,
+    ...data,
+    ...patch,
+  });
   return merged;
 }
 
