@@ -15,6 +15,7 @@ export function emptyGameStats() {
     winsVsHumans: 0,
     winsVsBots: 0,
     rating: 1000,
+    lastPlayedAt: 0,
   };
 }
 
