@@ -23,6 +23,15 @@ Public tabletop rooms plus instant bot practice. English only. Playable on phone
 - On a finished rated match, write `lastPlayedAt` and site aggregates.
 - Featured / New are badges and can also be their own rows.
 
+## Security (current)
+
+- Private `users/{uid}`: owner may change display name and keep email in sync with Auth. Owner cannot change `role`, `disabled`, `stats`, or `games`. Admin bootstrap is the configured admin email only.
+- Public `publicProfiles/{uid}`: owner cannot change `role`. Leaderboard Elo is stored here until a Cloud Function owns rated writes.
+- `matches`: creator must be in `playerIds`. Identity fields frozen. `result` write-once. After a result, only stats flags may change.
+- `rooms`: host must create. Host / code / game / password / createdAt frozen. Strangers cannot edit a waiting room unless they add themselves as a participant.
+
+Rated move legality is still client-side. A seated player can still fake a result on a match they belong to. Server-side moves are a later step.
+
 ## Home
 
 Rows, in order:
@@ -62,4 +71,4 @@ Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-em
 
 ## After a match
 
-Win/loss/draw on the profile. Per-game leaderboard. `games.{id}.lastPlayedAt` on the player. Site-wide `stats/games` counters for shelves.
+Win/loss/draw on the public profile. Per-game leaderboard. `games.{id}.lastPlayedAt` on the public profile. Site-wide `stats/games` counters for shelves.
