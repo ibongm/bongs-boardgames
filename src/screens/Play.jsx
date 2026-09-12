@@ -71,7 +71,7 @@ export default function Play() {
     return () => clearTimeout(timer);
   }, [game, state, status, difficulty, seed, actor, testMode]);
 
-  if (!game || (copy.published === false && game.meta.id !== 'pioneer') || !state) {
+  if (!game || copy.published === false || !state) {
     return <p className="text-ink/70">That game is not available.</p>;
   }
 

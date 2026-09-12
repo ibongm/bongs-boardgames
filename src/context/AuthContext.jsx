@@ -8,7 +8,8 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { auth, firebaseReady } from '../lib/firebase.js';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { auth, db, firebaseReady } from '../lib/firebase.js';
 import { ensureUserDocument } from '../services/users.js';
 
 const AuthContext = createContext(null);
@@ -27,11 +28,21 @@ export function AuthProvider({ children }) {
         setLoading(false);
         return;
       }
-      const doc = await ensureUserDocument(user);
-      setProfile(doc);
+      const initialDoc = await ensureUserDocument(user);
+      setProfile(initialDoc);
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (!firebaseReady || !firebaseUser?.uid) return undefined;
+    return onSnapshot(doc(db, 'publicProfiles', firebaseUser.uid), (snap) => {
+      if (snap.exists()) {
+        const live = snap.data();
+        setProfile((prev) => (prev ? { ...prev, ...live } : live));
+      }
+    });
+  }, [firebaseUser?.uid]);
 
   const value = useMemo(
     () => ({

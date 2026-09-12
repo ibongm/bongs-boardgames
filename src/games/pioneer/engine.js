@@ -550,21 +550,17 @@ export function applyAction(stateIn, action, actorSeatIn) {
       const { offerId } = action;
       if (!canAcceptTrade(state, actorSeat, offerId)) throw new Error('Illegal trade acceptance');
       const offer = state.offers.find((o) => o.id === offerId);
-      const isOfferFromActive = offer.fromSeat === state.turn;
-      const giverSeat = isOfferFromActive ? offer.fromSeat : actorSeat;
-      const receiverSeat = isOfferFromActive ? actorSeat : offer.fromSeat;
+      const pMaker = state.players[offer.fromSeat];
+      const pAccepter = state.players[actorSeat];
 
-      const pGiver = state.players[giverSeat];
-      const pReceiver = state.players[receiverSeat];
-
-      // Atomic transfer
+      // Atomic transfer: maker gives offer.give, accepter gives offer.want
       Object.entries(offer.give).forEach(([res, amt]) => {
-        pGiver.resources[res] -= amt;
-        pReceiver.resources[res] = (pReceiver.resources[res] || 0) + amt;
+        pMaker.resources[res] -= amt;
+        pAccepter.resources[res] = (pAccepter.resources[res] || 0) + amt;
       });
       Object.entries(offer.want).forEach(([res, amt]) => {
-        pReceiver.resources[res] -= amt;
-        pGiver.resources[res] = (pGiver.resources[res] || 0) + amt;
+        pAccepter.resources[res] -= amt;
+        pMaker.resources[res] = (pMaker.resources[res] || 0) + amt;
       });
 
       offer.closed = true;
@@ -573,7 +569,7 @@ export function applyAction(stateIn, action, actorSeatIn) {
       const giveStr = Object.entries(offer.give).map(([r, n]) => `${n} ${r}`).join(', ');
       const wantStr = Object.entries(offer.want).map(([r, n]) => `${n} ${r}`).join(', ');
       state.log.push({
-        text: `${pGiver.name} traded ${giveStr} to ${pReceiver.name} for ${wantStr}.`,
+        text: `${pMaker.name} traded ${giveStr} to ${pAccepter.name} for ${wantStr}.`,
       });
       break;
     }

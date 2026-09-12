@@ -38,10 +38,11 @@ export default function PioneerBoard({
     );
   }
 
+  const isSpectator = viewerSeat === 'spectator' || typeof viewerSeat !== 'number' || viewerSeat < 0;
   const currentActorSeat = state.actorSeat !== undefined && state.actorSeat !== null ? state.actorSeat : state.turn;
   const actorPlayer = state.players?.[currentActorSeat];
-  const viewerPlayer = state.players?.[viewerSeat] || state.players?.[0];
-  const isMyTurn = canPlay && currentActorSeat === viewerSeat;
+  const viewerPlayer = !isSpectator ? state.players?.[viewerSeat] : null;
+  const isMyTurn = !isSpectator && canPlay && currentActorSeat === viewerSeat;
   const isGameOver = state.phase === 'gameover' || state.winner !== null;
 
   // Actions
@@ -86,7 +87,7 @@ export default function PioneerBoard({
   function handleOfferTrade(give, want) {
     setError('');
     try {
-      onMove({ type: 'offerTrade', give, want });
+      onMove({ type: 'offerTrade', give, want, actorSeat: viewerSeat });
     } catch (err) {
       setError(err.message);
     }
@@ -95,7 +96,7 @@ export default function PioneerBoard({
   function handleCounterTrade(offerId, give, want) {
     setError('');
     try {
-      onMove({ type: 'counterTrade', offerId, give, want });
+      onMove({ type: 'counterTrade', offerId, give, want, actorSeat: viewerSeat });
     } catch (err) {
       setError(err.message);
     }
@@ -104,7 +105,7 @@ export default function PioneerBoard({
   function handleAcceptTrade(offerId) {
     setError('');
     try {
-      onMove({ type: 'acceptTrade', offerId });
+      onMove({ type: 'acceptTrade', offerId, actorSeat: viewerSeat });
     } catch (err) {
       setError(err.message);
     }

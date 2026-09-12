@@ -135,8 +135,19 @@ export default function Room() {
 
   const Board = game.Board;
   const actorSeat = match?.state?.actorSeat ?? match?.state?.turn;
+  const hasOpenTrade = Boolean(
+    match?.state?.phase === 'main' &&
+    match?.state?.offers?.some((o) => !o.closed && o.fromSeat !== mySeatIndex)
+  );
+  const isActorTurn = Boolean(
+    firebaseUser?.uid && match?.seats?.[actorSeat]?.uid === firebaseUser?.uid
+  );
   const canPlay =
-    room.status === 'playing' && match && !match.result && Boolean(firebaseUser?.uid) && match.seats[actorSeat]?.uid === firebaseUser?.uid;
+    room.status === 'playing' &&
+    match &&
+    !match.result &&
+    Boolean(firebaseUser?.uid) &&
+    (isActorTurn || (hasOpenTrade && mySeatIndex >= 0));
   const disconnectSec = Math.round((game?.meta?.disconnectMs || 30000) / 1000);
   const waitMs = (seat) => {
     if (!seat.disconnectedAt) return null;
@@ -167,16 +178,28 @@ export default function Room() {
             <Board
               state={displayState}
               canPlay={canPlay}
-              viewerSeat={mySeatIndex < 0 ? 0 : mySeatIndex}
+              viewerSeat={mySeatIndex < 0 ? 'spectator' : mySeatIndex}
               onMove={(move) => playMove(match, room, move, firebaseUser?.uid).catch((err) => setError(err.message))}
             />
-            <p className="mt-4 text-center text-ink/80">
-              {match.result
-                ? match.result.draw
-                  ? 'Draw.'
-                  : `${match.seats[match.result.winner]?.name} wins.`
-                : `${match.seats[actorSeat]?.name}'s turn`}
-            </p>
+            <div className="mt-4 text-center">
+              <div
+                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold ${
+                  match.result
+                    ? 'bg-gold/15 text-gold'
+                    : isActorTurn
+                      ? 'bg-gold text-cream shadow-xs'
+                      : 'bg-walnut/70 text-ink/80 border border-gold/20'
+                }`}
+              >
+                {match.result
+                  ? match.result.draw
+                    ? 'Draw.'
+                    : `${match.seats[match.result.winner]?.name || `Player ${match.result.winner + 1}`} wins.`
+                  : isActorTurn
+                    ? 'Your turn'
+                    : `${match.seats[actorSeat]?.name || `Player ${actorSeat + 1}`}'s turn`}
+              </div>
+            </div>
           </div>
         )}
         {room.status === 'waiting' && (
@@ -184,7 +207,12 @@ export default function Room() {
         )}
         {room.status === 'finished' && match && (
           <div className="mt-6">
-            <Board state={match.state} canPlay={false} onMove={() => {}} />
+            <Board
+              state={match.state}
+              canPlay={false}
+              viewerSeat={mySeatIndex < 0 ? 'spectator' : mySeatIndex}
+              onMove={() => {}}
+            />
             <button type="button" className="mt-4 text-gold" onClick={() => navigate('/lobby')}>
               Back to lobby
             </button>
@@ -292,6 +320,17 @@ export default function Room() {
           ])
           .join(' · ')}
       />
+      {(room.status === 'playing' || room.status === 'finished') && (
+        <div className="fixed bottom-5 right-5 z-30 lg:hidden">
+          <button
+            type="button"
+            className="bg-gold text-cream shadow-table rounded-full px-5 py-3 font-semibold text-sm border border-cream/25 flex items-center gap-1.5"
+            onClick={() => setRulesOpen(true)}
+          >
+            Rules
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -40,7 +40,9 @@ service cloud.firestore {
         && request.resource.data.code == resource.data.code
         && request.resource.data.gameId == resource.data.gameId
         && request.resource.data.passwordHash == resource.data.passwordHash
-        && request.resource.data.createdAt == resource.data.createdAt;
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.get('seatCount', null) == resource.data.get('seatCount', null)
+        && request.resource.data.get('mapId', null) == resource.data.get('mapId', null);
     }
     function matchIdentityFrozen() {
       return request.resource.data.gameId == resource.data.gameId
@@ -61,6 +63,13 @@ service cloud.firestore {
           && request.resource.data.seats == resource.data.seats
         );
     }
+    function validStats(stats) {
+      return stats != null
+        && stats.played == stats.wins + stats.losses + stats.draws
+        && stats.wins >= 0
+        && stats.losses >= 0
+        && stats.draws >= 0;
+    }
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
@@ -79,11 +88,16 @@ service cloud.firestore {
         && (
           request.resource.data.role == 'player'
           || (request.resource.data.role == 'admin' && bootstrapAdmin())
-        );
+        )
+        && (!('stats' in request.resource.data) || validStats(request.resource.data.stats));
       allow update: if isAdmin()
         || (
           isOwner(uid)
           && request.resource.data.role == resource.data.role
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'stats', 'games'])
+          && request.resource.data.displayName is string
+          && request.resource.data.displayName.size() <= 40
+          && (!('stats' in request.resource.data) || validStats(request.resource.data.stats))
         );
     }
 
@@ -94,7 +108,8 @@ service cloud.firestore {
 
     match /stats/{id} {
       allow read: if true;
-      allow write: if signedIn();
+      allow create: if signedIn() && request.resource.data.keys().hasOnly(['games']);
+      allow update: if signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['games']);
     }
 
     match /rooms/{id} {
@@ -107,12 +122,17 @@ service cloud.firestore {
       allow update: if signedIn() && roomIdentityIntact() && (
         isAdmin()
         || resource.data.hostId == request.auth.uid
-        || request.auth.uid in resource.data.participantIds
         || (
           resource.data.status == 'waiting'
           && request.resource.data.status == 'waiting'
           && request.resource.data.matchId == resource.data.matchId
-          && request.auth.uid in request.resource.data.participantIds
+          && (request.auth.uid in resource.data.participantIds || request.auth.uid in request.resource.data.participantIds)
+        )
+        || (
+          resource.data.status == 'playing'
+          && (request.resource.data.status == 'playing' || request.resource.data.status == 'finished')
+          && request.resource.data.matchId == resource.data.matchId
+          && request.auth.uid in resource.data.participantIds
         )
       );
       allow delete: if signedIn() && (isAdmin() || resource.data.hostId == request.auth.uid);
@@ -131,9 +151,29 @@ service cloud.firestore {
         && resultWriteOnce()
         && afterResultFlagsOnly();
 
-      match /secrets/{seatIndex} {
-        allow read: if signedIn() && resource.data.uid == request.auth.uid;
-        allow write: if signedIn();
+      match /secrets/{seat} {
+        function matchData() {
+          return get(/databases/$(database)/documents/matches/$(id)).data;
+        }
+        function isMatchPlayer() {
+          return signedIn() && request.auth.uid in matchData().playerIds;
+        }
+        function ownHumanSecret() {
+          return signedIn() && resource.data.uid == request.auth.uid;
+        }
+        function botSecret() {
+          return resource.data.uid == null && isMatchPlayer();
+        }
+        allow read: if ownHumanSecret() || botSecret();
+        allow create: if isMatchPlayer()
+          && request.resource.data.seatIndex == int(seat)
+          && (
+            request.resource.data.uid == null
+            || request.resource.data.uid in matchData().playerIds
+          );
+        allow update: if request.resource.data.uid == resource.data.uid
+          && request.resource.data.seatIndex == resource.data.seatIndex
+          && (ownHumanSecret() || botSecret());
       }
     }
   }

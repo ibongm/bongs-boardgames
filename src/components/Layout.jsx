@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
@@ -16,7 +17,9 @@ export default function Layout() {
       )}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 sm:py-6">
         <ErrorBoundary>
-          <Outlet />
+          <Suspense fallback={<div className="py-16 text-center text-ink/60 font-sans text-sm animate-pulse">Loading table…</div>}>
+            <Outlet />
+          </Suspense>
         </ErrorBoundary>
       </main>
       <footer className="border-t border-gold/20 text-ink/70 text-sm px-4 py-6 text-center">{site.footer}</footer>

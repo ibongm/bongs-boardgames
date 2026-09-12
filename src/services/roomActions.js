@@ -139,21 +139,22 @@ export async function replaceStaleHumans(roomId) {
     const seats = room.seats.map((seat) => {
       if (seat.type !== 'human' || !seat.lastSeen) return { ...seat };
       const wait = disconnectMsFor(room);
-      if (now - seat.lastSeen < wait) return { ...seat };
-      if (!seat.disconnectedAt) {
+      if (now - seat.lastSeen >= 10000 && !seat.disconnectedAt) {
         changed = true;
-        return { ...seat, disconnectedAt: seat.lastSeen };
+        return { ...seat, disconnectedAt: now };
       }
-      if (now - seat.disconnectedAt < wait) return { ...seat };
-      changed = true;
-      return {
-        uid: `bot-replace-${seat.uid}`,
-        name: 'Bot (medium)',
-        type: 'bot',
-        difficulty: 'medium',
-        lastSeen: now,
-        disconnectedAt: null,
-      };
+      if (seat.disconnectedAt && now - seat.disconnectedAt >= wait) {
+        changed = true;
+        return {
+          uid: `bot-replace-${seat.uid}`,
+          name: 'Bot (medium)',
+          type: 'bot',
+          difficulty: 'medium',
+          lastSeen: now,
+          disconnectedAt: null,
+        };
+      }
+      return { ...seat };
     });
     return changed ? { seats } : null;
   });
@@ -180,8 +181,14 @@ export async function startRoom(roomId) {
 
 export async function playMove(match, room, move, actorUid) {
   const game = getGame(match.gameId);
+  const isTradeResponse = move?.type === 'counterTrade' || move?.type === 'acceptTrade';
   const current = match.seats[actorIndex(match)];
-  if (current?.type === 'human' && current.uid !== actorUid) throw new Error('Not your turn');
+  if (isTradeResponse) {
+    const isSeated = match.seats.some((s) => s.uid === actorUid);
+    if (!isSeated) throw new Error('Not seated at this table');
+  } else if (current?.type === 'human' && current.uid !== actorUid) {
+    throw new Error('Not your turn');
+  }
   const nextState = game.engine.applyMove(match.state, move);
   const result = game.engine.status(nextState).over
     ? { winner: nextState.winner, draw: nextState.draw }
@@ -199,6 +206,21 @@ export async function playMove(match, room, move, actorUid) {
 export async function playBotIfNeeded(match, room) {
   if (!match || match.result) return match;
   const game = getGame(match.gameId);
+
+  // If there is an open trade offer in Pioneer, check if any seated bot accepts it
+  if (match.gameId === 'pioneer' && match.state?.offers?.some((o) => !o.closed)) {
+    const openOffer = match.state.offers.find((o) => !o.closed);
+    for (let s = 0; s < match.seats.length; s++) {
+      const seat = match.seats[s];
+      if (seat?.type === 'bot' && seat.uid && openOffer.fromSeat !== s) {
+        const accept = game.ai.evaluateTradeOffer?.(match.state, s, openOffer);
+        if (accept) {
+          return playMove(match, room, accept, seat.uid);
+        }
+      }
+    }
+  }
+
   const current = match.seats[actorIndex(match)];
   if (current?.type !== 'bot') return match;
   const move = game.ai.chooseMove(match.state, current.difficulty || 'medium');

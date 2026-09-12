@@ -1,0 +1,17 @@
+{
+  "name": "Bong's Board Games",
+  "short_name": "Bong's Games",
+  "description": "Play tabletop board games in the browser: Tic-Tac-Toe, Connect Four, Citadels, and Pioneer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2c1810",
+  "theme_color": "#6b1c28",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

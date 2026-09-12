@@ -14,7 +14,7 @@ export function createState() {
 }
 
 export function legalMoves(state) {
-  if (state.winner || state.draw) return [];
+  if (state.winner !== null || state.draw) return [];
   return state.board.map((cell, index) => (cell === null ? index : null)).filter((v) => v !== null);
 }
 

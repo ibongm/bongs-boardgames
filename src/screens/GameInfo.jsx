@@ -22,7 +22,7 @@ export default function GameInfo() {
   const [mapId, setMapId] = useState('map_balanced');
   const copy = site.games[gameId] || {};
 
-  if (!game || (copy.published === false && game.meta.id !== 'pioneer')) return <p>That game is not available.</p>;
+  if (!game || copy.published === false) return <p>That game is not available.</p>;
 
   const Board = game.Board;
 

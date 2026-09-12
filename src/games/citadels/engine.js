@@ -244,7 +244,8 @@ export function scoreSeat(state, seat) {
   if (hq && types.size < 5) {
     const missing = ['noble', 'religious', 'trade', 'military', 'unique'].find((t) => !types.has(t));
     if (missing) {
-      types.delete('unique');
+      const hasOtherUnique = p.city.some((id) => id !== hq && cardById(id)?.type === 'unique');
+      if (!hasOtherUnique) types.delete('unique');
       types.add(missing);
     }
   }
@@ -614,6 +615,7 @@ export function legalActions(state, seat) {
 
 export function publicView(state, viewer) {
   const view = clone(state);
+  delete view.deck;
   view.facedownDiscard = (state.facedownDiscard || []).map(() => 'hidden');
   view.players = state.players.map((p, seat) => ({
     ...p,
@@ -621,8 +623,11 @@ export function publicView(state, viewer) {
     handCount: p.hand.length,
     roleId: p.roleRevealed || viewer === seat ? p.roleId : null,
   }));
-  if (viewer !== 'spectator' && viewer !== state.actorSeat && state.phase === 'draft') {
+  if (viewer !== state.actorSeat && state.phase === 'draft') {
     view.draftRemaining = state.draftRemaining.map(() => 'hidden');
+  }
+  if (view.pendingDraw && viewer !== state.actorSeat) {
+    view.pendingDraw = view.pendingDraw.map(() => 'hidden');
   }
   return view;
 }

@@ -1,16 +1,18 @@
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import Protected from './components/Protected.jsx';
-import Home from './screens/Home.jsx';
-import Auth from './screens/Auth.jsx';
-import GameInfo from './screens/GameInfo.jsx';
-import Play from './screens/Play.jsx';
-import Lobby from './screens/Lobby.jsx';
-import Room from './screens/Room.jsx';
-import Profile from './screens/Profile.jsx';
-import Leaderboard from './screens/Leaderboard.jsx';
-import Admin from './screens/Admin.jsx';
-import Settings from './screens/Settings.jsx';
+
+const Home = lazy(() => import('./screens/Home.jsx'));
+const Auth = lazy(() => import('./screens/Auth.jsx'));
+const GameInfo = lazy(() => import('./screens/GameInfo.jsx'));
+const Play = lazy(() => import('./screens/Play.jsx'));
+const Lobby = lazy(() => import('./screens/Lobby.jsx'));
+const Room = lazy(() => import('./screens/Room.jsx'));
+const Profile = lazy(() => import('./screens/Profile.jsx'));
+const Leaderboard = lazy(() => import('./screens/Leaderboard.jsx'));
+const Admin = lazy(() => import('./screens/Admin.jsx'));
+const Settings = lazy(() => import('./screens/Settings.jsx'));
 
 function NotFound() {
   return <p className="text-ink/60">That page is not on this table.</p>;

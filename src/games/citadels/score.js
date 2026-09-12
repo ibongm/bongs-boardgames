@@ -25,7 +25,8 @@ export function scoreBreakdown(state, seat) {
   if (hq && types.size < 5) {
     const missing = typeList.find((t) => !types.has(t));
     if (missing) {
-      types.delete('unique');
+      const hasOtherUnique = (p.city || []).some((id) => id !== hq && cardById(id)?.type === 'unique');
+      if (!hasOtherUnique) types.delete('unique');
       types.add(missing);
       hauntedAs = missing;
     }

@@ -234,3 +234,31 @@ export function chooseMove(state, difficulty = 'medium') {
 
   return null;
 }
+
+export function evaluateTradeOffer(state, botSeat, offer) {
+  if (!offer || offer.closed || offer.fromSeat === botSeat) return null;
+  const bot = state.players[botSeat];
+  if (!bot) return null;
+
+  // Verify bot owns requested resources
+  for (const [res, amt] of Object.entries(offer.want || {})) {
+    if ((bot.resources[res] || 0) < amt) return null;
+  }
+
+  const totalWant = Object.values(offer.want || {}).reduce((s, n) => s + (n || 0), 0);
+  const totalGive = Object.values(offer.give || {}).reduce((s, n) => s + (n || 0), 0);
+  if (totalGive < totalWant) return null;
+
+  // Verify bot has at least 1 surplus of what it gives away
+  let hasSurplus = true;
+  for (const [res, amt] of Object.entries(offer.want || {})) {
+    if ((bot.resources[res] || 0) - amt < 1) {
+      hasSurplus = false;
+    }
+  }
+
+  if (hasSurplus) {
+    return { type: 'acceptTrade', offerId: offer.id, actorSeat: botSeat };
+  }
+  return null;
+}

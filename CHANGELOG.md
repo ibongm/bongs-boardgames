@@ -1,5 +1,66 @@
 # Changelog
 
+### [2026-09-12] - Update Product Log for Shipped Pioneer and Architecture Enhancements
+- **Files Changed**:
+  - `docs/SITE.md` (Modified)
+- **Details**:
+  - Promoted Pioneer from in-development to shipped status across the platform documentation.
+  - Documented new architecture standards: automated Vitest testing suite, 95% bundle optimization via code-splitting and artwork chunking, hardened Firestore security rules, mobile drawer navigation, full-column board interaction, and real-time profile synchronization.
+
+### [2026-09-12] - PWA Web Manifest and Real-Time Profile Synchronization
+- **Files Changed**:
+  - `public/manifest.webmanifest` (Created)
+  - `index.html` (Modified)
+  - `src/context/AuthContext.jsx` (Modified)
+- **Details**:
+  - Added standalone web application manifest (`public/manifest.webmanifest`) configured with site metadata, theme palette, and SVG icons for home screen installation.
+  - Linked manifest in `index.html` and expanded meta description to cover all four titles (Tic-Tac-Toe, Connect Four, Citadels, Pioneer).
+  - Attached real-time `onSnapshot` listener to `publicProfiles/{uid}` in `AuthContext.jsx` to dynamically propagate match rating adjustments, game counts, and home shelf stats without requiring manual browser reloads.
+
+### [2026-09-12] - Responsive Mobile Navigation and Pioneer Official Publication
+- **Files Changed**:
+  - `src/components/Header.jsx` (Modified)
+  - `src/lib/defaults.js` (Modified)
+  - `src/screens/GameInfo.jsx` (Modified)
+  - `src/screens/Play.jsx` (Modified)
+- **Details**:
+  - Transformed header navigation into a responsive layout featuring an accessible mobile drawer with hamburger toggle (< 640px) to prevent multiple-line header wrapping.
+  - Published Pioneer (`pioneer`) officially in `defaults.js` with released date `2026-09-12`.
+  - Removed temporary hardcoded `&& game.meta.id !== 'pioneer'` publication bypasses in `GameInfo.jsx` and `Play.jsx`, establishing uniform publication enforcement across all titles.
+
+### [2026-09-12] - Connect Four AI Heuristics and Column-Wide Drop Target
+- **Files Changed**:
+  - `src/games/connect-four/ai.js` (Modified)
+  - `src/games/connect-four/Board.jsx` (Modified)
+- **Details**:
+  - Upgraded minimax search with center-column bias, 2-in-a-row and 3-in-a-row window evaluations, alpha-beta pruning, and center-first move ordering for strategic Hard-difficulty play.
+  - Enabled direct column cell tapping across the entire Connect Four board grid with gold ring focus/hover indicators, allowing mobile and desktop players to drop discs without having to hit the top drop buttons.
+
+### [2026-09-12] - Lazy-Loaded Game Boards and Citadels Artwork Chunking
+- **Files Changed**:
+  - `src/games/registry.js` (Modified)
+  - `vite.config.js` (Modified)
+- **Details**:
+  - Encapsulated game board components (`TicTacToeBoard`, `ConnectFourBoard`, `CitadelsBoard`, `PioneerBoard`) inside `createLazyBoard` using pure `React.createElement` with local `<Suspense>` skeletons for clean bundler parse.
+  - Isolated Citadels raster and vector photo collections into a dedicated `citadels-art` Rollup manual chunk, reducing initial index bundle from 1.65 MB to 81 kB (95% reduction).
+
+### [2026-09-12] - Route-Level Code Splitting and Suspense Boundaries
+- **Files Changed**:
+  - `src/App.jsx` (Modified)
+  - `src/components/Layout.jsx` (Modified)
+- **Details**:
+  - Converted screen imports (`Home`, `Auth`, `GameInfo`, `Play`, `Lobby`, `Room`, `Profile`, `Leaderboard`, `Admin`, `Settings`) in `App.jsx` to dynamic `React.lazy()` imports.
+  - Added `<Suspense>` wrapper in `Layout.jsx` around the `<Outlet />` with a themed animated loading fallback, preventing navbar and footer teardown during route transitions.
+
+### [2026-09-12] - Harden Firestore Security Rules and Sync Room Identity
+- **Files Changed**:
+  - `firestore.rules` (Modified)
+- **Details**:
+  - Synced local rules with deployed secrets security subcollection (`/matches/{id}/secrets/{seat}`) and room configuration attributes (`seatCount`, `mapId`).
+  - Hardened `/rooms/{id}` update permissions so non-host participants cannot start matches, assign match IDs, or alter room settings during waiting or playing states.
+  - Restricted `/stats/{id}` write permissions to the `games` aggregation key only, preventing document wipes or arbitrary root injections.
+  - Secured `/publicProfiles/{uid}` updates by enforcing role immutability for non-admins, field constraints to `displayName`, `stats`, and `games`, `displayName` string length <= 40, and arithmetic validation `played == wins + losses + draws`.
+
 ### [2026-09-12] - Fix Blank Page on Table Creation and Room Join
 - **Files Changed**:
   - `src/screens/Room.jsx` (Modified)
