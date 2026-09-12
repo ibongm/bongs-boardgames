@@ -4,6 +4,7 @@ import { names } from './names.js';
 import { DISTRICT_TEXT, ROLE_TEXT, stemOf } from './info.js';
 import { DistrictPicture, RolePicture } from './Art.jsx';
 import { buildCost } from './engine.js';
+import { scoreBreakdown } from './score.js';
 
 function typeTone(type) {
   return (
@@ -27,7 +28,7 @@ export default function Inspect({ inspect, onClose, onOpen, state, viewerSeat, a
     const holder = state.players.find((p) => p.roleRevealed && p.roleId === roleId);
     return (
       <Modal title={names.roles[roleId] || 'Character'} open onClose={onClose}>
-        <RolePicture roleId={roleId} className="w-36 mx-auto" />
+        <RolePicture roleId={roleId} className="w-48 mx-auto" />
         <p className="mt-3 text-xs uppercase tracking-wide text-ink/60">Rank {info?.rank || '—'}</p>
         <p className="mt-2">{info?.text}</p>
         {faceup && <p className="mt-3 text-ink/70">Discarded face up this round. Nobody drafted this character.</p>}
@@ -90,7 +91,7 @@ export default function Inspect({ inspect, onClose, onOpen, state, viewerSeat, a
     }
     return (
       <Modal title={card.name} open onClose={onClose} footer={footer.length ? footer : undefined}>
-        <DistrictPicture stem={stem} type={card.type} className="w-36 mx-auto" />
+        <DistrictPicture stem={stem} type={card.type} className="w-48 mx-auto" />
         <p className="mt-3 text-xs uppercase tracking-wide font-semibold" style={{ color: typeTone(card.type) }}>
           {names.types[card.type]} · {card.cost} gold to build
           {card.scoreAs ? ` · scores ${card.scoreAs}` : ''}
@@ -105,6 +106,7 @@ export default function Inspect({ inspect, onClose, onOpen, state, viewerSeat, a
     const p = state.players[seat];
     if (!p) return null;
     const you = seat === viewerSeat;
+    const sheet = state.phase === 'gameover' ? scoreBreakdown(state, seat) : null;
     return (
       <Modal title={p.name || `Seat ${seat + 1}`} open onClose={onClose}>
         <p className="text-ink/70">
@@ -142,6 +144,26 @@ export default function Inspect({ inspect, onClose, onOpen, state, viewerSeat, a
           </div>
         ) : (
           <p className="mt-2 text-ink/60">Empty city.</p>
+        )}
+        {sheet && (
+          <>
+            <p className="mt-4 text-xs uppercase tracking-wide text-ink/60">Score</p>
+            <ul className="mt-1 space-y-0.5 text-sm text-ink/80">
+              {sheet.lines.map((line, i) => (
+                <li key={`${line.label}-${i}`} className="flex justify-between gap-3">
+                  <span>
+                    {line.label}
+                    {line.note ? <span className="text-ink/55"> · {line.note}</span> : null}
+                  </span>
+                  <span className="font-semibold text-ink">{line.points}</span>
+                </li>
+              ))}
+              <li className="flex justify-between gap-3 font-semibold text-ink pt-1">
+                <span>Total</span>
+                <span>{sheet.total}</span>
+              </li>
+            </ul>
+          </>
         )}
         {you && p.hand?.filter((id) => id !== 'hidden').length ? (
           <>
