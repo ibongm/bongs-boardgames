@@ -9,7 +9,7 @@
   --color-parchment: #8a5a5e;
   --color-gold: #6b1c28;
   --color-rust: #1a080c;
-  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-display: "Source Serif 4", "Source Serif", Georgia, serif;
   --font-sans: "Source Sans 3", system-ui, sans-serif;
   --shadow-table: 0 18px 40px color-mix(in oklab, #3f1018 18%, transparent);
   --radius-sm: 8px;
@@ -34,6 +34,7 @@ body {
   background-color: #f7f2e8;
   background-image: radial-gradient(900px 420px at 100% -10%, color-mix(in oklab, #6b1c28 10%, transparent), transparent 55%);
   color: #3f1018;
+  font-family: var(--font-sans);
 }
 
 h1,

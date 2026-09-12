@@ -22,16 +22,6 @@ Public tabletop rooms plus instant bot practice. English only. Playable on phone
 - English only.
 - On a finished rated match, write `lastPlayedAt` and site aggregates.
 - Featured / New are badges and can also be their own rows.
-- On the light page, body and card copy use ink. Cream text is only for the burgundy header and filled primary buttons.
-
-## Security (current)
-
-- Private `users/{uid}`: owner may change display name and keep email in sync with Auth. Owner cannot change `role`, `disabled`, `stats`, or `games`. Admin bootstrap is the configured admin email only.
-- Public `publicProfiles/{uid}`: owner cannot change `role`. Leaderboard Elo is stored here until a Cloud Function owns rated writes.
-- `matches`: creator must be in `playerIds`. Identity fields frozen. `result` write-once. After a result, only stats flags may change.
-- `rooms`: host must create. Host / code / game / password / createdAt frozen. Strangers cannot edit a waiting room unless they add themselves as a participant.
-
-Rated move legality is still client-side. A seated player can still fake a result on a match they belong to. Server-side moves are a later step.
 
 ## Home
 
@@ -50,17 +40,17 @@ Each card: preview board, Featured/New badges, title, “Similar to …”, blur
 
 ## Games
 
-Shipped: Tic-Tac-Toe (2), Connect Four (2).
+Shipped: Tic-Tac-Toe (2), Connect Four (2), Citadels (4–6, working title).
 
 Per-game Admin fields: title, blurb, similarTo, published, featured, releasedAt, newUntil, howToPlay, rulesDetails, order.
 
-Admin lists games as rows. Clicking a row opens the existing modal with that game's fields.
-
 ## Rules
 
-One popup, two layers: How to play, then Details. Same modal on the game page, the practice table, and a live/finished room. Live rooms add a “This match” strip (seats, bot difficulty, 30s disconnect replacement).
+One popup, two layers: How to play, then Details. Same modal on the game page, the practice table, and a live/finished room. Live rooms add a “This match” strip (seats, bot difficulty, disconnect replacement). Citadels waits 45 seconds.
 
 Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-empty.
+
+Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Body, cards, and the rules modal use ink on cream. Cream text stays on the burgundy header and filled primary buttons. Display face is Source Serif 4.
 
 ## Play
 
@@ -68,10 +58,10 @@ Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-em
 - Google + email/password.
 - Public lobby + room code. Optional host password.
 - Host adds bots in the lobby only (Easy / Medium / Hard).
-- Disconnect: wait 30s, then replace with a Medium bot.
+- Disconnect: wait 30s (45s in Citadels), then replace with a Medium bot.
 - Spectators allowed.
 - Ratings only for human vs human. Practice vs bot is unrated.
 
 ## After a match
 
-Win/loss/draw on the public profile. Per-game leaderboard. `games.{id}.lastPlayedAt` on the public profile. Site-wide `stats/games` counters for shelves.
+Win/loss/draw on the profile. Per-game leaderboard. `games.{id}.lastPlayedAt` on the player. Site-wide `stats/games` counters for shelves.
