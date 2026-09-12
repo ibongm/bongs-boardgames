@@ -2,31 +2,27 @@ import { useMemo, useState } from 'react';
 import { cardById, displayName } from './cards.js';
 import { names, ROLE_ORDER, TYPE_COLORS } from './names.js';
 import { buildCost, legalActions } from './engine.js';
+import { stemOf } from './info.js';
+import { DistrictPicture, RolePicture } from './Art.jsx';
+import Inspect from './Inspect.jsx';
 
 function typeTone(type) {
   return TYPE_COLORS[type] || '#6b1c28';
 }
 
-function CardFace({ cardId, selected, onClick, disabled, badge }) {
+function CardFace({ cardId, onClick, badge }) {
   const card = cardById(cardId);
   if (!card) {
-    return <div className="h-16 w-12 rounded-md bg-cream border border-gold/25" />;
+    return <div className="h-24 w-16 rounded-md bg-cream border border-gold/25" />;
   }
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className={`text-left rounded-md px-2 py-1.5 min-h-11 border ${
-        selected ? 'border-gold bg-gold/10' : 'border-gold/25 bg-cream'
-      }`}
-      style={{ minWidth: '5.5rem' }}
-    >
-      <span className="block text-[10px] uppercase tracking-wide font-semibold" style={{ color: typeTone(card.type) }}>
+    <button type="button" onClick={onClick} className="text-left rounded-md border border-gold/25 bg-cream p-1 min-w-[4.6rem]">
+      <DistrictPicture stem={stemOf(cardId)} type={card.type} className="w-16 mx-auto" />
+      <span className="block mt-1 text-[10px] uppercase tracking-wide font-semibold" style={{ color: typeTone(card.type) }}>
         {names.types[card.type]}
       </span>
-      <span className="block text-ink text-sm font-semibold leading-tight">{card.name}</span>
-      <span className="block text-ink/70 text-xs">
+      <span className="block text-ink text-xs font-semibold leading-tight">{card.name}</span>
+      <span className="block text-ink/70 text-[11px]">
         {card.cost} gold{badge ? ` · ${badge}` : ''}
       </span>
     </button>
@@ -42,8 +38,7 @@ function OutlineButton({ children, onClick }) {
 }
 
 export default function CitadelsBoard({ state, canPlay, onMove, interactive = true, viewerSeat = 0 }) {
-  const [selectedHand, setSelectedHand] = useState(null);
-  const [payCards, setPayCards] = useState([]);
+  const [inspect, setInspect] = useState(null);
   const actions = useMemo(
     () => (state && canPlay ? legalActions(state, state.actorSeat) : []),
     [state, canPlay]
@@ -59,13 +54,8 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
 
   function send(action) {
     if (!canPlay || !action) return;
-    setSelectedHand(null);
-    setPayCards([]);
+    setInspect(null);
     onMove(action);
-  }
-
-  function togglePay(id) {
-    setPayCards((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
   }
 
   if (compact) {
@@ -76,11 +66,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
             <p className="text-[10px] text-ink/70 truncate">{p.name || `Seat ${i + 1}`}</p>
             <div className="flex flex-wrap gap-0.5 mt-1">
               {p.city.slice(0, 4).map((id) => (
-                <span
-                  key={id}
-                  className="w-3 h-3 rounded-sm"
-                  style={{ background: typeTone(cardById(id)?.type) }}
-                />
+                <span key={id} className="w-3 h-3 rounded-sm" style={{ background: typeTone(cardById(id)?.type) }} />
               ))}
             </div>
           </div>
@@ -105,24 +91,27 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           const holder = state.players.find((p) => p.roleRevealed && p.roleId === roleId);
           const called = state.rankCalled > index + 1 || holder;
           return (
-            <div
+            <button
               key={roleId}
-              className={`rounded-md px-2 py-1 text-xs min-h-11 flex flex-col justify-center border ${
+              type="button"
+              onClick={() => setInspect({ kind: 'role', roleId })}
+              className={`rounded-md px-2 py-1 text-xs min-h-11 flex items-center gap-2 border text-left ${
                 faceup
-                  ? 'bg-cream border-gold/20 text-ink/55 line-through'
+                  ? 'bg-cream border-gold/20 text-ink/60'
                   : holder
                     ? 'bg-gold/10 border-gold text-ink'
                     : 'bg-cream border-gold/25 text-ink'
               }`}
             >
-              <span className="font-mono font-semibold text-gold">{index + 1}</span>
-              <span className="font-semibold">{names.roles[roleId]}</span>
-              {faceup && <span className="no-underline text-ink/50">discarded</span>}
-              {holder && <span className="text-ink/70">{holder.name}</span>}
-              {!faceup && !holder && called && state.killedRole === roleId && (
-                <span className="text-ink/50">killed</span>
-              )}
-            </div>
+              <RolePicture roleId={roleId} className="w-8 shrink-0" />
+              <span className="flex flex-col justify-center">
+                <span className="font-mono font-semibold text-gold">{index + 1}</span>
+                <span className={`font-semibold ${faceup ? 'line-through' : ''}`}>{names.roles[roleId]}</span>
+                {faceup && <span className="text-ink/50">discarded</span>}
+                {holder && <span className="text-ink/70">{holder.name}</span>}
+                {!faceup && !holder && called && state.killedRole === roleId && <span className="text-ink/50">killed</span>}
+              </span>
+            </button>
           );
         })}
       </div>
@@ -136,41 +125,41 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
         {state.players.map((p, i) => (
           <div
             key={i}
-            className={`rounded-xl border p-3 ${
-              i === actor ? 'border-gold bg-cream' : 'border-gold/20 bg-cream/70'
-            }`}
+            className={`rounded-xl border p-3 ${i === actor ? 'border-gold bg-cream' : 'border-gold/20 bg-cream/70'}`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-ink font-semibold text-sm">
-                {p.name || `Seat ${i + 1}`}
-                {i === viewerSeat ? ' · you' : ''}
-                {state.crownSeat === i ? ' · crown' : ''}
-              </p>
-              <p className="text-ink/80 text-xs">
-                {p.gold} gold · {p.hand?.length || 0} cards
-                {p.roleRevealed && p.roleId ? ` · ${names.roles[p.roleId]}` : ''}
-              </p>
-            </div>
+            <button type="button" className="w-full text-left" onClick={() => setInspect({ kind: 'seat', seat: i })}>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-ink font-semibold text-sm">
+                  {p.name || `Seat ${i + 1}`}
+                  {i === viewerSeat ? ' · you' : ''}
+                  {state.crownSeat === i ? ' · crown' : ''}
+                </p>
+                <p className="text-ink/80 text-xs">
+                  {p.gold} gold · {p.hand?.length || 0} cards
+                  {p.roleRevealed && p.roleId ? ` · ${names.roles[p.roleId]}` : ''}
+                </p>
+              </div>
+            </button>
             <div className="mt-2 flex flex-wrap gap-1">
               {p.city.length ? (
                 p.city.map((id, districtIndex) => {
                   const destroy = actions.find((a) => a.type === 'warlordDestroy' && a.seat === i && a.districtIndex === districtIndex);
                   return (
                     <button
-                      key={id}
+                      key={`${id}-${districtIndex}`}
                       type="button"
-                      disabled={!destroy}
-                      onClick={() => send(destroy)}
-                      className="rounded px-1.5 py-1 text-[11px] text-cream min-h-8 font-semibold"
-                      style={{ background: typeTone(cardById(id)?.type) }}
-                      title={destroy ? `Destroy for ${Math.max(0, (cardById(id)?.cost || 1) - 1)} gold` : displayName(id)}
+                      onClick={() => setInspect({ kind: 'card', cardId: id, destroy: destroy || null })}
+                      className="rounded overflow-hidden border border-gold/20 bg-cream w-12"
+                      title={displayName(id)}
                     >
-                      {displayName(id)}
+                      <DistrictPicture stem={stemOf(id)} type={cardById(id)?.type} />
                     </button>
                   );
                 })
               ) : (
-                <span className="text-ink/50 text-xs">Empty city</span>
+                <button type="button" className="text-ink/50 text-xs" onClick={() => setInspect({ kind: 'seat', seat: i })}>
+                  Empty city · view seat
+                </button>
               )}
             </div>
           </div>
@@ -179,7 +168,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
 
       {state.phase === 'draft' && canPlay && (
         <div>
-          <p className="text-sm text-ink/80 mb-2">Pick a character. The rest pass left.</p>
+          <p className="text-sm text-ink/80 mb-2">Pick a character. Tap a portrait for its ability first if you want.</p>
           <div className="flex flex-wrap gap-2">
             {actions
               .filter((a) => a.type === 'pickRole')
@@ -200,7 +189,16 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
       {state.phase === 'chooseCard' && canPlay && (
         <div className="flex flex-wrap gap-2">
           {(state.pendingDraw || []).map((id, keepIndex) => (
-            <CardFace key={id} cardId={id} onClick={() => send({ type: 'keepDrawn', keepIndex })} />
+            <div key={id} className="space-y-1">
+              <CardFace cardId={id} onClick={() => setInspect({ kind: 'card', cardId: id })} />
+              <button
+                type="button"
+                className="bg-gold text-cream text-xs font-semibold rounded px-2 py-1 min-h-8 w-full"
+                onClick={() => send({ type: 'keepDrawn', keepIndex })}
+              >
+                Keep
+              </button>
+            </div>
           ))}
         </div>
       )}
@@ -240,9 +238,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
               </OutlineButton>
             ))}
           {actions.some((a) => a.type === 'magicianRedraw') && (
-            <OutlineButton onClick={() => send({ type: 'magicianRedraw', cardIds: you.hand.slice() })}>
-              Redraw whole hand
-            </OutlineButton>
+            <OutlineButton onClick={() => send({ type: 'magicianRedraw', cardIds: you.hand.slice() })}>Redraw whole hand</OutlineButton>
           )}
           {actions.some((a) => a.type === 'useSmithy') && (
             <OutlineButton onClick={() => send({ type: 'useSmithy' })}>Smithy: 2 gold for 3 cards</OutlineButton>
@@ -259,43 +255,21 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
         <div>
           <p className="text-xs uppercase tracking-wide text-ink/60 mb-2">Your hand</p>
           <div className="flex flex-wrap gap-2">
-            {(you.hand || []).filter((id) => id !== 'hidden').map((id) => {
-              const build = actions.find((a) => a.type === 'build' && a.cardId === id);
-              const lab = actions.find((a) => a.type === 'useLab' && a.cardId === id);
-              const cost = buildCost(state, viewerSeat, id);
-              const den = cardById(id)?.name === "Thieves' Den";
-              return (
-                <div key={id} className="space-y-1">
+            {(you.hand || [])
+              .filter((id) => id !== 'hidden')
+              .map((id) => {
+                const build = actions.find((a) => a.type === 'build' && a.cardId === id);
+                const lab = actions.find((a) => a.type === 'useLab' && a.cardId === id);
+                const cost = buildCost(state, viewerSeat, id);
+                return (
                   <CardFace
+                    key={id}
                     cardId={id}
-                    selected={selectedHand === id || payCards.includes(id)}
-                    onClick={() => {
-                      if (den) togglePay(id);
-                      setSelectedHand(id);
-                    }}
                     badge={`${cost} to build`}
+                    onClick={() => setInspect({ kind: 'card', cardId: id, build: build || null, lab: lab || null })}
                   />
-                  {selectedHand === id && (
-                    <div className="flex gap-1">
-                      {build && (
-                        <button
-                          type="button"
-                          className="bg-gold text-cream text-xs rounded px-2 py-1 min-h-8 font-semibold"
-                          onClick={() => send({ type: 'build', cardId: id, payWithCards: payCards.filter((c) => c !== id) })}
-                        >
-                          Build
-                        </button>
-                      )}
-                      {lab && (
-                        <button type="button" className="border border-gold/40 text-ink text-xs rounded px-2 py-1 min-h-8" onClick={() => send(lab)}>
-                          Lab
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
             {!you.hand?.filter((id) => id !== 'hidden').length && <span className="text-ink/50 text-sm">Empty hand</span>}
           </div>
         </div>
@@ -315,6 +289,16 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           ))}
         </ol>
       )}
+
+      <Inspect
+        inspect={inspect}
+        onClose={() => setInspect(null)}
+        onOpen={setInspect}
+        state={state}
+        viewerSeat={viewerSeat}
+        actions={actions}
+        onAction={send}
+      />
     </div>
   );
 }
