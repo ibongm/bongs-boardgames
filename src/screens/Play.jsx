@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getGame } from '../games/registry.js';
 import { useSite } from '../context/SiteContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import RulesModal from '../components/RulesModal.jsx';
 
 const DIFFICULTIES = [
   { id: 'easy', label: 'Easy' },
@@ -19,6 +20,7 @@ export default function Play() {
   const [difficulty, setDifficulty] = useState('medium');
   const [state, setState] = useState(() => game?.engine.createState() || null);
   const [seed, setSeed] = useState(0);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   useEffect(() => {
     if (!game) return;
@@ -74,7 +76,13 @@ export default function Play() {
   return (
     <div className="max-w-xl mx-auto">
       <p className="text-xs uppercase tracking-[0.16em] text-ink/45">Practice · vs bot · unrated</p>
-      <h1 className="font-display text-5xl text-gold tracking-tight mt-2">{title}</h1>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <h1 className="font-display text-5xl text-gold tracking-tight">{title}</h1>
+        <button type="button" className="btn btn-ghost" onClick={() => setRulesOpen(true)}>
+          Rules
+        </button>
+      </div>
+      {copy.similarTo && <p className="mt-1 text-ink/45">Similar to {copy.similarTo}</p>}
       <p className="mt-3 text-ink/70">{copy.blurb}</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
@@ -110,6 +118,13 @@ export default function Play() {
           )}
         </div>
       </div>
+      <RulesModal
+        gameId={gameId}
+        copy={copy}
+        open={rulesOpen}
+        onClose={() => setRulesOpen(false)}
+        matchInfo={`Practice table · you vs ${difficulty} bot. Unrated. A live-table leaver is replaced by a Medium bot after 30 seconds.`}
+      />
     </div>
   );
 }

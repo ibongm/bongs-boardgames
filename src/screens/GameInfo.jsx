@@ -5,6 +5,7 @@ import { useSite } from '../context/SiteContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { createRoom } from '../services/rooms.js';
 import { firebaseReady } from '../lib/firebase.js';
+import RulesModal from '../components/RulesModal.jsx';
 
 export default function GameInfo() {
   const { gameId } = useParams();
@@ -14,6 +15,7 @@ export default function GameInfo() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [rulesOpen, setRulesOpen] = useState(false);
   const copy = site.games[gameId] || {};
 
   if (!game || copy.published === false) return <p>That game is not available.</p>;
@@ -41,8 +43,12 @@ export default function GameInfo() {
   return (
     <div className="max-w-xl">
       <p className="font-display text-5xl text-gold tracking-tight">{copy.title || game.meta.title}</p>
+      {copy.similarTo && <p className="mt-1 text-ink/45">Similar to {copy.similarTo}</p>}
       <p className="mt-3 text-ink/70">{copy.blurb}</p>
       <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/40">{game.meta.seats} seats · humans and bots</p>
+      <button type="button" className="btn btn-ghost mt-4" onClick={() => setRulesOpen(true)}>
+        Rules
+      </button>
 
       <div className="mt-8 pointer-events-none max-w-xs">
         <Board state={game.meta.previewState} canPlay={false} onMove={() => {}} interactive={false} />
@@ -75,6 +81,7 @@ export default function GameInfo() {
       <Link to="/lobby" className="inline-block mt-4 text-gold text-sm underline-offset-4 hover:underline">
         Open lobby
       </Link>
+      <RulesModal gameId={gameId} copy={copy} open={rulesOpen} onClose={() => setRulesOpen(false)} />
     </div>
   );
 }
