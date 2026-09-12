@@ -52,6 +52,35 @@ export async function sitDown(roomId, profile) {
   });
 }
 
+export async function setRoomSeatCount(roomId, requested) {
+  return withRoom(roomId, (room) => {
+    if (room.status !== 'waiting') return null;
+    const game = getGame(room.gameId);
+    const min = game?.meta?.seatsMin || game?.meta?.seats || 2;
+    const max = game?.meta?.seatsMax || game?.meta?.seats || min;
+    const nextCount = Math.min(max, Math.max(min, Number(requested) || min));
+    const current = (room.seats || []).map((seat) => ({ ...seat }));
+    const occupied = current.filter((seat) => seat.type !== 'empty').length;
+    if (nextCount < occupied) throw new Error(`Already have ${occupied} players seated`);
+    if (nextCount === current.length) return null;
+    if (nextCount > current.length) {
+      while (current.length < nextCount) current.push(emptySeat());
+      return { seats: current };
+    }
+    const kept = [];
+    let emptiesToDrop = current.length - nextCount;
+    for (let i = current.length - 1; i >= 0; i -= 1) {
+      if (emptiesToDrop > 0 && current[i].type === 'empty') {
+        emptiesToDrop -= 1;
+        continue;
+      }
+      kept.unshift(current[i]);
+    }
+    if (kept.length !== nextCount) throw new Error('Clear an empty seat first');
+    return { seats: kept };
+  });
+}
+
 export async function addBot(roomId, difficulty = 'medium') {
   return withRoom(roomId, (room) => {
     if (room.status !== 'waiting') return null;
