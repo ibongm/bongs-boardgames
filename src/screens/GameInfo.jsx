@@ -34,7 +34,7 @@ export default function GameInfo() {
     }
     try {
       const room = await createRoom({
-        host: { uid: firebaseUser.uid, displayName: profile.displayName },
+        host: { uid: firebaseUser.uid, displayName: profile?.displayName || firebaseUser?.displayName || 'Host' },
         gameId,
         password: password.trim() || null,
         seatCount,

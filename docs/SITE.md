@@ -65,6 +65,8 @@ Pioneer ships complete 5th-edition-style island settlement rules (3–4 seats, 1
 - Host adds bots in the lobby only (Easy / Medium / Hard).
 - Disconnect: wait 30s (45s in Citadels and Pioneer), then replace with a Medium bot.
 - Ratings only for matches with 2+ signed-in humans. Winner is rated against the average of other participating humans; bots are excluded from rating adjustments.
+- Multi-dimensional board states (such as Connect Four) are serialized transparently to ensure compatibility with Firestore document constraints.
+- Error boundary wrapper on application outlet prevents uncaught render exceptions from resulting in blank pages.
 
 ## After a match
 

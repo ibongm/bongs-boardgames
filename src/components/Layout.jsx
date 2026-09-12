@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Header from './Header.jsx';
+import ErrorBoundary from './ErrorBoundary.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 import { firebaseReady } from '../lib/firebase.js';
 
@@ -14,7 +15,9 @@ export default function Layout() {
         </div>
       )}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 sm:py-6">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <footer className="border-t border-gold/20 text-ink/70 text-sm px-4 py-6 text-center">{site.footer}</footer>
     </div>

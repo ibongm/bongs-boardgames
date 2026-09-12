@@ -1,6 +1,18 @@
 # Changelog
 
-### [2026-09-12] - Document Pioneer Zero-Scroll Split Layout in Product Log
+### [2026-09-12] - Fix Blank Page on Table Creation and Room Join
+- **Files Changed**:
+  - `src/screens/Room.jsx` (Modified)
+  - `src/screens/GameInfo.jsx` (Modified)
+  - `src/services/matches.js` (Modified)
+  - `src/components/ErrorBoundary.jsx` (Created)
+  - `src/components/Layout.jsx` (Modified)
+  - `docs/SITE.md` (Modified)
+- **Details**:
+  - Moved `displayState` `useMemo` hook in `Room.jsx` before conditional early returns (`!room`, `!game`, `error`), eliminating React error #310 ("Rendered more hooks than during previous render") that caused the entire application root to unmount into a blank page upon room data resolution.
+  - Added safe optional chaining and fallbacks for `profile?.displayName` and `firebaseUser?.uid` in `GameInfo.jsx` and `Room.jsx` to protect against null-dereference exceptions during table creation and spectator visits.
+  - Implemented `serializeMatchState` and `deserializeMatchState` in `src/services/matches.js` to serialize 2D board matrices into Firestore-compatible object arrays, preventing nested-array rejection errors during Connect Four room match initialization.
+  - Added an `ErrorBoundary` component in `Layout.jsx` wrapping the primary `<Outlet />` to catch render exceptions gracefully with a return-to-lobby option rather than collapsing into a blank screen.
 - **Files Changed**:
   - `docs/SITE.md` (Modified)
 - **Details**:

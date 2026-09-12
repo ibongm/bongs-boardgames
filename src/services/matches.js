@@ -25,6 +25,30 @@ async function ratingFor(uid, gameId) {
   }
 }
 
+export function serializeMatchState(state) {
+  if (!state) return state;
+  if (Array.isArray(state.board) && Array.isArray(state.board[0])) {
+    return {
+      ...state,
+      board: state.board.map((row) => ({ cells: row })),
+      _encodedBoard: 'rows',
+    };
+  }
+  return state;
+}
+
+export function deserializeMatchState(state) {
+  if (!state) return state;
+  if (state._encodedBoard === 'rows' && Array.isArray(state.board)) {
+    const { _encodedBoard, ...rest } = state;
+    return {
+      ...rest,
+      board: state.board.map((r) => r.cells),
+    };
+  }
+  return state;
+}
+
 export async function createMatch(room) {
   const game = getGame(room.gameId);
   const seats = (room.seats || []).map((seat) => ({ ...seat }));
@@ -39,6 +63,7 @@ export async function createMatch(room) {
       ratingSnapshot[uid] = await ratingFor(uid, room.gameId);
     })
   );
+  const rawState = game.engine.createState({ seatCount: seats.length, mapId: room.mapId, map: room.mapId });
   const payload = {
     roomId: room.id,
     gameId: room.gameId,
@@ -47,30 +72,43 @@ export async function createMatch(room) {
     playerSeats,
     ratingSnapshot,
     statsAppliedBy: {},
-    state: game.engine.createState({ seatCount: seats.length, mapId: room.mapId, map: room.mapId }),
+    state: serializeMatchState(rawState),
     result: null,
     createdAt: serverTimestamp(),
   };
   const ref = await addDoc(collection(db, 'matches'), payload);
-  return { id: ref.id, ...payload };
+  return { id: ref.id, ...payload, state: rawState };
 }
 
 export function watchMatch(matchId, callback) {
   return onSnapshot(doc(db, 'matches', matchId), (snap) => {
-    callback(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+    if (!snap.exists()) {
+      callback(null);
+      return;
+    }
+    const data = snap.data();
+    callback({
+      id: snap.id,
+      ...data,
+      state: deserializeMatchState(data.state),
+    });
   });
 }
 
 export async function commitMove(matchId, expectedRevision, patch) {
   const ref = doc(db, 'matches', matchId);
   let applied = false;
+  const dbPatch = { ...patch };
+  if (dbPatch.state) {
+    dbPatch.state = serializeMatchState(dbPatch.state);
+  }
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(ref);
     if (!snap.exists()) return;
     const current = snap.data();
     if (current.result) return;
     if (current.state?.revision !== expectedRevision) return;
-    tx.update(ref, patch);
+    tx.update(ref, dbPatch);
     applied = true;
   });
   return applied;

@@ -64,11 +64,11 @@ export default function Room() {
   useEffect(() => {
     if (!room || !profile || needsPassword || joined.current || room.status === 'finished') return;
     joined.current = true;
-    sitDown(room.id, { uid: firebaseUser.uid, displayName: profile.displayName }).catch((err) => setError(err.message));
+    sitDown(room.id, { uid: firebaseUser?.uid, displayName: profile?.displayName || firebaseUser?.displayName || 'Player' }).catch((err) => setError(err.message));
   }, [room, profile, needsPassword, firebaseUser]);
 
   useEffect(() => {
-    if (!room?.id || mySeatIndex < 0) return undefined;
+    if (!room?.id || mySeatIndex < 0 || !firebaseUser?.uid) return undefined;
     const tick = () => heartbeat(room.id, firebaseUser.uid).catch(() => {});
     tick();
     const id = setInterval(tick, 8000);
@@ -92,6 +92,14 @@ export default function Room() {
   }, [match, firebaseUser?.uid]);
 
   const game = room ? getGame(room.gameId) : null;
+
+  const displayState = useMemo(() => {
+    if (!match?.state || !game) return null;
+    if (typeof game?.engine?.publicView === 'function') {
+      return game.engine.publicView(match.state, mySeatIndex < 0 ? 'spectator' : mySeatIndex);
+    }
+    return match.state;
+  }, [match?.state, game, mySeatIndex]);
 
   async function onUnlock(event) {
     event.preventDefault();
@@ -137,14 +145,6 @@ export default function Room() {
   const rated = (match?.playerIds || []).length >= 2;
   const minSeats = game.meta.seatsMin || game.meta.seats || 2;
   const maxSeats = game.meta.seatsMax || game.meta.seats || minSeats;
-
-  const displayState = useMemo(() => {
-    if (!match?.state) return null;
-    if (typeof game.engine.publicView === 'function') {
-      return game.engine.publicView(match.state, mySeatIndex < 0 ? 'spectator' : mySeatIndex);
-    }
-    return match.state;
-  }, [match?.state, game, mySeatIndex]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
@@ -202,7 +202,7 @@ export default function Room() {
                 {seat.type === 'bot' ? ' · bot' : ''}
                 {waitMs(seat) !== null && seat.type === 'human' ? ` · wait ${waitMs(seat)}s` : ''}
               </span>
-              {isHost && room.status === 'waiting' && seat.type !== 'empty' && seat.uid !== firebaseUser.uid && (
+              {isHost && room.status === 'waiting' && seat.type !== 'empty' && seat.uid !== firebaseUser?.uid && (
                 <button type="button" className="text-gold" onClick={() => removeSeat(room.id, index)}>
                   Remove
                 </button>
