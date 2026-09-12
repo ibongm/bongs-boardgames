@@ -25,6 +25,10 @@ import library from './photos/district-library.js';
 import mapRoom from './photos/district-map-room.js';
 import imperialTreasury from './photos/district-imperial-treasury.js';
 import statue from './photos/district-statue.js';
+import factory from './photos/district-factory.js';
+import quarry from './photos/district-quarry.js';
+import thievesDen from './photos/district-thieves-den.js';
+import wishingWell from './photos/district-wishing-well.js';
 import back from './photos/back.js';
 
 export const CARD_BACK = back;
@@ -57,4 +61,8 @@ export const DISTRICT_PHOTO = {
   'map-room': mapRoom,
   'imperial-treasury': imperialTreasury,
   statue,
+  factory,
+  quarry,
+  'thieves-den': thievesDen,
+  'wishing-well': wishingWell,
 };
