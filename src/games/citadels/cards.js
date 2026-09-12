@@ -25,7 +25,7 @@ export const BASIC_CARDS = [
   ...copies('town-hall', 'Town Hall', 'trade', 5, 2),
   ...copies('watchtower', 'Watchtower', 'military', 1, 3),
   ...copies('prison', 'Prison', 'military', 2, 3),
-  ...copies('battlefield', 'Battlefield', 'military', 3, 3),
+  ...copies('battlefield', 'Barracks', 'military', 3, 3),
   ...copies('fortress', 'Fortress', 'military', 5, 2),
 ];
 

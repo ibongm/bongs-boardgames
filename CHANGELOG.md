@@ -2,6 +2,9 @@
 
 ## 2026-09-12
 
+- Citadels now uses the official first-game card pictures from the attached sheet (characters, district types, uniques that appear on that sheet). Factory, Quarry, Thieves' Den, and Wishing Well stay on the line-art fallback until those scans exist. The 3-cost military district shows as Barracks.
+- Admin test mode: on a practice table, signed-in admins can tick “Test mode — no bot timer, play every seat.” On a live room, host or admin can tick “Test table — no disconnect timer.”
+
 - Citadels cards, characters, and seats are illustrated and tappable. A popup shows the picture plus the official first-game text. Opening another player shows their gold, hand size, revealed role, and city.
 - Citadels table copy uses ink on cream so ranks, seats, and empty cities stay readable on the light theme. Titles use Source Serif 4 instead of Cormorant Garamond.
 - Citadels Rules modal now carries the first-game draft, gather, build, eight characters, fourteen uniques, and scoring from the attached rulebook, plus the site guest/bot/45s notes.
