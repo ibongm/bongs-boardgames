@@ -8,6 +8,8 @@ Public tabletop for Tic-Tac-Toe and Connect Four.
 - Live: https://bongs-boardgames.vercel.app
 - Firebase project: `bongs-boardgames-55d28`
 - Admin email: `ivanm.ploce@gmail.com`
+- Product log: [`docs/SITE.md`](docs/SITE.md)
+- Changelog: [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Local development
 
