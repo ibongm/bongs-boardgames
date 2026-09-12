@@ -16,6 +16,9 @@ export default function GameInfo() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [rulesOpen, setRulesOpen] = useState(false);
+  const minSeats = game?.meta?.seatsMin || game?.meta?.seats || 2;
+  const maxSeats = game?.meta?.seatsMax || game?.meta?.seats || minSeats;
+  const [seatCount, setSeatCount] = useState(game?.meta?.seats || minSeats);
   const copy = site.games[gameId] || {};
 
   if (!game || copy.published === false) return <p>That game is not available.</p>;
@@ -33,6 +36,7 @@ export default function GameInfo() {
         host: { uid: firebaseUser.uid, displayName: profile.displayName },
         gameId,
         password: password.trim() || null,
+        seatCount,
       });
       navigate(`/rooms/${room.code}`);
     } catch (err) {
@@ -45,7 +49,9 @@ export default function GameInfo() {
       <p className="font-display text-5xl text-gold tracking-tight">{copy.title || game.meta.title}</p>
       {copy.similarTo && <p className="mt-1 text-ink/45">Similar to {copy.similarTo}</p>}
       <p className="mt-3 text-ink/70">{copy.blurb}</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/40">{game.meta.seats} seats · humans and bots</p>
+      <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/40">
+        {maxSeats > minSeats ? `${minSeats}–${maxSeats}` : game.meta.seats} seats · humans and bots
+      </p>
       <button type="button" className="btn btn-ghost mt-4" onClick={() => setRulesOpen(true)}>
         Rules
       </button>
@@ -64,6 +70,32 @@ export default function GameInfo() {
         <p className="text-sm text-ink/65">
           Rated only when two people sit down. A bot in the other chair is still just practice.
         </p>
+        {maxSeats > minSeats && (
+          <div>
+            <p className="text-sm text-ink/65">Players at this table</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {Array.from({ length: maxSeats - minSeats + 1 }, (_, i) => minSeats + i).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setSeatCount(n)}
+                  className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
+                    seatCount === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  }`}
+                >
+                  {n} players
+                </button>
+              ))}
+            </div>
+            {gameId === 'citadels' && (
+              <p className="mt-2 text-xs text-ink/55">
+                {seatCount === 4 && '4 players: two characters face up, one face down.'}
+                {seatCount === 5 && '5 players: one character face up, one face down.'}
+                {seatCount === 6 && '6 players: no face-up discard, one character face down. Seven characters are drafted.'}
+              </p>
+            )}
+          </div>
+        )}
         <label className="block text-sm text-ink/65">
           Optional room password
           <input
