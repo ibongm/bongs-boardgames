@@ -221,16 +221,16 @@ export default function PioneerBoard({
       <section className="flex-1 min-w-0 w-full flex flex-col items-center gap-3">
         {/* Top Banner / Win Announcement */}
         {isGameOver ? (
-          <div className="w-full bg-amber-100 border-2 border-amber-500 rounded-2xl p-3.5 text-center">
-            <p className="font-display text-xl sm:text-2xl font-bold text-amber-900">
+          <div className="w-full bg-gold/15 border border-gold/40 rounded-2xl p-3.5 text-center">
+            <p className="font-display text-xl sm:text-2xl font-bold text-gold">
               Pioneer · {state.players?.[state.winner]?.name} reaches 10 points and wins the island!
             </p>
-            <p className="text-xs text-amber-800 mt-1">
+            <p className="text-xs text-ink/60 mt-1">
               Settlements, cities, Longest Route, Grand Garrison, and secret Charters have settled the realm.
             </p>
           </div>
         ) : (
-          <div className="w-full flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-cream border border-gold/25 rounded-2xl shadow-xs">
+          <div className="w-full flex flex-wrap items-center justify-between gap-2 px-3 py-2 paper-card border border-gold/20 rounded-2xl">
             <div className="flex items-center gap-2">
               <span
                 className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[9px] text-white font-bold"
@@ -245,8 +245,8 @@ export default function PioneerBoard({
             </div>
 
             {state.dice && (
-              <div className="flex items-center gap-1.5 bg-cream border border-gold/30 rounded-xl px-2.5 py-1 text-xs font-semibold">
-                <span className="text-ink/60">Dice:</span>
+              <div className="flex items-center gap-1.5 bg-felt-deep/60 border border-gold/20 rounded-xl px-2.5 py-1 text-xs font-semibold">
+                <span className="text-ink/50">Dice:</span>
                 <span className="font-mono text-gold font-bold">
                   {state.dice[0]} + {state.dice[1]} = {state.dice[0] + state.dice[1]}
                 </span>
@@ -255,21 +255,21 @@ export default function PioneerBoard({
           </div>
         )}
 
-        {/* Action Bar (Only buttons: Roll, Play Breakthrough, Trade, Bank, End turn. No Build button!) */}
+        {/* Action Bar */}
         {interactive && canPlay && isMyTurn && !isGameOver && (
-          <div className="w-full bg-cream border border-gold/25 rounded-2xl p-2.5 flex flex-wrap items-center gap-2 shadow-xs">
+          <div className="w-full paper-card border border-gold/20 rounded-2xl p-2.5 flex flex-wrap items-center gap-2">
             {state.phase === 'rolling' && (
               <button
                 type="button"
                 onClick={handleRoll}
-                className="btn btn-primary py-2 px-6 text-sm font-bold min-h-11 shadow-sm"
+                className="btn btn-primary py-2 px-6 text-sm font-bold min-h-11"
               >
                 Roll Dice
               </button>
             )}
 
             {state.phase === 'setup' && (
-              <div className="flex-1 bg-amber-50 border border-amber-200 rounded-xl p-2 text-xs text-amber-900">
+              <div className="flex-1 bg-gold/10 border border-gold/25 rounded-xl p-2 text-xs text-ink/80">
                 {setupPendingIntersection ? (
                   <span>Settlement selected! Now click a connecting road path.</span>
                 ) : (

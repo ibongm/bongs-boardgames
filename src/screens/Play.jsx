@@ -72,7 +72,7 @@ export default function Play() {
   }, [game, state, status, difficulty, seed, actor, testMode]);
 
   if (!game || copy.published === false || !state) {
-    return <p className="text-ink/70">That game is not available.</p>;
+    return <p className="text-ink/60">That game is not available.</p>;
   }
 
   const Board = game.Board;
@@ -106,15 +106,15 @@ export default function Play() {
 
   if (gameId === 'pioneer') {
     const pioneerSidebarTop = (
-      <div className="bg-cream border border-gold/25 rounded-2xl p-3.5 space-y-3 shadow-xs">
+      <div className="paper-card border border-gold/20 rounded-2xl p-3.5 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold">Practice Table · Unrated</p>
-            <h1 className="font-display text-2xl text-gold">{title}</h1>
+            <p className="text-[10px] uppercase tracking-wider text-ink/40 font-semibold">Practice Table · Unrated</p>
+            <h1 className="font-display text-2xl font-bold text-gold">{title}</h1>
           </div>
           <button
             type="button"
-            className="border border-gold/40 hover:bg-gold/10 rounded-xl px-3 py-1.5 text-xs font-semibold min-h-9 text-ink"
+            className="btn btn-ghost text-xs px-3 py-1.5 min-h-9"
             onClick={() => setRulesOpen(true)}
           >
             Rules
@@ -123,7 +123,7 @@ export default function Play() {
 
         {/* Difficulty pills */}
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold mb-1">Bot Difficulty</p>
+          <p className="text-[10px] uppercase tracking-wider text-ink/40 font-semibold mb-1">Bot Difficulty</p>
           <div className="flex gap-1.5">
             {DIFFICULTIES.map((item) => (
               <button
@@ -131,7 +131,7 @@ export default function Play() {
                 type="button"
                 onClick={() => setDifficulty(item.id)}
                 className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold min-h-9 transition-colors ${
-                  difficulty === item.id ? 'bg-gold text-cream shadow-xs' : 'border border-gold/30 text-ink hover:bg-gold/5'
+                  difficulty === item.id ? 'btn-primary' : 'btn-ghost'
                 }`}
               >
                 {item.label}
@@ -141,17 +141,17 @@ export default function Play() {
         </div>
 
         {/* Table size & Map Layout */}
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gold/15">
+        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gold/10">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold mb-1">Seats</p>
+            <p className="text-[10px] uppercase tracking-wider text-ink/40 font-semibold mb-1">Seats</p>
             <div className="flex gap-1">
               {[3, 4].map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => setSeatCount(n)}
-                  className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 ${
-                    seatCount === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 transition-colors ${
+                    seatCount === n ? 'btn-primary' : 'btn-ghost'
                   }`}
                 >
                   {n}
@@ -161,13 +161,13 @@ export default function Play() {
           </div>
 
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-ink/50 font-semibold mb-1">Map</p>
+            <p className="text-[10px] uppercase tracking-wider text-ink/40 font-semibold mb-1">Map</p>
             <div className="flex gap-1">
               <button
                 type="button"
                 onClick={() => setMapId('map_balanced')}
-                className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 ${
-                  mapId === 'map_balanced' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 transition-colors ${
+                  mapId === 'map_balanced' ? 'btn-primary' : 'btn-ghost'
                 }`}
                 title="Balanced Isle: fixed beginner layout"
               >
@@ -177,8 +177,8 @@ export default function Play() {
                 <button
                   type="button"
                   onClick={() => setMapId('map_shuffled')}
-                  className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 ${
-                    mapId === 'map_shuffled' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  className={`flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 transition-colors ${
+                    mapId === 'map_shuffled' ? 'btn-primary' : 'btn-ghost'
                   }`}
                   title="Random Isle: procedural island layout"
                 >
@@ -188,7 +188,7 @@ export default function Play() {
                 <button
                   type="button"
                   disabled
-                  className="flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 border border-gold/20 text-ink/35 cursor-not-allowed bg-walnut/5"
+                  className="flex-1 py-1 rounded-xl text-xs font-semibold min-h-8 truncate px-1 border border-gold/15 text-ink/30 cursor-not-allowed"
                   title="Sign in to unlock Random Isle"
                 >
                   Random 🔒
@@ -199,7 +199,7 @@ export default function Play() {
         </div>
 
         {isAdmin && (
-          <label className="flex items-center gap-1.5 text-xs text-ink/75 pt-1">
+          <label className="flex items-center gap-1.5 text-xs text-ink/60 pt-1">
             <input
               type="checkbox"
               checked={testMode}
@@ -218,20 +218,20 @@ export default function Play() {
     );
 
     const pioneerSidebarBottom = (
-      <div className="bg-cream border border-gold/25 rounded-2xl p-3 space-y-2 text-center shadow-xs">
-        <p className="font-display text-base font-semibold text-gold">{headline}</p>
+      <div className="paper-card border border-gold/20 rounded-2xl p-3 space-y-2 text-center">
+        <p className="font-display text-base font-bold text-gold">{headline}</p>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={newGame}
-            className="flex-1 bg-gold text-cream font-semibold rounded-xl py-2 px-3 text-xs min-h-10 hover:bg-gold/90 shadow-xs"
+            className="flex-1 btn btn-primary text-xs min-h-10"
           >
             New game
           </button>
           {firebaseUser ? (
             <Link
               to={`/games/${gameId}`}
-              className="flex-1 border border-gold/40 rounded-xl py-2 px-3 text-xs text-center min-h-10 text-ink hover:bg-gold/5 flex items-center justify-center font-medium"
+              className="flex-1 btn btn-ghost text-xs min-h-10"
             >
               Play a person
             </Link>
@@ -239,7 +239,7 @@ export default function Play() {
             <Link
               to="/sign-in"
               state={{ from: `/games/${gameId}` }}
-              className="flex-1 border border-gold/40 rounded-xl py-2 px-3 text-xs text-center min-h-10 text-ink hover:bg-gold/5 flex items-center justify-center font-medium"
+              className="flex-1 btn btn-ghost text-xs min-h-10"
             >
               Sign in to play
             </Link>
@@ -271,15 +271,15 @@ export default function Play() {
 
   return (
     <div className={wide ? 'max-w-4xl mx-auto' : 'max-w-xl mx-auto'}>
-      <p className="text-sm text-ink/70">Practice table · vs bot · unrated</p>
+      <p className="text-sm text-ink/50">Practice table · vs bot · unrated</p>
       <div className="flex flex-wrap items-center gap-3 mt-1">
-        <h1 className="font-display text-4xl text-gold">{title}</h1>
-        <button type="button" className="border border-gold/40 rounded-md px-3 py-2 text-sm min-h-11" onClick={() => setRulesOpen(true)}>
+        <h1 className="font-display text-4xl font-bold text-gold">{title}</h1>
+        <button type="button" className="btn btn-ghost text-sm px-3 py-2 min-h-9" onClick={() => setRulesOpen(true)}>
           Rules
         </button>
       </div>
-      {copy.similarTo && <p className="mt-1 text-ink/55">Similar to {copy.similarTo}</p>}
-      <p className="mt-3 text-ink/80">{copy.blurb}</p>
+      {copy.similarTo && <p className="mt-1 text-ink/45">Similar to {copy.similarTo}</p>}
+      <p className="mt-3 text-ink/70">{copy.blurb}</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {DIFFICULTIES.map((item) => (
@@ -287,8 +287,8 @@ export default function Play() {
             key={item.id}
             type="button"
             onClick={() => setDifficulty(item.id)}
-            className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-              difficulty === item.id ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+            className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+              difficulty === item.id ? 'btn-primary' : 'btn-ghost'
             }`}
           >
             {item.label}
@@ -296,7 +296,7 @@ export default function Play() {
         ))}
       </div>
       {isAdmin && (
-        <label className="mt-3 flex items-center gap-2 text-sm text-ink/80">
+        <label className="mt-3 flex items-center gap-2 text-sm text-ink/70">
           <input
             type="checkbox"
             checked={testMode}
@@ -320,8 +320,8 @@ export default function Play() {
               key={n}
               type="button"
               onClick={() => setSeatCount(n)}
-              className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                seatCount === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+              className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                seatCount === n ? 'btn-primary' : 'btn-ghost'
               }`}
             >
               {n} seats
@@ -331,13 +331,13 @@ export default function Play() {
       )}
       {gameId === 'pioneer' && (
         <div className="mt-3">
-          <p className="text-xs uppercase tracking-wide text-ink/55 mb-1.5">Map Layout</p>
+          <p className="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Map Layout</p>
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setMapId('map_balanced')}
-              className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                mapId === 'map_balanced' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+              className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                mapId === 'map_balanced' ? 'btn-primary' : 'btn-ghost'
               }`}
               title="Best for beginners: fixed layout with printed starts"
             >
@@ -347,8 +347,8 @@ export default function Play() {
               <button
                 type="button"
                 onClick={() => setMapId('map_shuffled')}
-                className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                  mapId === 'map_shuffled' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                  mapId === 'map_shuffled' ? 'btn-primary' : 'btn-ghost'
                 }`}
               >
                 Random Isle
@@ -358,7 +358,7 @@ export default function Play() {
                 <button
                   type="button"
                   disabled
-                  className="px-3 py-2 rounded-full text-sm font-semibold min-h-11 border border-gold/20 text-ink/35 cursor-not-allowed bg-walnut/5"
+                  className="px-3 py-2 rounded-full text-sm font-semibold min-h-11 border border-gold/15 text-ink/30 cursor-not-allowed"
                   title="Random Isle is available after you sign in. Guests may play Balanced Isle against bots."
                 >
                   Random Isle
@@ -378,20 +378,20 @@ export default function Play() {
 
       <div className="mt-8">
         <Board state={state} canPlay={humanTurn} onMove={onMove} viewerSeat={viewerSeat} />
-        <p className="mt-4 text-center font-display text-2xl text-gold">{headline}</p>
+        <p className="mt-4 text-center font-display text-2xl font-bold text-gold">{headline}</p>
         <div className="mt-5 flex flex-col sm:flex-row gap-2 justify-center">
-          <button type="button" onClick={newGame} className="bg-gold text-cream font-semibold rounded-md px-4 py-3 min-h-11">
+          <button type="button" onClick={newGame} className="btn btn-primary">
             New game
           </button>
           {firebaseUser ? (
-            <Link to={`/games/${gameId}`} className="border border-gold/40 rounded-md px-4 py-3 text-center min-h-11">
+            <Link to={`/games/${gameId}`} className="btn btn-ghost">
               Play a person
             </Link>
           ) : (
             <Link
               to="/sign-in"
               state={{ from: `/games/${gameId}` }}
-              className="border border-gold/40 rounded-md px-4 py-3 text-center min-h-11"
+              className="btn btn-ghost"
             >
               Sign in to play a person
             </Link>

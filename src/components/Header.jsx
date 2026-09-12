@@ -4,13 +4,13 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 
 const linkClass = ({ isActive }) =>
-  `px-3 py-2 rounded-md text-sm min-h-11 inline-flex items-center ${
-    isActive ? 'bg-cream/15 text-cream font-semibold' : 'text-cream/90 hover:text-cream'
+  `px-3 py-2 rounded-md text-sm min-h-11 inline-flex items-center transition-colors ${
+    isActive ? 'bg-gold/15 text-gold font-semibold' : 'text-cream/70 hover:text-cream hover:bg-white/5'
   }`;
 
 const mobileLinkClass = ({ isActive }) =>
-  `block px-3 py-2.5 rounded-lg text-sm min-h-11 flex items-center ${
-    isActive ? 'bg-cream/20 text-cream font-semibold' : 'text-cream/90 hover:bg-cream/10'
+  `block px-3 py-2.5 rounded-lg text-sm min-h-11 flex items-center transition-colors ${
+    isActive ? 'bg-gold/15 text-gold font-semibold' : 'text-cream/70 hover:bg-white/5 hover:text-cream'
   }`;
 
 export default function Header() {
@@ -21,9 +21,9 @@ export default function Header() {
   const closeMenu = () => setMobileOpen(false);
 
   return (
-    <header className="border-b border-cream/15 bg-gold sticky top-0 z-20 shadow-sm">
+    <header className="border-b border-white/8 bg-rust/80 backdrop-blur-xl sticky top-0 z-20">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-        <Link to="/" onClick={closeMenu} className="font-display text-xl text-cream shrink-0">
+        <Link to="/" onClick={closeMenu} className="font-display text-xl font-bold text-gold shrink-0 tracking-tight">
           {site.homeTitle}
         </Link>
 
@@ -39,19 +39,19 @@ export default function Header() {
         <div className="hidden sm:flex items-center gap-3 text-sm">
           {firebaseUser ? (
             <>
-              <Link to="/settings" className="text-cream/90 hover:text-cream py-2 font-medium">
+              <Link to="/settings" className="text-cream/70 hover:text-cream py-2 font-medium transition-colors">
                 {profile?.displayName || 'Player'}
               </Link>
               <button
                 type="button"
                 onClick={logout}
-                className="text-cream/80 hover:text-cream py-2 underline-offset-4 hover:underline"
+                className="text-cream/50 hover:text-cream py-2 underline-offset-4 hover:underline transition-colors"
               >
                 Sign out
               </button>
             </>
           ) : (
-            <Link to="/sign-in" className="text-cream font-medium hover:underline py-2">
+            <Link to="/sign-in" className="btn btn-primary text-sm px-4 py-2 min-h-9">
               Sign in
             </Link>
           )}
@@ -63,12 +63,12 @@ export default function Header() {
             <Link
               to="/settings"
               onClick={closeMenu}
-              className="text-xs text-cream/90 bg-cream/15 px-2.5 py-1.5 rounded-full font-medium max-w-[120px] truncate"
+              className="text-xs text-cream/70 bg-white/8 px-2.5 py-1.5 rounded-full font-medium max-w-[120px] truncate"
             >
               {profile?.displayName || 'Player'}
             </Link>
           ) : (
-            <Link to="/sign-in" onClick={closeMenu} className="text-xs text-cream/90 hover:text-cream px-2 py-1 font-medium">
+            <Link to="/sign-in" onClick={closeMenu} className="text-xs text-gold font-semibold px-2 py-1">
               Sign in
             </Link>
           )}
@@ -77,7 +77,7 @@ export default function Header() {
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label="Toggle navigation menu"
             aria-expanded={mobileOpen}
-            className="p-2 text-cream rounded-md hover:bg-cream/15 min-h-11 min-w-11 flex items-center justify-center"
+            className="p-2 text-cream/70 hover:text-cream rounded-md hover:bg-white/8 min-h-11 min-w-11 flex items-center justify-center transition-colors"
           >
             <svg
               className="w-6 h-6 fill-none stroke-current"
@@ -98,7 +98,7 @@ export default function Header() {
 
       {/* Mobile dropdown drawer */}
       {mobileOpen && (
-        <div className="sm:hidden border-t border-cream/15 bg-gold px-4 py-3 space-y-1">
+        <div className="sm:hidden border-t border-white/8 bg-rust/95 backdrop-blur-xl px-4 py-3 space-y-1">
           <NavLink to="/lobby" onClick={closeMenu} className={mobileLinkClass}>
             Lobby
           </NavLink>
@@ -127,7 +127,7 @@ export default function Header() {
                 closeMenu();
                 logout();
               }}
-              className="w-full text-left px-3 py-2.5 text-sm text-cream/80 hover:text-cream hover:bg-cream/10 rounded-lg min-h-11 flex items-center"
+              className="w-full text-left px-3 py-2.5 text-sm text-cream/50 hover:text-cream hover:bg-white/5 rounded-lg min-h-11 flex items-center transition-colors"
             >
               Sign out
             </button>

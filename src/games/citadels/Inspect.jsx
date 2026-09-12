@@ -14,7 +14,7 @@ function typeTone(type) {
       trade: '#2f6b4f',
       military: '#a3543a',
       unique: '#6b4a8a',
-    }[type] || '#6b1c28'
+    }[type] || '#6366f1'
   );
 }
 
@@ -127,7 +127,7 @@ export default function Inspect({ inspect, onClose, onOpen, state, viewerSeat, a
                 <button
                   key={`${id}-${districtIndex}`}
                   type="button"
-                  className="text-left rounded-md border border-gold/25 bg-cream p-1"
+                  className="text-left rounded-md border border-gold/20 bg-felt-deep p-1"
                   onClick={() =>
                     onOpen({
                       kind: 'card',
@@ -175,7 +175,7 @@ export default function Inspect({ inspect, onClose, onOpen, state, viewerSeat, a
                   <button
                     key={id}
                     type="button"
-                    className="text-left rounded-md border border-gold/25 bg-cream p-1"
+                    className="text-left rounded-md border border-gold/20 bg-felt-deep p-1"
                     onClick={() =>
                       onOpen({
                         kind: 'card',

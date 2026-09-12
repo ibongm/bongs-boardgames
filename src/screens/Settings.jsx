@@ -17,12 +17,12 @@ export default function Settings() {
 
   return (
     <form onSubmit={onSubmit} className="max-w-md paper-card rounded-3xl p-6">
-      <h1 className="font-display text-4xl text-gold tracking-tight">Profile settings</h1>
-      <label className="block mt-5 text-sm text-ink/65">
+      <h1 className="font-display text-4xl font-bold text-gold tracking-tight">Profile settings</h1>
+      <label className="block mt-5 text-sm text-ink/60">
         Display name
         <input className="mt-1 w-full rounded-lg px-3 py-2 min-h-11" value={name} onChange={(e) => setName(e.target.value)} required />
       </label>
-      <p className="mt-3 text-xs text-ink/45">{firebaseUser?.email || profile.email}</p>
+      <p className="mt-3 text-xs text-ink/40">{firebaseUser?.email || profile.email}</p>
       <button type="submit" className="btn btn-primary mt-4">Save</button>
       {saved && <p className="mt-2 text-sm text-gold">Saved.</p>}
     </form>

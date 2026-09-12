@@ -48,10 +48,10 @@ export default function GameInfo() {
 
   return (
     <div className="max-w-xl">
-      <p className="font-display text-5xl text-gold tracking-tight">{copy.title || game.meta.title}</p>
-      {copy.similarTo && <p className="mt-1 text-ink/45">Similar to {copy.similarTo}</p>}
+      <p className="font-display text-5xl font-bold text-gold tracking-tight">{copy.title || game.meta.title}</p>
+      {copy.similarTo && <p className="mt-1 text-ink/40">Similar to {copy.similarTo}</p>}
       <p className="mt-3 text-ink/70">{copy.blurb}</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/40">
+      <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/35">
         {maxSeats > minSeats ? `${minSeats}–${maxSeats}` : game.meta.seats} seats · humans and bots
       </p>
       <button type="button" className="btn btn-ghost mt-4" onClick={() => setRulesOpen(true)}>
@@ -65,24 +65,24 @@ export default function GameInfo() {
       <Link to={`/play/${gameId}`} className="btn btn-primary mt-8">
         Play vs bot
       </Link>
-      <p className="mt-2 text-xs text-ink/45">Instant, no account, does not count toward ratings.</p>
+      <p className="mt-2 text-xs text-ink/40">Instant, no account, does not count toward ratings.</p>
 
       <form onSubmit={onCreate} className="mt-8 space-y-3 paper-card rounded-3xl p-6">
-        <p className="font-display text-2xl text-gold tracking-tight">Host a table</p>
-        <p className="text-sm text-ink/65">
+        <p className="font-display text-2xl font-bold text-gold tracking-tight">Host a table</p>
+        <p className="text-sm text-ink/60">
           Rated only when two people sit down. A bot in the other chair is still just practice.
         </p>
         {maxSeats > minSeats && (
           <div>
-            <p className="text-sm text-ink/65">Players at this table</p>
+            <p className="text-sm text-ink/60">Players at this table</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {Array.from({ length: maxSeats - minSeats + 1 }, (_, i) => minSeats + i).map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => setSeatCount(n)}
-                  className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                    seatCount === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                    seatCount === n ? 'btn-primary' : 'btn-ghost'
                   }`}
                 >
                   {n} players
@@ -90,7 +90,7 @@ export default function GameInfo() {
               ))}
             </div>
             {gameId === 'citadels' && (
-              <p className="mt-2 text-xs text-ink/55">
+              <p className="mt-2 text-xs text-ink/50">
                 {seatCount === 4 && '4 players: two characters face up, one face down.'}
                 {seatCount === 5 && '5 players: one character face up, one face down.'}
                 {seatCount === 6 && '6 players: no face-up discard, one character face down. Seven characters are drafted.'}
@@ -98,13 +98,13 @@ export default function GameInfo() {
             )}
             {gameId === 'pioneer' && (
               <div className="mt-4">
-                <p className="text-sm text-ink/65 mb-1.5">Island Map Layout</p>
+                <p className="text-sm text-ink/60 mb-1.5">Island Map Layout</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setMapId('map_balanced')}
-                    className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                      mapId === 'map_balanced' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                    className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                      mapId === 'map_balanced' ? 'btn-primary' : 'btn-ghost'
                     }`}
                     title="Best for beginners: fixed layout with printed starts"
                   >
@@ -114,8 +114,8 @@ export default function GameInfo() {
                     <button
                       type="button"
                       onClick={() => setMapId('map_shuffled')}
-                      className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                        mapId === 'map_shuffled' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                      className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                        mapId === 'map_shuffled' ? 'btn-primary' : 'btn-ghost'
                       }`}
                     >
                       Random Isle
@@ -125,7 +125,7 @@ export default function GameInfo() {
                       <button
                         type="button"
                         disabled
-                        className="px-3 py-2 rounded-full text-sm font-semibold min-h-11 border border-gold/20 text-ink/35 cursor-not-allowed bg-walnut/5"
+                        className="px-3 py-2 rounded-full text-sm font-semibold min-h-11 border border-gold/15 text-ink/30 cursor-not-allowed"
                         title="Random Isle is available after you sign in. Guests may play Balanced Isle against bots."
                       >
                         Random Isle
@@ -144,7 +144,7 @@ export default function GameInfo() {
             )}
           </div>
         )}
-        <label className="block text-sm text-ink/65">
+        <label className="block text-sm text-ink/60">
           Optional room password
           <input
             className="mt-1 w-full rounded-lg px-3 py-2 min-h-11"

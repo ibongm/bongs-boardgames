@@ -40,10 +40,10 @@ export default function BanditModal({
   // If discarding required for viewer
   if (isDiscardPhase && requiredDiscard > 0 && !alreadyDiscarded) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div className="bg-cream border-2 border-red-700/60 rounded-3xl p-5 shadow-2xl max-w-sm w-full">
-          <p className="font-display text-lg font-bold text-red-800 mb-1">A 7 was Rolled!</p>
-          <p className="text-xs text-ink/75 mb-3">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-rust/80 backdrop-blur-sm">
+        <div className="paper-card border border-gold/30 rounded-3xl p-5 shadow-2xl max-w-sm w-full">
+          <p className="font-display text-lg font-bold text-gold mb-1">A 7 was Rolled!</p>
+          <p className="text-xs text-ink/70 mb-3">
             You hold {totalCards} resource cards. The Bandit forces you to discard{' '}
             <strong className="text-ink font-bold">{requiredDiscard}</strong> cards of your choice.
           </p>
@@ -53,7 +53,7 @@ export default function BanditModal({
               const held = player?.resources?.[r.id] || 0;
               const count = discardCounts[r.id] || 0;
               return (
-                <div key={r.id} className="flex items-center justify-between p-2 rounded-xl bg-walnut/5 border border-gold/15">
+                <div key={r.id} className="flex items-center justify-between p-2 rounded-xl bg-felt-deep/50 border border-gold/15">
                   <div className="flex items-center gap-2">
                     <span className="text-base">{r.icon}</span>
                     <div>
@@ -66,7 +66,7 @@ export default function BanditModal({
                       type="button"
                       disabled={count <= 0}
                       onClick={() => setDiscardCounts((c) => ({ ...c, [r.id]: Math.max(0, count - 1) }))}
-                      className="w-7 h-7 rounded-lg bg-walnut/10 font-bold text-sm disabled:opacity-30"
+                      className="w-7 h-7 rounded-lg bg-gold/15 text-gold hover:bg-gold/25 font-bold text-sm disabled:opacity-30 transition-colors"
                     >
                       -
                     </button>
@@ -75,7 +75,7 @@ export default function BanditModal({
                       type="button"
                       disabled={count >= held || totalDiscardSelected >= requiredDiscard}
                       onClick={() => setDiscardCounts((c) => ({ ...c, [r.id]: count + 1 }))}
-                      className="w-7 h-7 rounded-lg bg-walnut/10 font-bold text-sm disabled:opacity-30"
+                      className="w-7 h-7 rounded-lg bg-gold/15 text-gold hover:bg-gold/25 font-bold text-sm disabled:opacity-30 transition-colors"
                     >
                       +
                     </button>
@@ -103,10 +103,10 @@ export default function BanditModal({
     const oppToSteal = selectedOppSeat !== null ? selectedOppSeat : eligibleOpponents[0];
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-        <div className="bg-cream border-2 border-gold rounded-3xl p-5 shadow-2xl max-w-sm w-full">
-          <p className="font-display text-lg font-bold text-ink mb-1">Bandit Plunder</p>
-          <p className="text-xs text-ink/75 mb-3">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-rust/80 backdrop-blur-sm">
+        <div className="paper-card border border-gold/30 rounded-3xl p-5 shadow-2xl max-w-sm w-full">
+          <p className="font-display text-lg font-bold text-gold mb-1">Bandit Plunder</p>
+          <p className="text-xs text-ink/70 mb-3">
             Choose an adjacent opponent to steal 1 random resource card from:
           </p>
 
@@ -120,7 +120,7 @@ export default function BanditModal({
                   type="button"
                   onClick={() => setSelectedOppSeat(oppSeat)}
                   className={`w-full p-3 rounded-xl border flex items-center justify-between text-left transition-all ${
-                    isSelected ? 'border-gold bg-gold/15' : 'border-gold/20 bg-cream/70'
+                    isSelected ? 'border-gold bg-gold/15' : 'border-gold/20 bg-felt-deep/60'
                   }`}
                 >
                   <div className="flex items-center gap-2">

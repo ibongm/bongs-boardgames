@@ -19,8 +19,8 @@ export default function SeatPanel({
             key={seat}
             className={`rounded-2xl border p-2.5 transition-all ${
               isTurn
-                ? 'border-gold bg-cream shadow-sm ring-1 ring-gold/40'
-                : 'border-gold/20 bg-cream/60'
+                ? 'border-gold bg-felt-deep shadow-table ring-1 ring-gold/40'
+                : 'border-gold/20 bg-felt-deep/40'
             }`}
           >
             <div className="flex items-center justify-between gap-1.5">
@@ -45,15 +45,15 @@ export default function SeatPanel({
             </div>
 
             <div className="mt-2 grid grid-cols-3 gap-1 text-[11px] text-ink/70 text-center">
-              <div className="bg-walnut/10 rounded px-1 py-0.5">
+              <div className="bg-gold/10 rounded px-1 py-0.5">
                 <span className="block text-[9px] uppercase tracking-wider text-ink/45">Cards</span>
                 <span className="font-semibold">{p.cardCount ?? Object.values(p.resources || {}).reduce((s, n) => s + (n || 0), 0)}</span>
               </div>
-              <div className="bg-walnut/10 rounded px-1 py-0.5">
+              <div className="bg-gold/10 rounded px-1 py-0.5">
                 <span className="block text-[9px] uppercase tracking-wider text-ink/45">Guards</span>
                 <span className="font-semibold">{p.playedGuards || 0}</span>
               </div>
-              <div className="bg-walnut/10 rounded px-1 py-0.5">
+              <div className="bg-gold/10 rounded px-1 py-0.5">
                 <span className="block text-[9px] uppercase tracking-wider text-ink/45">Route</span>
                 <span className="font-semibold">{p.routeLength || 0}</span>
               </div>
@@ -62,12 +62,12 @@ export default function SeatPanel({
             {(hasRoute || hasGarrison) && (
               <div className="mt-1.5 flex flex-wrap gap-1">
                 {hasRoute && (
-                  <span className="inline-block bg-amber-100 text-amber-900 border border-amber-300 rounded px-1.5 py-0.2 text-[9px] font-semibold">
+                  <span className="inline-block bg-gold/20 text-gold border border-gold/40 rounded px-1.5 py-0.2 text-[9px] font-semibold">
                     Route (+2)
                   </span>
                 )}
                 {hasGarrison && (
-                  <span className="inline-block bg-red-100 text-red-900 border border-red-300 rounded px-1.5 py-0.2 text-[9px] font-semibold">
+                  <span className="inline-block bg-indigo-500/20 text-indigo-300 border border-indigo-400/40 rounded px-1.5 py-0.2 text-[9px] font-semibold">
                     Garrison (+2)
                   </span>
                 )}

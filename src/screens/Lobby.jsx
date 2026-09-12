@@ -30,15 +30,15 @@ export default function Lobby() {
 
   return (
     <div>
-      <h1 className="font-display text-5xl text-gold tracking-tight">Lobby</h1>
+      <h1 className="font-display text-5xl font-bold text-gold tracking-tight">Lobby</h1>
       <form onSubmit={joinCode} className="mt-6 flex flex-col sm:flex-row gap-2 max-w-lg">
         <input className="flex-1 rounded-lg px-3 py-2 min-h-11 uppercase" placeholder="Room code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
         <button type="submit" className="btn btn-primary">Join by code</button>
       </form>
-      {error && <p className="mt-2 text-sm text-gold">{error}</p>}
+      {error && <p className="mt-2 text-sm text-parchment">{error}</p>}
       <div className="mt-8 overflow-x-auto rounded-3xl paper-card">
         <table className="w-full text-sm text-left">
-          <thead className="text-ink/50">
+          <thead className="text-ink/40">
             <tr>
               <th className="px-4 py-3 font-semibold">Code</th>
               <th className="px-4 py-3 font-semibold">Game</th>
@@ -63,7 +63,7 @@ export default function Lobby() {
             })}
             {!rooms.length && (
               <tr>
-                <td className="px-4 py-8 text-ink/45" colSpan={5}>No open rooms. Create one from a game page.</td>
+                <td className="px-4 py-8 text-ink/35" colSpan={5}>No open rooms. Create one from a game page.</td>
               </tr>
             )}
           </tbody>

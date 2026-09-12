@@ -25,15 +25,15 @@ export default function Leaderboard() {
 
   return (
     <div>
-      <h1 className="font-display text-5xl text-gold tracking-tight">Leaderboards</h1>
-      <p className="mt-2 text-sm text-ink/55">Rated games only — two people at the table. Bot practice never counts.</p>
+      <h1 className="font-display text-5xl font-bold text-gold tracking-tight">Leaderboards</h1>
+      <p className="mt-2 text-sm text-ink/45">Rated games only — two people at the table. Bot practice never counts.</p>
       <div className="mt-5 flex gap-2 flex-wrap">
         {games.map((game) => (
           <Link
             key={game.meta.id}
             to={`/leaderboards/${game.meta.id}`}
-            className={`px-4 py-2 rounded-full text-sm min-h-11 inline-flex items-center font-semibold ${
-              activeId === game.meta.id ? 'bg-gold text-cream' : 'btn-ghost'
+            className={`px-4 py-2 rounded-full text-sm min-h-11 inline-flex items-center font-semibold transition-colors ${
+              activeId === game.meta.id ? 'btn-primary' : 'btn-ghost'
             }`}
           >
             {site.games[game.meta.id]?.title || game.meta.title}
@@ -42,7 +42,7 @@ export default function Leaderboard() {
       </div>
       <div className="mt-6 overflow-x-auto rounded-3xl paper-card">
         <table className="w-full text-sm">
-          <thead className="text-ink/50">
+          <thead className="text-ink/40">
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Rank</th>
               <th className="px-4 py-3 text-left font-semibold">Player</th>
@@ -67,7 +67,7 @@ export default function Leaderboard() {
             ))}
             {!rows.length && (
               <tr>
-                <td className="px-4 py-8 text-ink/45" colSpan={5}>
+                <td className="px-4 py-8 text-ink/35" colSpan={5}>
                   No rated games for {getGame(activeId)?.meta.title || 'this title'} yet.
                 </td>
               </tr>

@@ -37,10 +37,10 @@ export default function RulesModal({ gameId, copy, open, onClose, matchInfo, foo
 
   return (
     <Modal title={`${title} rules`} open={open} onClose={onClose} footer={footer}>
-      <p className="text-ink/60 text-xs uppercase tracking-wide">{seatsLabel} players</p>
+      <p className="text-ink/50 text-xs uppercase tracking-wide">{seatsLabel} players</p>
       {matchInfo && (
-        <div className="mt-3 rounded-xl border border-gold/20 bg-cream p-3 text-ink">
-          <p className="text-xs uppercase tracking-wide text-ink/60">This match</p>
+        <div className="mt-3 rounded-xl border border-gold/20 bg-felt-deep/50 p-3 text-ink">
+          <p className="text-xs uppercase tracking-wide text-ink/50">This match</p>
           <p className="mt-1">{matchInfo}</p>
         </div>
       )}

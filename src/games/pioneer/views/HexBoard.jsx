@@ -40,7 +40,7 @@ export default function HexBoard({
     <div className="relative w-full max-w-[min(100%,calc(100vh-160px))] overflow-hidden rounded-3xl border border-gold/30 bg-[#ded3be] shadow-inner flex flex-col items-center">
       {/* Zoom controls */}
       {interactive && (
-        <div className="absolute top-3 right-3 z-20 flex gap-1 bg-cream/90 backdrop-blur-xs p-1 rounded-xl border border-gold/30 shadow-xs">
+        <div className="absolute top-3 right-3 z-20 flex gap-1 paper-card p-1 rounded-xl border border-gold/30 shadow-table">
           <button
             type="button"
             className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-ink hover:bg-gold/20"

@@ -53,11 +53,11 @@ export default function Admin() {
 
   return (
     <div className="space-y-10">
-      <h1 className="font-display text-5xl text-gold tracking-tight">Admin</h1>
+      <h1 className="font-display text-5xl font-bold text-gold tracking-tight">Admin</h1>
       {note && <p className="text-sm text-gold">{note}</p>}
 
       <form onSubmit={saveCopy} className="paper-card rounded-3xl p-6 space-y-3">
-        <h2 className="font-display text-2xl">Site copy</h2>
+        <h2 className="font-display text-2xl font-bold text-gold">Site copy</h2>
         <Field label="Home title">
           <input className="w-full rounded-lg px-3 py-2 min-h-11" value={copy.homeTitle} onChange={(e) => setCopy({ ...copy, homeTitle: e.target.value })} />
         </Field>
@@ -71,7 +71,7 @@ export default function Admin() {
       </form>
 
       <section className="paper-card rounded-3xl p-6">
-        <h2 className="font-display text-2xl">Games</h2>
+        <h2 className="font-display text-2xl font-bold text-gold">Games</h2>
         <p className="mt-1 text-sm text-ink/65">Select a title to edit its page copy.</p>
         <ul className="mt-4 divide-y divide-gold/15">
           {games.map((game) => {
@@ -145,7 +145,7 @@ export default function Admin() {
       </Modal>
 
       <section className="paper-card rounded-3xl p-6">
-        <h2 className="font-display text-2xl">Players</h2>
+        <h2 className="font-display text-2xl font-bold text-gold">Players</h2>
         <ul className="mt-3 space-y-2 text-sm">
           {users.map((user) => (
             <li key={user.id} className="flex flex-wrap items-center gap-2 justify-between border-b border-gold/10 py-2">
@@ -164,7 +164,7 @@ export default function Admin() {
       </section>
 
       <section className="paper-card rounded-3xl p-6">
-        <h2 className="font-display text-2xl">Live rooms</h2>
+        <h2 className="font-display text-2xl font-bold text-gold">Live rooms</h2>
         <ul className="mt-3 space-y-2 text-sm">
           {rooms.map((room) => (
             <li key={room.id} className="flex justify-between gap-2">

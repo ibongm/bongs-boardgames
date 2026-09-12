@@ -23,7 +23,7 @@ export default class ErrorBoundary extends React.Component {
             An error occurred while rendering this table. You can return to the lobby or refresh.
           </p>
           {this.state.error?.message && (
-            <p className="text-xs font-mono text-gold bg-walnut/50 p-2 rounded-lg break-all">
+            <p className="text-xs font-mono text-gold bg-felt-deep/50 p-2 rounded-lg break-all">
               {this.state.error.message}
             </p>
           )}

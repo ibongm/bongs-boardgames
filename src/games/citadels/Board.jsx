@@ -8,22 +8,22 @@ import { DistrictPicture, RolePicture } from './Art.jsx';
 import Inspect from './Inspect.jsx';
 
 function typeTone(type) {
-  return TYPE_COLORS[type] || '#6b1c28';
+  return TYPE_COLORS[type] || '#6366f1';
 }
 
 function CardFace({ cardId, onClick, badge }) {
   const card = cardById(cardId);
   if (!card) {
-    return <div className="h-24 w-16 rounded-md bg-cream border border-gold/25" />;
+    return <div className="h-24 w-16 rounded-md bg-felt-deep border border-gold/20" />;
   }
   return (
-    <button type="button" onClick={onClick} className="text-left rounded-md border border-gold/25 bg-cream p-1 min-w-[4.6rem]">
+    <button type="button" onClick={onClick} className="text-left rounded-md border border-gold/20 bg-felt-deep p-1 min-w-[4.6rem]">
       <DistrictPicture stem={stemOf(cardId)} type={card.type} className="w-16 mx-auto" />
       <span className="block mt-1 text-[10px] uppercase tracking-wide font-semibold" style={{ color: typeTone(card.type) }}>
         {names.types[card.type]}
       </span>
       <span className="block text-ink text-xs font-semibold leading-tight">{card.name}</span>
-      <span className="block text-ink/70 text-[11px]">
+      <span className="block text-ink/60 text-[11px]">
         {card.cost} gold{badge ? ` · ${badge}` : ''}
       </span>
     </button>
@@ -64,7 +64,7 @@ function Scoreboard({ state }) {
         {sheets.map((sheet, place) => {
           const won = sheet.seat === state.winner;
           return (
-            <li key={sheet.seat} className={`rounded-xl border p-3 ${won ? 'border-gold bg-cream' : 'border-gold/20 bg-cream/60'}`}>
+            <li key={sheet.seat} className={`rounded-xl border p-3 ${won ? 'border-gold bg-felt-deep' : 'border-gold/15 bg-felt-deep/50'}`}>
               <div className="flex items-baseline justify-between gap-2">
                 <p className="font-semibold text-ink">
                   {place + 1}. {sheet.name}
@@ -122,8 +122,8 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
     return (
       <div className="grid grid-cols-2 gap-1">
         {state.players.map((p, i) => (
-          <div key={i} className="rounded-md bg-cream px-2 py-1 border border-gold/15">
-            <p className="text-[10px] text-ink/70 truncate">{p.name || `Seat ${i + 1}`}</p>
+          <div key={i} className="rounded-md bg-felt-deep px-2 py-1 border border-gold/15">
+            <p className="text-[10px] text-ink/60 truncate">{p.name || `Seat ${i + 1}`}</p>
             <div className="flex flex-wrap gap-0.5 mt-1">
               {p.city.slice(0, 4).map((id) => (
                 <span key={id} className="w-3 h-3 rounded-sm" style={{ background: typeTone(cardById(id)?.type) }} />
@@ -266,7 +266,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           <p className="text-sm text-ink/80">{phaseHint}</p>
         </section>
       )}
-      <div className="order-2 sm:order-4 sticky bottom-0 z-20 -mx-3 px-3 py-2 bg-cream/95 border-t border-gold/20 sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:border-0 space-y-2">
+      <div className="order-2 sm:order-4 sticky bottom-0 z-20 -mx-3 px-3 py-2 bg-rust/95 backdrop-blur-sm border-t border-gold/15 sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:border-0 space-y-2">
         {youBlock}
       </div>
       <section className="order-3 sm:order-2">
@@ -292,10 +292,10 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
                   current
                     ? 'bg-gold text-cream border-gold'
                     : faceup || killed
-                      ? 'bg-cream border-gold/20 text-ink/50'
+                      ? 'bg-felt-deep/40 border-gold/15 text-ink/40'
                       : holder
-                        ? 'bg-gold/10 border-gold text-ink'
-                        : 'bg-cream border-gold/25 text-ink'
+                        ? 'bg-gold/15 border-gold text-ink'
+                        : 'bg-felt-deep border-gold/20 text-ink'
                 }`}
               >
                 <RolePicture roleId={roleId} className="w-full max-w-[3.2rem]" />
@@ -313,7 +313,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           {state.players.map((p, i) => {
             const now = !over && i === actor;
             return (
-              <div key={i} className={`rounded-lg border p-2 ${now ? 'border-gold bg-cream col-span-2' : 'border-gold/20 bg-cream/70'}`}>
+              <div key={i} className={`rounded-lg border p-2 ${now ? 'border-gold bg-felt-deep col-span-2' : 'border-gold/15 bg-felt-deep/40'}`}>
                 <button type="button" className="w-full text-left" onClick={() => setInspect({ kind: 'seat', seat: i })}>
                   <div className="flex items-start justify-between gap-1">
                     <p className="text-ink font-semibold text-xs leading-tight">
@@ -342,7 +342,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
                           key={`${id}-${districtIndex}`}
                           type="button"
                           onClick={() => setInspect({ kind: 'card', cardId: id, destroy: destroy || null })}
-                          className="rounded border border-gold/20 bg-cream w-10 p-0 text-left"
+                          className="rounded border border-gold/15 bg-felt-deep w-10 p-0 text-left"
                           title={displayName(id)}
                         >
                           <DistrictPicture stem={stemOf(id)} type={card?.type} />

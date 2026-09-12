@@ -50,12 +50,13 @@ One popup, two layers: How to play, then Details. Same modal on the game page, t
 
 Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-empty.
 
-Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Body, cards, and the rules modal use ink on cream. Cream text stays on the burgundy header and filled primary buttons. Display face is Source Serif 4. Districts, characters, and other seats open a popup with art and the card or player text. Official card photos for all 8 characters, card back, 17 basic districts, and 10 unique districts are extracted from the official demo cards sheet. Spectator and opponent views redact hidden role drafts and unchosen cards.
+Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Cards and panels use dark slate surfaces with glass accents. Display and body faces use Inter. Districts, characters, and other seats open a popup with art and the card or player text. Official card photos for all 8 characters, card back, 17 basic districts, and 10 unique districts are extracted from the official demo cards sheet. Spectator and opponent views redact hidden role drafts and unchosen cards.
 
 Pioneer ships complete 5th-edition-style island settlement rules (3–4 seats, 10 Victory Points): pointy-top hex grid, Balanced Isle printed starts, Random Isle spiral placement, 2d6 production, roll of 7 discard/Bandit/steal, maritime and domestic trading (with bot offer evaluation and counter-offers), contextual building (roads, settlements, cities), Breakthrough deck with hidden Charters, Longest Route, and Grand Garrison. On desktop, Pioneer renders in a zero-scroll two-column split view with match options, seat badges, hand resources, and log on the left, and the board arena with action bar on the right.
 
 ## Architecture & Performance
 
+- **Design System ("Midnight Glass")**: Modern dark navy canvas (`#0f172a`) with subtle indigo radial light gradients, frosted glass cards (`backdrop-blur-xl`, semi-transparent indigo background, subtle border glow), glowing indigo/violet gradients on buttons and accents, Inter geometric typography, and refined game board surfaces (including dark slate Citadels cards and indigo/ivory Connect Four discs).
 - **Automated Testing**: Vitest suite covers game engines for Tic-Tac-Toe, Connect Four, Citadels, and Pioneer.
 - **Code Splitting & Bundling**: Route screens and game boards are dynamically imported via `React.lazy()` with `<Suspense>` skeletons. Citadels artwork is bundled in a separate chunk, reducing the initial index bundle to ~85 kB (gzip ~27 kB).
 - **Security & Rules**: Firestore security rules restrict room updates to hosts for status/matchId/settings changes, lock `/stats/games` modifications to valid aggregation keys, and validate profile updates against role privilege escalation and stat arithmetic invariants.

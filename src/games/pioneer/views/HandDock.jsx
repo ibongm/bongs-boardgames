@@ -20,7 +20,7 @@ export default function HandDock({
   const resourceKeys = ['wood', 'clay', 'sheep', 'wheat', 'stone'];
 
   return (
-    <div className="bg-cream border border-gold/25 rounded-3xl p-3 sm:p-4 space-y-3">
+    <div className="paper-card border border-gold/20 rounded-3xl p-3 sm:p-4 space-y-3">
       {/* Hand resources */}
       <div>
         <div className="flex items-center justify-between mb-2">
@@ -77,13 +77,13 @@ export default function HandDock({
               return (
                 <div
                   key={`${cId}-${idx}`}
-                  className="rounded-xl border border-gold/30 bg-walnut/5 p-2.5 min-w-[130px] flex flex-col justify-between"
+                  className="rounded-xl border border-gold/20 bg-felt-deep/50 p-2.5 min-w-[130px] flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-1">
                       <span className="font-semibold text-xs text-ink">{def?.title || 'Card'}</span>
                       {def?.isCharter && (
-                        <span className="bg-amber-100 text-amber-800 text-[9px] px-1 rounded font-bold">1 VP</span>
+                        <span className="bg-gold/20 text-gold border border-gold/30 text-[9px] px-1.5 py-0.5 rounded font-bold">1 VP</span>
                       )}
                     </div>
                     <p className="text-[10px] text-ink/70 mt-1 leading-snug">{def?.description}</p>
@@ -95,7 +95,7 @@ export default function HandDock({
                     <button
                       type="button"
                       onClick={() => onPlayCard(cId)}
-                      className="mt-2 w-full bg-gold text-cream text-xs font-semibold py-1.5 px-2 rounded-lg min-h-9 transition-colors hover:bg-gold/90"
+                      className="mt-2 w-full btn btn-primary text-xs py-1.5 px-2 min-h-9"
                     >
                       Play
                     </button>

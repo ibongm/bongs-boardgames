@@ -1,5 +1,43 @@
 # Changelog
 
+### [2026-09-12] - Midnight Glass Modern Dark Theme Redesign
+- **Files Changed**:
+  - `index.html` (Modified)
+  - `src/index.css` (Modified)
+  - `src/components/Header.jsx` (Modified)
+  - `src/components/Modal.jsx` (Modified)
+  - `src/components/GameCard.jsx` (Modified)
+  - `src/components/RulesModal.jsx` (Modified)
+  - `src/components/ErrorBoundary.jsx` (Modified)
+  - `src/screens/Home.jsx` (Modified)
+  - `src/screens/Auth.jsx` (Modified)
+  - `src/screens/Settings.jsx` (Modified)
+  - `src/screens/GameInfo.jsx` (Modified)
+  - `src/screens/Room.jsx` (Modified)
+  - `src/screens/Lobby.jsx` (Modified)
+  - `src/screens/Profile.jsx` (Modified)
+  - `src/screens/Leaderboard.jsx` (Modified)
+  - `src/screens/Admin.jsx` (Modified)
+  - `src/screens/Play.jsx` (Modified)
+  - `src/games/citadels/Art.jsx` (Modified)
+  - `src/games/citadels/Board.jsx` (Modified)
+  - `src/games/citadels/Inspect.jsx` (Modified)
+  - `src/games/pioneer/Board.jsx` (Modified)
+  - `src/games/pioneer/views/BanditModal.jsx` (Modified)
+  - `src/games/pioneer/views/BuildPicker.jsx` (Modified)
+  - `src/games/pioneer/views/HandDock.jsx` (Modified)
+  - `src/games/pioneer/views/HexBoard.jsx` (Modified)
+  - `src/games/pioneer/views/Log.jsx` (Modified)
+  - `src/games/pioneer/views/SeatPanel.jsx` (Modified)
+  - `src/games/pioneer/views/TradeModal.jsx` (Modified)
+  - `docs/SITE.md` (Modified)
+- **Details**:
+  - Transitioned the entire visual system from warm parlor aesthetic to "Midnight Glass": deep navy canvas (`#0f172a`) with subtle indigo radial lighting, frosted glass panels (`paper-card` with `backdrop-blur-xl`), and vibrant indigo/violet button and accent gradients.
+  - Replaced typography with Inter across display and body surfaces; updated `index.html` Google Fonts import and `theme-color` meta tag.
+  - Revamped global UI components: frosted sticky navigation bar with glass dropdown drawer, frosted modal dialogs with backdrop blur, and interactive game cards with hover-lift elevations and glowing badges.
+  - Modernized game boards: adapted Citadels SVG and tile card faces to dark slate (`#1e293b`) with indigo highlights, updated Connect Four discs to glowing violet-indigo against an indigo felt panel, and refined Pioneer's two-column dashboard, contextual modals, trading desk, and board zoom overlay.
+  - Updated product documentation in `docs/SITE.md` to reflect the new design system.
+
 ### [2026-09-12] - Update Product Log for Shipped Pioneer and Architecture Enhancements
 - **Files Changed**:
   - `docs/SITE.md` (Modified)

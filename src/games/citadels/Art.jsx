@@ -8,7 +8,7 @@ const TYPE_FILL = {
   trade: '#2f6b4f',
   military: '#a3543a',
   unique: '#6b4a8a',
-  role: '#6b1c28',
+  role: '#6366f1',
 };
 
 const GLYPH = {
@@ -56,7 +56,7 @@ const GLYPH = {
 function Picture({ color, d, banner }) {
   return (
     <svg viewBox="0 0 80 100" className="w-full h-full" aria-hidden="true">
-      <rect width="80" height="100" rx="8" fill="#f7f2e8" />
+      <rect width="80" height="100" rx="8" fill="#1e293b" />
       <rect x="3" y="3" width="74" height="94" rx="6" fill="none" stroke={color} strokeWidth="2.4" />
       <rect x="3" y="3" width="74" height="16" rx="6" fill={color} />
       <rect x="3" y="12" width="74" height="8" fill={color} />
@@ -83,7 +83,7 @@ function PhotoOrGlyph({ src, color, d, banner, className = '' }) {
 }
 
 export function DistrictPicture({ stem, type, className = '' }) {
-  const color = TYPE_FILL[type] || TYPE_COLORS[type] || '#6b1c28';
+  const color = TYPE_FILL[type] || TYPE_COLORS[type] || '#6366f1';
   const d = GLYPH[stem] || GLYPH.manor;
   return <PhotoOrGlyph src={DISTRICT_PHOTO[stem]} color={color} d={d} className={className} />;
 }
@@ -94,5 +94,5 @@ export function RolePicture({ roleId, className = '' }) {
 }
 
 export function HiddenPicture({ className = '' }) {
-  return <PhotoOrGlyph src={CARD_BACK} color="#8a5a5e" d="M24 50 H56 M40 34 V66" className={className} />;
+  return <PhotoOrGlyph src={CARD_BACK} color="#475569" d="M24 50 H56 M40 34 V66" className={className} />;
 }

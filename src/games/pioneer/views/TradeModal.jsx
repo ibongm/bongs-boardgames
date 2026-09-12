@@ -55,10 +55,10 @@ export default function TradeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-      <div className="bg-cream border-2 border-gold rounded-3xl p-5 shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-rust/80 backdrop-blur-sm">
+      <div className="paper-card border border-gold/30 rounded-3xl p-5 shadow-table max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between border-b border-gold/20 pb-3">
-          <p className="font-display text-xl font-bold text-ink">Trading Desk</p>
+          <p className="font-display text-xl font-bold text-gold">Trading Desk</p>
           <button
             type="button"
             onClick={onClose}
@@ -74,7 +74,7 @@ export default function TradeModal({
             type="button"
             onClick={() => setTab('bank')}
             className={`flex-1 py-2 rounded-xl text-xs font-semibold min-h-10 transition-colors ${
-              tab === 'bank' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+              tab === 'bank' ? 'btn-primary' : 'btn-ghost'
             }`}
           >
             Bank Trade (Maritime)
@@ -83,7 +83,7 @@ export default function TradeModal({
             type="button"
             onClick={() => setTab('domestic')}
             className={`flex-1 py-2 rounded-xl text-xs font-semibold min-h-10 transition-colors ${
-              tab === 'domestic' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+              tab === 'domestic' ? 'btn-primary' : 'btn-ghost'
             }`}
           >
             Domestic Trade (Players)
@@ -109,7 +109,7 @@ export default function TradeModal({
                       className={`p-2 rounded-xl border text-center transition-all ${
                         giveRes === r.id
                           ? 'border-gold bg-gold/15 font-bold'
-                          : 'border-gold/20 bg-cream/70'
+                          : 'border-gold/20 bg-felt-deep/60'
                       }`}
                     >
                       <span className="block text-base">{r.icon}</span>
@@ -136,7 +136,7 @@ export default function TradeModal({
                       className={`p-2 rounded-xl border text-center transition-all disabled:opacity-30 ${
                         takeRes === r.id
                           ? 'border-gold bg-gold/15 font-bold'
-                          : 'border-gold/20 bg-cream/70'
+                          : 'border-gold/20 bg-felt-deep/60'
                       }`}
                     >
                       <span className="block text-base">{r.icon}</span>
@@ -148,7 +148,7 @@ export default function TradeModal({
               </div>
             </div>
 
-            <div className="bg-walnut/5 rounded-xl p-3 text-xs text-ink/75">
+            <div className="bg-felt-deep/50 border border-gold/15 rounded-xl p-3 text-xs text-ink/75">
               Trading <strong className="text-ink">{currentRate} {giveRes}</strong> for <strong className="text-ink">1 {takeRes}</strong>.
             </div>
 
@@ -175,13 +175,13 @@ export default function TradeModal({
                   <p className="text-xs font-semibold text-ink/80 mb-1">You Offer (Give):</p>
                   <div className="grid grid-cols-5 gap-1.5">
                     {RESOURCES.map((r) => (
-                      <div key={r.id} className="border border-gold/20 rounded-xl p-1 text-center bg-cream/70">
+                      <div key={r.id} className="border border-gold/20 rounded-xl p-1 text-center bg-felt-deep/60">
                         <span className="block text-xs">{r.icon}</span>
                         <span className="text-[10px] text-ink/60">{player?.resources?.[r.id] || 0} held</span>
                         <div className="flex items-center justify-center gap-1 mt-1">
                           <button
                             type="button"
-                            className="w-5 h-5 rounded bg-walnut/10 text-xs font-bold"
+                            className="w-5 h-5 rounded bg-gold/15 text-gold hover:bg-gold/25 text-xs font-bold transition-colors"
                             onClick={() => setGiveCounts((c) => ({ ...c, [r.id]: Math.max(0, c[r.id] - 1) }))}
                           >
                             -
@@ -189,7 +189,7 @@ export default function TradeModal({
                           <span className="text-xs font-bold">{giveCounts[r.id]}</span>
                           <button
                             type="button"
-                            className="w-5 h-5 rounded bg-walnut/10 text-xs font-bold"
+                            className="w-5 h-5 rounded bg-gold/15 text-gold hover:bg-gold/25 text-xs font-bold transition-colors"
                             onClick={() =>
                               setGiveCounts((c) => ({
                                 ...c,
@@ -209,13 +209,13 @@ export default function TradeModal({
                   <p className="text-xs font-semibold text-ink/80 mb-1">You Request (Want):</p>
                   <div className="grid grid-cols-5 gap-1.5">
                     {RESOURCES.map((r) => (
-                      <div key={r.id} className="border border-gold/20 rounded-xl p-1 text-center bg-cream/70">
+                      <div key={r.id} className="border border-gold/20 rounded-xl p-1 text-center bg-felt-deep/60">
                         <span className="block text-xs">{r.icon}</span>
                         <span className="text-[10px] text-ink/60">{r.label}</span>
                         <div className="flex items-center justify-center gap-1 mt-1">
                           <button
                             type="button"
-                            className="w-5 h-5 rounded bg-walnut/10 text-xs font-bold"
+                            className="w-5 h-5 rounded bg-gold/15 text-gold hover:bg-gold/25 text-xs font-bold transition-colors"
                             onClick={() => setWantCounts((c) => ({ ...c, [r.id]: Math.max(0, c[r.id] - 1) }))}
                           >
                             -
@@ -223,7 +223,7 @@ export default function TradeModal({
                           <span className="text-xs font-bold">{wantCounts[r.id]}</span>
                           <button
                             type="button"
-                            className="w-5 h-5 rounded bg-walnut/10 text-xs font-bold"
+                            className="w-5 h-5 rounded bg-gold/15 text-gold hover:bg-gold/25 text-xs font-bold transition-colors"
                             onClick={() => setWantCounts((c) => ({ ...c, [r.id]: c[r.id] + 1 }))}
                           >
                             +
@@ -269,7 +269,7 @@ export default function TradeModal({
                     return (
                       <div
                         key={offer.id}
-                        className="rounded-xl border border-gold/30 bg-walnut/5 p-2.5 flex items-center justify-between text-xs"
+                        className="rounded-xl border border-gold/20 bg-felt-deep/50 p-2.5 flex items-center justify-between text-xs"
                       >
                         <div>
                           <p className="font-semibold text-ink">

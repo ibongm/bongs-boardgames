@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <div>
-      <p className="font-display text-4xl md:text-5xl text-gold">{site.homeTitle}</p>
+      <p className="font-display text-4xl md:text-5xl font-bold text-gold tracking-tight">{site.homeTitle}</p>
       <p className="mt-4 max-w-2xl text-lg text-ink/80 leading-relaxed">{site.tagline}</p>
 
       <HomeShelf title={labels.featured || 'Featured'} items={featured} />

@@ -117,16 +117,16 @@ export default function Room() {
 
   if (needsPassword) {
     return (
-      <form onSubmit={onUnlock} className="max-w-sm bg-walnut p-5 rounded-2xl border border-gold/20">
-        <p className="font-display text-2xl text-gold">Password required</p>
+      <form onSubmit={onUnlock} className="max-w-sm paper-card p-5 rounded-2xl">
+        <p className="font-display text-2xl font-bold text-gold">Password required</p>
         <input
           className="mt-4 w-full rounded-md px-3 py-2 text-ink min-h-11"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {error && <p className="mt-2 text-sm">{error}</p>}
-        <button type="submit" className="mt-3 bg-gold text-cream font-semibold rounded-md px-4 py-2 min-h-11">
+        {error && <p className="mt-2 text-sm text-parchment">{error}</p>}
+        <button type="submit" className="mt-3 btn btn-primary">
           Enter
         </button>
       </form>
@@ -160,15 +160,15 @@ export default function Room() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
       <section>
-        <p className="text-sm text-ink/70">
+        <p className="text-sm text-ink/50">
           Room <span className="font-mono text-gold">{room.code}</span>
           {rated ? ' · rated' : ' · unrated practice'}
           {mySeatIndex < 0 ? ' · spectating' : ''}
         </p>
         <div className="flex flex-wrap items-center gap-3 mt-1">
-          <h1 className="font-display text-3xl text-gold">{game.meta.title}</h1>
+          <h1 className="font-display text-3xl font-bold text-gold">{game.meta.title}</h1>
           {(room.status === 'playing' || room.status === 'finished') && (
-            <button type="button" className="border border-gold/40 rounded-md px-3 py-2 text-sm min-h-11" onClick={() => setRulesOpen(true)}>
+            <button type="button" className="btn btn-ghost text-sm px-3 py-2 min-h-9" onClick={() => setRulesOpen(true)}>
               Rules
             </button>
           )}
@@ -185,10 +185,10 @@ export default function Room() {
               <div
                 className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold ${
                   match.result
-                    ? 'bg-gold/15 text-gold'
+                    ? 'bg-gold/15 text-gold border border-gold/25'
                     : isActorTurn
-                      ? 'bg-gold text-cream shadow-xs'
-                      : 'bg-walnut/70 text-ink/80 border border-gold/20'
+                      ? 'btn-primary shadow-table'
+                      : 'bg-felt-deep/60 text-ink/70 border border-gold/15'
                 }`}
               >
                 {match.result
@@ -203,7 +203,7 @@ export default function Room() {
           </div>
         )}
         {room.status === 'waiting' && (
-          <p className="mt-6 text-ink/70">Waiting for the host to start. Fill seats with people or bots.</p>
+          <p className="mt-6 text-ink/60">Waiting for the host to start. Fill seats with people or bots.</p>
         )}
         {room.status === 'finished' && match && (
           <div className="mt-6">
@@ -220,8 +220,8 @@ export default function Room() {
         )}
         {error && <p className="mt-3 text-sm text-parchment">{error}</p>}
       </section>
-      <aside className="bg-walnut border border-gold/20 rounded-2xl p-4 h-fit">
-        <p className="text-xs uppercase tracking-wide text-ink/55">Seats</p>
+      <aside className="paper-card rounded-2xl p-4 h-fit">
+        <p className="text-xs uppercase tracking-wide text-ink/40">Seats</p>
         <ul className="mt-3 space-y-2">
           {(room.seats || []).map((seat, index) => (
             <li key={index} className="flex items-center justify-between gap-2 text-sm">
@@ -231,7 +231,7 @@ export default function Room() {
                 {waitMs(seat) !== null && seat.type === 'human' ? ` · wait ${waitMs(seat)}s` : ''}
               </span>
               {isHost && room.status === 'waiting' && seat.type !== 'empty' && seat.uid !== firebaseUser?.uid && (
-                <button type="button" className="text-gold" onClick={() => removeSeat(room.id, index)}>
+                <button type="button" className="text-gold text-xs hover:underline" onClick={() => removeSeat(room.id, index)}>
                   Remove
                 </button>
               )}
@@ -239,7 +239,7 @@ export default function Room() {
           ))}
         </ul>
         {(isHost || isAdmin) && (
-          <label className="mt-4 flex items-start gap-2 text-sm text-ink/80">
+          <label className="mt-4 flex items-start gap-2 text-sm text-ink/70">
             <input
               type="checkbox"
               className="mt-1"
@@ -251,14 +251,14 @@ export default function Room() {
         )}
         {isHost && room.status === 'waiting' && maxSeats > minSeats && (
           <div className="mt-4">
-            <p className="text-xs uppercase tracking-wide text-ink/55 mb-2">Table size</p>
+            <p className="text-xs uppercase tracking-wide text-ink/40 mb-2">Table size</p>
             <div className="flex flex-wrap gap-2">
               {Array.from({ length: maxSeats - minSeats + 1 }, (_, i) => minSeats + i).map((n) => (
                 <button
                   key={n}
                   type="button"
-                  className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
-                    (room.seats || []).length === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 transition-colors ${
+                    (room.seats || []).length === n ? 'btn-primary' : 'btn-ghost'
                   }`}
                   onClick={() => setRoomSeatCount(room.id, n).catch((err) => setError(err.message))}
                 >
@@ -267,7 +267,7 @@ export default function Room() {
               ))}
             </div>
             {room.gameId === 'citadels' && (
-              <p className="mt-2 text-xs text-ink/60">
+              <p className="mt-2 text-xs text-ink/50">
                 {(room.seats || []).length === 6
                   ? '6 players: no face-up discard, one character face down.'
                   : (room.seats || []).length === 5
@@ -288,20 +288,20 @@ export default function Room() {
               <option value="medium">Medium bot</option>
               <option value="hard">Hard bot</option>
             </select>
-            <button type="button" className="w-full border border-gold/40 rounded-md py-2 min-h-11" onClick={() => addBot(room.id, difficulty)}>
+            <button type="button" className="w-full btn btn-ghost" onClick={() => addBot(room.id, difficulty)}>
               Add bot
             </button>
             <button
               type="button"
-              className="w-full bg-gold text-cream font-semibold rounded-md py-2 min-h-11"
+              className="w-full btn btn-primary"
               onClick={() => startRoom(room.id).catch((err) => setError(err.message))}
             >
               Start game
             </button>
           </div>
         )}
-        <p className="text-xs uppercase tracking-wide text-ink/55 mt-5">Spectators</p>
-        <ul className="mt-2 text-sm text-ink/80">
+        <p className="text-xs uppercase tracking-wide text-ink/40 mt-5">Spectators</p>
+        <ul className="mt-2 text-sm text-ink/70">
           {(room.spectators || []).length ? room.spectators.map((s) => <li key={s.uid}>{s.name}</li>) : <li>None</li>}
         </ul>
       </aside>
@@ -324,7 +324,7 @@ export default function Room() {
         <div className="fixed bottom-5 right-5 z-30 lg:hidden">
           <button
             type="button"
-            className="bg-gold text-cream shadow-table rounded-full px-5 py-3 font-semibold text-sm border border-cream/25 flex items-center gap-1.5"
+            className="btn btn-primary shadow-table rounded-full px-5 py-3 text-sm flex items-center gap-1.5"
             onClick={() => setRulesOpen(true)}
           >
             Rules

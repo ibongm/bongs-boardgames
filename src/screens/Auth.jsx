@@ -25,9 +25,9 @@ export default function Auth({ mode }) {
 
   return (
     <div className="max-w-md mx-auto paper-card rounded-3xl p-7">
-      <h1 className="font-display text-4xl text-gold tracking-tight">{mode === 'register' ? 'Create an account' : 'Sign in'}</h1>
+      <h1 className="font-display text-4xl font-bold text-gold tracking-tight">{mode === 'register' ? 'Create an account' : 'Sign in'}</h1>
       {!firebaseReady && (
-        <p className="mt-3 text-sm text-ink/60">Firebase keys are missing, so sign-in is disabled.</p>
+        <p className="mt-3 text-sm text-ink/50">Firebase keys are missing, so sign-in is disabled.</p>
       )}
       <form className="mt-6 space-y-3" onSubmit={onSubmit}>
         {mode === 'register' && (
@@ -43,7 +43,7 @@ export default function Auth({ mode }) {
       <button type="button" disabled={!firebaseReady} onClick={() => loginGoogle().catch((err) => setError(err.message))} className="btn btn-ghost w-full mt-3">
         Continue with Google
       </button>
-      <p className="mt-4 text-sm text-ink/60">
+      <p className="mt-4 text-sm text-ink/50">
         {mode === 'register' ? (
           <>Already registered? <Link to="/sign-in" className="text-gold underline-offset-4 hover:underline">Sign in</Link></>
         ) : (

@@ -14,7 +14,7 @@ export default function BuildPicker({
 
   return (
     <div className="fixed inset-x-0 bottom-6 z-40 flex justify-center px-4 pointer-events-none">
-      <div className="pointer-events-auto bg-cream border-2 border-gold rounded-3xl p-4 shadow-xl max-w-sm w-full animate-in fade-in slide-in-from-bottom-4 duration-200">
+      <div className="pointer-events-auto paper-card border border-gold/30 rounded-3xl p-4 shadow-xl max-w-sm w-full animate-in fade-in slide-in-from-bottom-4 duration-200">
         <div className="flex items-center justify-between mb-3">
           <p className="font-display text-base font-bold text-ink">
             {type === 'path'
