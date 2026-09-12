@@ -64,10 +64,7 @@ function Scoreboard({ state }) {
         {sheets.map((sheet, place) => {
           const won = sheet.seat === state.winner;
           return (
-            <li
-              key={sheet.seat}
-              className={`rounded-xl border p-3 ${won ? 'border-gold bg-cream' : 'border-gold/20 bg-cream/60'}`}
-            >
+            <li key={sheet.seat} className={`rounded-xl border p-3 ${won ? 'border-gold bg-cream' : 'border-gold/20 bg-cream/60'}`}>
               <div className="flex items-baseline justify-between gap-2">
                 <p className="font-semibold text-ink">
                   {place + 1}. {sheet.name}
@@ -156,127 +153,15 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
 
   const currentRank = state.rankCalled || 0;
 
-  return (
-    <div className="space-y-4 text-ink">
-      {over && <Scoreboard state={state} />}
-
-      {!over && (
-        <section className="rounded-2xl border border-gold/25 bg-walnut p-3">
-          <p className="text-xs uppercase tracking-wide text-ink/55">
-            Round {state.round || 1}
-            {canPlay ? ' · your turn' : acting ? ` · ${acting.name}` : ''}
-            {state.crownSeat === viewerSeat ? ' · you hold the crown' : ''}
-          </p>
-          <p className="font-display text-2xl text-gold leading-tight mt-0.5">{phaseTitle}</p>
-          <p className="text-sm text-ink/80 mt-1">{phaseHint}</p>
-        </section>
-      )}
-
-      <section>
-        <p className="text-xs uppercase tracking-wide text-ink/55 mb-2">Characters this round</p>
-        <div className="flex gap-1 overflow-x-auto pb-1">
-          {ROLE_ORDER.map((roleId, index) => {
-            const rank = index + 1;
-            const faceup = state.faceupDiscard?.includes(roleId);
-            const holder = state.players.find((p) => p.roleRevealed && p.roleId === roleId);
-            const killed = state.killedRole === roleId;
-            const current = !over && currentRank === rank && state.phase !== 'draft';
-            const upcoming = !over && state.phase !== 'draft' && currentRank < rank && !faceup && !holder && !killed;
-            return (
-              <button
-                key={roleId}
-                type="button"
-                onClick={() => setInspect({ kind: 'role', roleId })}
-                className={`rounded-md px-2 py-1 text-xs min-h-11 min-w-[4.6rem] flex items-center gap-2 border text-left shrink-0 ${
-                  current
-                    ? 'bg-gold text-cream border-gold'
-                    : faceup || killed
-                      ? 'bg-cream border-gold/20 text-ink/55'
-                      : holder
-                        ? 'bg-gold/10 border-gold text-ink'
-                        : 'bg-cream border-gold/25 text-ink'
-                }`}
-              >
-                <RolePicture roleId={roleId} className="w-8 shrink-0" />
-                <span className="flex flex-col justify-center">
-                  <span className={`font-mono font-semibold ${current ? 'text-cream' : 'text-gold'}`}>{rank}</span>
-                  <span className={`font-semibold leading-tight ${faceup ? 'line-through' : ''}`}>{names.roles[roleId]}</span>
-                  {faceup && <span>face up</span>}
-                  {killed && !holder && <span>killed</span>}
-                  {holder && <span className={current ? 'text-cream/80' : 'text-ink/70'}>{holder.name}</span>}
-                  {upcoming && <span className="text-ink/50">later</span>}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section>
-        <p className="text-xs uppercase tracking-wide text-ink/55 mb-2">Cities</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {state.players.map((p, i) => {
-            const now = !over && i === actor;
-            return (
-              <div
-                key={i}
-                className={`rounded-xl border p-3 ${now ? 'border-gold bg-cream' : 'border-gold/20 bg-cream/70'}`}
-              >
-                <button type="button" className="w-full text-left" onClick={() => setInspect({ kind: 'seat', seat: i })}>
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-ink font-semibold text-sm">
-                      {p.name || `Seat ${i + 1}`}
-                      {i === viewerSeat ? ' · you' : ''}
-                      {state.crownSeat === i ? ' · crown' : ''}
-                    </p>
-                    {now && <span className="text-[10px] uppercase tracking-wide bg-gold text-cream rounded-full px-2 py-0.5">Now</span>}
-                    {over && i === state.winner && (
-                      <span className="text-[10px] uppercase tracking-wide bg-gold text-cream rounded-full px-2 py-0.5">Won</span>
-                    )}
-                  </div>
-                  <p className="text-ink/80 text-xs mt-1">
-                    {p.gold} gold · {p.hand?.length || 0} in hand · {p.city.length} built
-                    {p.roleRevealed && p.roleId ? ` · ${names.roles[p.roleId]}` : ''}
-                    {over && state.scores ? ` · ${state.scores[i]} pts` : ''}
-                  </p>
-                </button>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {p.city.length ? (
-                    p.city.map((id, districtIndex) => {
-                      const card = cardById(id);
-                      const destroy = actions.find((a) => a.type === 'warlordDestroy' && a.seat === i && a.districtIndex === districtIndex);
-                      return (
-                        <button
-                          key={`${id}-${districtIndex}`}
-                          type="button"
-                          onClick={() => setInspect({ kind: 'card', cardId: id, destroy: destroy || null })}
-                          className="rounded border border-gold/20 bg-cream w-[4.4rem] p-0.5 text-left"
-                          title={displayName(id)}
-                        >
-                          <DistrictPicture stem={stemOf(id)} type={card?.type} />
-                          <span className="block text-[10px] text-ink font-semibold leading-tight truncate px-0.5">{card?.name}</span>
-                        </button>
-                      );
-                    })
-                  ) : (
-                    <button type="button" className="text-ink/50 text-xs" onClick={() => setInspect({ kind: 'seat', seat: i })}>
-                      Empty city · open seat
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
+  const youBlock = (
+    <>
       {you && !over && (
         <section>
-          <p className="text-xs uppercase tracking-wide text-ink/55 mb-2">
+          <p className="text-[11px] uppercase tracking-wide text-ink/55 mb-1">
             Your hand · {you.gold} gold
             {you.roleId ? ` · ${names.roles[you.roleId]}` : ''}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {(you.hand || [])
               .filter((id) => id !== 'hidden')
               .map((id) => {
@@ -296,39 +181,28 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           </div>
         </section>
       )}
-
       {state.phase === 'draft' && canPlay && (
-        <section className="rounded-xl border border-gold/25 bg-walnut p-3">
+        <section className="rounded-xl border border-gold/25 bg-walnut p-2">
           <p className="text-sm font-semibold text-ink mb-2">Choose your character</p>
           <div className="flex flex-wrap gap-2">
             {actions
               .filter((a) => a.type === 'pickRole')
               .map((action) => (
-                <button
-                  key={action.roleId}
-                  type="button"
-                  className="bg-gold text-cream font-semibold rounded-md px-3 py-2 min-h-11"
-                  onClick={() => send(action)}
-                >
+                <button key={action.roleId} type="button" className="bg-gold text-cream font-semibold rounded-md px-3 py-2 min-h-11" onClick={() => send(action)}>
                   {ROLE_ORDER.indexOf(action.roleId) + 1}. {names.roles[action.roleId]}
                 </button>
               ))}
           </div>
         </section>
       )}
-
       {state.phase === 'chooseCard' && canPlay && (
-        <section className="rounded-xl border border-gold/25 bg-walnut p-3">
+        <section className="rounded-xl border border-gold/25 bg-walnut p-2">
           <p className="text-sm font-semibold text-ink mb-2">Keep one card. The other goes under the deck.</p>
           <div className="flex flex-wrap gap-2">
             {(state.pendingDraw || []).map((id, keepIndex) => (
               <div key={id} className="space-y-1">
                 <CardFace cardId={id} onClick={() => setInspect({ kind: 'card', cardId: id })} />
-                <button
-                  type="button"
-                  className="bg-gold text-cream text-xs font-semibold rounded px-2 py-1 min-h-8 w-full"
-                  onClick={() => send({ type: 'keepDrawn', keepIndex })}
-                >
+                <button type="button" className="bg-gold text-cream text-xs font-semibold rounded px-2 py-1 min-h-8 w-full" onClick={() => send({ type: 'keepDrawn', keepIndex })}>
                   Keep
                 </button>
               </div>
@@ -336,12 +210,9 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           </div>
         </section>
       )}
-
       {canPlay && (state.phase === 'gather' || state.phase === 'main') && (
-        <section className="rounded-xl border border-gold/25 bg-walnut p-3 space-y-2">
-          <p className="text-sm font-semibold text-ink">
-            {state.phase === 'gather' ? 'Gather first' : 'Your actions'}
-          </p>
+        <section className="rounded-xl border border-gold/25 bg-walnut p-2 space-y-2">
+          <p className="text-sm font-semibold text-ink">{state.phase === 'gather' ? 'Gather first' : 'Your actions'}</p>
           <div className="flex flex-wrap gap-2">
             {actions.some((a) => a.type === 'gatherGold') && (
               <button type="button" className="bg-gold text-cream font-semibold rounded-md px-3 py-2 min-h-11" onClick={() => send({ type: 'gatherGold' })}>
@@ -354,27 +225,15 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
             {actions.some((a) => a.type === 'typeIncome') && (
               <OutlineButton onClick={() => send({ type: 'typeIncome' })}>Gold from your districts</OutlineButton>
             )}
-            {actions
-              .filter((a) => a.type === 'assassinKill')
-              .map((action) => (
-                <OutlineButton key={action.roleId} onClick={() => send(action)}>
-                  Kill {names.roles[action.roleId]}
-                </OutlineButton>
-              ))}
-            {actions
-              .filter((a) => a.type === 'thiefRob')
-              .map((action) => (
-                <OutlineButton key={action.roleId} onClick={() => send(action)}>
-                  Rob {names.roles[action.roleId]}
-                </OutlineButton>
-              ))}
-            {actions
-              .filter((a) => a.type === 'magicianSwap')
-              .map((action) => (
-                <OutlineButton key={action.seat} onClick={() => send(action)}>
-                  Swap hand with {state.players[action.seat]?.name || `seat ${action.seat + 1}`}
-                </OutlineButton>
-              ))}
+            {actions.filter((a) => a.type === 'assassinKill').map((action) => (
+              <OutlineButton key={action.roleId} onClick={() => send(action)}>Kill {names.roles[action.roleId]}</OutlineButton>
+            ))}
+            {actions.filter((a) => a.type === 'thiefRob').map((action) => (
+              <OutlineButton key={action.roleId} onClick={() => send(action)}>Rob {names.roles[action.roleId]}</OutlineButton>
+            ))}
+            {actions.filter((a) => a.type === 'magicianSwap').map((action) => (
+              <OutlineButton key={action.seat} onClick={() => send(action)}>Swap hand with {state.players[action.seat]?.name || `seat ${action.seat + 1}`}</OutlineButton>
+            ))}
             {actions.some((a) => a.type === 'magicianRedraw') && (
               <OutlineButton onClick={() => send({ type: 'magicianRedraw', cardIds: you.hand.slice() })}>Redraw whole hand</OutlineButton>
             )}
@@ -390,9 +249,117 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           {state.phase === 'main' && <p className="text-xs text-ink/60">Tap a card in your hand to build it.</p>}
         </section>
       )}
+    </>
+  );
 
+  return (
+    <div className="flex flex-col gap-3 text-ink">
+      {over && <Scoreboard state={state} />}
+      {!over && (
+        <section className="rounded-xl border border-gold/25 bg-walnut p-2">
+          <p className="text-[11px] uppercase tracking-wide text-ink/55">
+            Round {state.round || 1}
+            {canPlay ? ' · your turn' : acting ? ` · ${acting.name}` : ''}
+            {state.crownSeat === viewerSeat ? ' · crown' : ''}
+          </p>
+          <p className="font-display text-xl text-gold leading-tight">{phaseTitle}</p>
+          <p className="text-sm text-ink/80">{phaseHint}</p>
+        </section>
+      )}
+      <div className="order-2 sm:order-4 sticky bottom-0 z-20 -mx-3 px-3 py-2 bg-cream/95 border-t border-gold/20 sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:border-0 space-y-2">
+        {youBlock}
+      </div>
+      <section className="order-3 sm:order-2">
+        <p className="text-[11px] uppercase tracking-wide text-ink/55 mb-1">Characters</p>
+        <div className="grid grid-cols-4 gap-1">
+          {ROLE_ORDER.map((roleId, index) => {
+            const rank = index + 1;
+            const faceup = state.faceupDiscard?.includes(roleId);
+            const holder = state.players.find((p) => p.roleRevealed && p.roleId === roleId);
+            const killed = state.killedRole === roleId;
+            const current = !over && currentRank === rank && state.phase !== 'draft';
+            let status = '';
+            if (faceup) status = 'out';
+            else if (killed && !holder) status = 'killed';
+            else if (holder) status = holder.name;
+            else if (current) status = 'now';
+            return (
+              <button
+                key={roleId}
+                type="button"
+                onClick={() => setInspect({ kind: 'role', roleId })}
+                className={`rounded-md p-1 text-[10px] leading-tight flex flex-col items-center border text-center ${
+                  current
+                    ? 'bg-gold text-cream border-gold'
+                    : faceup || killed
+                      ? 'bg-cream border-gold/20 text-ink/50'
+                      : holder
+                        ? 'bg-gold/10 border-gold text-ink'
+                        : 'bg-cream border-gold/25 text-ink'
+                }`}
+              >
+                <RolePicture roleId={roleId} className="w-full max-w-[3.2rem]" />
+                <span className={`font-mono font-semibold ${current ? 'text-cream' : 'text-gold'}`}>{rank}</span>
+                <span className={`font-semibold truncate w-full ${faceup ? 'line-through' : ''}`}>{names.roles[roleId]}</span>
+                {status ? <span className="truncate w-full">{status}</span> : <span className="text-ink/40">—</span>}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+      <section className="order-4 sm:order-3">
+        <p className="text-[11px] uppercase tracking-wide text-ink/55 mb-1">Cities</p>
+        <div className="grid grid-cols-2 gap-2">
+          {state.players.map((p, i) => {
+            const now = !over && i === actor;
+            return (
+              <div key={i} className={`rounded-lg border p-2 ${now ? 'border-gold bg-cream col-span-2' : 'border-gold/20 bg-cream/70'}`}>
+                <button type="button" className="w-full text-left" onClick={() => setInspect({ kind: 'seat', seat: i })}>
+                  <div className="flex items-start justify-between gap-1">
+                    <p className="text-ink font-semibold text-xs leading-tight">
+                      {p.name || `Seat ${i + 1}`}
+                      {i === viewerSeat ? ' · you' : ''}
+                      {state.crownSeat === i ? ' · crown' : ''}
+                    </p>
+                    {now && <span className="text-[9px] uppercase tracking-wide bg-gold text-cream rounded-full px-1.5 py-0.5">Now</span>}
+                    {over && i === state.winner && (
+                      <span className="text-[9px] uppercase tracking-wide bg-gold text-cream rounded-full px-1.5 py-0.5">Won</span>
+                    )}
+                  </div>
+                  <p className="text-ink/70 text-[11px] mt-0.5">
+                    {p.gold}g · {p.hand?.length || 0} cards · {p.city.length} built
+                    {p.roleRevealed && p.roleId ? ` · ${names.roles[p.roleId]}` : ''}
+                    {over && state.scores ? ` · ${state.scores[i]}` : ''}
+                  </p>
+                </button>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {p.city.length ? (
+                    p.city.map((id, districtIndex) => {
+                      const card = cardById(id);
+                      const destroy = actions.find((a) => a.type === 'warlordDestroy' && a.seat === i && a.districtIndex === districtIndex);
+                      return (
+                        <button
+                          key={`${id}-${districtIndex}`}
+                          type="button"
+                          onClick={() => setInspect({ kind: 'card', cardId: id, destroy: destroy || null })}
+                          className="rounded border border-gold/20 bg-cream w-10 p-0 text-left"
+                          title={displayName(id)}
+                        >
+                          <DistrictPicture stem={stemOf(id)} type={card?.type} />
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <span className="text-ink/45 text-[11px]">Empty</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
       {!!state.log?.length && (
-        <details className="text-xs text-ink/60">
+        <details className="order-5 text-xs text-ink/60">
           <summary className="cursor-pointer text-ink/70">Recent events</summary>
           <ol className="mt-1 space-y-0.5 max-h-28 overflow-auto">
             {state.log.slice(-10).map((line, i) => (
@@ -401,16 +368,7 @@ export default function CitadelsBoard({ state, canPlay, onMove, interactive = tr
           </ol>
         </details>
       )}
-
-      <Inspect
-        inspect={inspect}
-        onClose={() => setInspect(null)}
-        onOpen={setInspect}
-        state={state}
-        viewerSeat={viewerSeat}
-        actions={actions}
-        onAction={send}
-      />
+      <Inspect inspect={inspect} onClose={() => setInspect(null)} onOpen={setInspect} state={state} viewerSeat={viewerSeat} actions={actions} onAction={send} />
     </div>
   );
 }
