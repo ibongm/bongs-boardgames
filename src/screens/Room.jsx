@@ -14,6 +14,7 @@ import {
   playMove,
   removeSeat,
   replaceStaleHumans,
+  setRoomSeatCount,
   setRoomTestMode,
   sitDown,
   startRoom,
@@ -134,6 +135,8 @@ export default function Room() {
     return Math.max(0, disconnectSec - Math.floor((Date.now() - seat.disconnectedAt) / 1000));
   };
   const rated = (match?.playerIds || []).length >= 2;
+  const minSeats = game.meta.seatsMin || game.meta.seats || 2;
+  const maxSeats = game.meta.seatsMax || game.meta.seats || minSeats;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
@@ -208,6 +211,34 @@ export default function Room() {
             />
             <span>Test table — no disconnect timer. Walk between devices without a bot taking the empty chair.</span>
           </label>
+        )}
+        {isHost && room.status === 'waiting' && maxSeats > minSeats && (
+          <div className="mt-4">
+            <p className="text-xs uppercase tracking-wide text-ink/55 mb-2">Table size</p>
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: maxSeats - minSeats + 1 }, (_, i) => minSeats + i).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
+                    (room.seats || []).length === n ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                  }`}
+                  onClick={() => setRoomSeatCount(room.id, n).catch((err) => setError(err.message))}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            {room.gameId === 'citadels' && (
+              <p className="mt-2 text-xs text-ink/60">
+                {(room.seats || []).length === 6
+                  ? '6 players: no face-up discard, one character face down.'
+                  : (room.seats || []).length === 5
+                    ? '5 players: one face up, one face down.'
+                    : '4 players: two face up, one face down.'}
+              </p>
+            )}
+          </div>
         )}
         {isHost && room.status === 'waiting' && (
           <div className="mt-4 space-y-2">
