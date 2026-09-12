@@ -41,27 +41,31 @@ Each card: preview board, Featured/New badges, title, “Similar to …”, blur
 ## Games
 
 Shipped: Tic-Tac-Toe (2), Connect Four (2), Citadels (4–6, working title).
+Unpublished / In Development: Pioneer (3–4 seats, island settlement board game, `published: false`).
 
-Per-game Admin fields: title, blurb, similarTo, published, featured, releasedAt, newUntil, howToPlay, rulesDetails, order.
+Per-game Admin fields: title, blurb, similarTo, published, featured, releasedAt, newUntil, howToPlay, rulesDetails, order. Unpublished games do not appear on home shelves.
 
 ## Rules
 
-One popup, two layers: How to play, then Details. Same modal on the game page, the practice table, and a live/finished room. Live rooms add a “This match” strip (seats, bot difficulty, disconnect replacement). Citadels waits 45 seconds.
+One popup, two layers: How to play, then Details. Same modal on the game page, the practice table, and a live/finished room. Live rooms add a “This match” strip (seats, bot difficulty, disconnect replacement). Citadels and Pioneer wait 45 seconds; other titles wait 30 seconds.
 
 Shipped text lives in `src/games/<id>/rules.js`. Admin overrides win when non-empty.
 
 Citadels ships the first-game rules (4–6 seats, eight characters, fourteen uniques). Body, cards, and the rules modal use ink on cream. Cream text stays on the burgundy header and filled primary buttons. Display face is Source Serif 4. Districts, characters, and other seats open a popup with art and the card or player text. Official card photos for all 8 characters, card back, 17 basic districts, and 10 unique districts are extracted from the official demo cards sheet.
 
+Pioneer ships complete 5th-edition-style island settlement rules (3–4 seats, 10 Victory Points): pointy-top hex grid, Balanced Isle printed starts, Random Isle spiral placement, 2d6 production, roll of 7 discard/Bandit/steal, maritime and domestic trading, contextual building (roads, settlements, cities), Breakthrough deck with hidden Charters, Longest Route, and Grand Garrison.
+
 ## Play
 
-- Sign-in required to create or join a room.
+- Sign-in required to create or sit at a human room.
+- Public spectating: guests and unauthenticated visitors can spectate any public table in read-only mode with hidden information redacted.
+- Practice vs bot: instant on `/play/:gameId`, unrated. For Pioneer, guests may practice on Balanced Isle; Random Isle requires signing in.
 - Google + email/password.
 - Public lobby + room code. Optional host password.
 - Host adds bots in the lobby only (Easy / Medium / Hard).
-- Disconnect: wait 30s (45s in Citadels), then replace with a Medium bot.
-- Spectators allowed.
-- Ratings only for human vs human. Practice vs bot is unrated.
+- Disconnect: wait 30s (45s in Citadels and Pioneer), then replace with a Medium bot.
+- Ratings only for matches with 2+ signed-in humans. Winner is rated against the average of other participating humans; bots are excluded from rating adjustments.
 
 ## After a match
 
-Win/loss/draw on the profile. Per-game leaderboard. `games.{id}.lastPlayedAt` on the player. Site-wide `stats/games` counters for shelves.
+Win/loss/draw on the profile. Per-game leaderboard. `games.{id}.lastPlayedAt` on the player. Site-wide `stats/games` counters for shelves. Pioneer completes with one winner (no draws).

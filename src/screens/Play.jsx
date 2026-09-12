@@ -27,7 +27,8 @@ export default function Play() {
   const maxSeats = game?.meta?.seatsMax || game?.meta?.seats || minSeats;
   const [seatCount, setSeatCount] = useState(game?.meta?.seats || minSeats);
   const [difficulty, setDifficulty] = useState('medium');
-  const [state, setState] = useState(() => game?.engine.createState({ seatCount: game?.meta?.seats || 2 }) || null);
+  const [mapId, setMapId] = useState('map_balanced');
+  const [state, setState] = useState(() => game?.engine.createState({ seatCount: game?.meta?.seats || 2, mapId: 'map_balanced' }) || null);
   const [seed, setSeed] = useState(0);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [testMode, setTestMode] = useState(() => {
@@ -40,9 +41,9 @@ export default function Play() {
 
   useEffect(() => {
     if (!game) return;
-    setState(game.engine.createState({ seatCount, seed: Date.now() }));
+    setState(game.engine.createState({ seatCount, mapId: gameId === 'pioneer' ? mapId : undefined, seed: Date.now() }));
     setSeed((n) => n + 1);
-  }, [gameId, game, seatCount]);
+  }, [gameId, game, seatCount, mapId]);
 
   const status = useMemo(() => (state && game ? game.engine.status(state) : null), [state, game]);
   const actor = actorOf(state);
@@ -70,7 +71,7 @@ export default function Play() {
     return () => clearTimeout(timer);
   }, [game, state, status, difficulty, seed, actor, testMode]);
 
-  if (!game || copy.published === false || !state) {
+  if (!game || (copy.published === false && game.meta.id !== 'pioneer') || !state) {
     return <p className="text-ink/70">That game is not available.</p>;
   }
 
@@ -97,7 +98,7 @@ export default function Play() {
   }
 
   function newGame() {
-    setState(game.engine.createState({ seatCount, seed: Date.now() }));
+    setState(game.engine.createState({ seatCount, mapId: gameId === 'pioneer' ? mapId : undefined, seed: Date.now() }));
     setSeed((n) => n + 1);
   }
 
@@ -161,6 +162,52 @@ export default function Play() {
               {n} seats
             </button>
           ))}
+        </div>
+      )}
+      {gameId === 'pioneer' && (
+        <div className="mt-3">
+          <p className="text-xs uppercase tracking-wide text-ink/55 mb-1.5">Map Layout</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMapId('map_balanced')}
+              className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
+                mapId === 'map_balanced' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+              }`}
+              title="Best for beginners: fixed layout with printed starts"
+            >
+              Balanced Isle
+            </button>
+            {firebaseUser ? (
+              <button
+                type="button"
+                onClick={() => setMapId('map_shuffled')}
+                className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
+                  mapId === 'map_shuffled' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                }`}
+              >
+                Random Isle
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled
+                  className="px-3 py-2 rounded-full text-sm font-semibold min-h-11 border border-gold/20 text-ink/35 cursor-not-allowed bg-walnut/5"
+                  title="Random Isle is available after you sign in. Guests may play Balanced Isle against bots."
+                >
+                  Random Isle
+                </button>
+                <Link
+                  to="/sign-in"
+                  state={{ from: `/play/${gameId}` }}
+                  className="text-xs text-gold underline-offset-4 hover:underline"
+                >
+                  Sign in to unlock Random Isle
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

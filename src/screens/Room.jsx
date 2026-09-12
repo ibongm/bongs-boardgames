@@ -128,7 +128,7 @@ export default function Room() {
   const Board = game.Board;
   const actorSeat = match?.state?.actorSeat ?? match?.state?.turn;
   const canPlay =
-    room.status === 'playing' && match && !match.result && match.seats[actorSeat]?.uid === firebaseUser.uid;
+    room.status === 'playing' && match && !match.result && Boolean(firebaseUser?.uid) && match.seats[actorSeat]?.uid === firebaseUser?.uid;
   const disconnectSec = Math.round((game?.meta?.disconnectMs || 30000) / 1000);
   const waitMs = (seat) => {
     if (!seat.disconnectedAt) return null;
@@ -138,12 +138,21 @@ export default function Room() {
   const minSeats = game.meta.seatsMin || game.meta.seats || 2;
   const maxSeats = game.meta.seatsMax || game.meta.seats || minSeats;
 
+  const displayState = useMemo(() => {
+    if (!match?.state) return null;
+    if (typeof game.engine.publicView === 'function') {
+      return game.engine.publicView(match.state, mySeatIndex < 0 ? 'spectator' : mySeatIndex);
+    }
+    return match.state;
+  }, [match?.state, game, mySeatIndex]);
+
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
       <section>
         <p className="text-sm text-ink/70">
           Room <span className="font-mono text-gold">{room.code}</span>
           {rated ? ' · rated' : ' · unrated practice'}
+          {mySeatIndex < 0 ? ' · spectating' : ''}
         </p>
         <div className="flex flex-wrap items-center gap-3 mt-1">
           <h1 className="font-display text-3xl text-gold">{game.meta.title}</h1>
@@ -153,13 +162,13 @@ export default function Room() {
             </button>
           )}
         </div>
-        {room.status === 'playing' && match && (
+        {room.status === 'playing' && match && displayState && (
           <div className="mt-6">
             <Board
-              state={match.state}
+              state={displayState}
               canPlay={canPlay}
               viewerSeat={mySeatIndex < 0 ? 0 : mySeatIndex}
-              onMove={(move) => playMove(match, room, move, firebaseUser.uid).catch((err) => setError(err.message))}
+              onMove={(move) => playMove(match, room, move, firebaseUser?.uid).catch((err) => setError(err.message))}
             />
             <p className="mt-4 text-center text-ink/80">
               {match.result

@@ -41,12 +41,15 @@ export async function withRoom(roomId, mutator) {
   return next;
 }
 
-export async function createRoom({ host, gameId, password }) {
+export async function createRoom({ host, gameId, password, seatCount, mapId }) {
   const game = getGame(gameId);
   if (!game) throw new Error('Unknown game');
   const code = randomRoomCode();
   const passwordHash = password ? await hashRoomPassword(code, password) : null;
-  const seats = Array.from({ length: game.meta.seats }, emptySeat);
+  const min = game.meta.seatsMin || game.meta.seats || 2;
+  const max = game.meta.seatsMax || game.meta.seats || min;
+  const actualSeatCount = seatCount ? Math.min(max, Math.max(min, Number(seatCount))) : (game.meta.seats || min);
+  const seats = Array.from({ length: actualSeatCount }, emptySeat);
   seats[0] = {
     uid: host.uid,
     name: host.displayName,
@@ -62,6 +65,8 @@ export async function createRoom({ host, gameId, password }) {
     participantIds: [host.uid],
     passwordHash,
     status: 'waiting',
+    seatCount: actualSeatCount,
+    mapId: mapId || null,
     seats,
     spectators: [],
     matchId: null,

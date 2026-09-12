@@ -1,5 +1,236 @@
 # Changelog
 
+### [2026-09-12] - Document Pioneer in Product Log
+- **Files Changed**:
+  - `docs/SITE.md` (Modified)
+- **Details**:
+  - Documented Pioneer specifications (`published: false`), 3-4 seats, 45-second disconnect replacement, guest spectating rules, and multi-player Elo adjustments.
+
+### [2026-09-12] - Update Firestore Security Rules for Public Spectating
+- **Files Changed**:
+  - `firestore.rules` (Modified)
+- **Details**:
+  - Allowed unauthenticated read access to public `rooms` and `matches` documents for spectator support.
+  - Added access controls for the `matches/{id}/secrets/{seatIndex}` collection restricting private hands to authenticated seat owners.
+
+### [2026-09-12] - Add Pioneer Map Hosting Selection to GameInfo Screen
+- **Files Changed**:
+  - `src/screens/GameInfo.jsx` (Modified)
+- **Details**:
+  - Added map layout picker for Pioneer tables (Balanced Isle vs Random Isle), ensuring guests are prompted to sign in for Random Isle.
+
+### [2026-09-12] - Enable Pioneer Practice Mode and Map Toggles
+- **Files Changed**:
+  - `src/screens/Play.jsx` (Modified)
+- **Details**:
+  - Enabled unrated bot practice on `/play/pioneer` while remaining unpublished on home shelves.
+  - Added map selection with guest gating on Random Isle and seamless sign-in draft preservation.
+
+### [2026-09-12] - Open Room Route for Guest Spectating
+- **Files Changed**:
+  - `src/App.jsx` (Modified)
+- **Details**:
+  - Unwrapped `/rooms/:code` route from `Protected` guard to allow unsigned guests to spectate public games.
+
+### [2026-09-12] - Enable Public Spectating and Redacted State in Room Screen
+- **Files Changed**:
+  - `src/screens/Room.jsx` (Modified)
+- **Details**:
+  - Allowed unauthenticated guests to open rooms in read-only spectating mode without throwing authentication errors.
+  - Fed engine `publicView` redacting secret hands and breakthrough cards for spectators and opponents.
+
+### [2026-09-12] - Adapt Elo Calculations for Multi-Human Matches
+- **Files Changed**:
+  - `src/services/stats.js` (Modified)
+- **Details**:
+  - Updated `nextRating` to compare winners against the average rating of the other participating humans, distributing smaller losses across opponents while ignoring bots.
+
+### [2026-09-12] - Enforce Full Seat Count Before Match Start
+- **Files Changed**:
+  - `src/services/roomActions.js` (Modified)
+- **Details**:
+  - Enforced that all configured room seats (`seatCount`) must be filled with humans or bots before starting a match.
+
+### [2026-09-12] - Pass Dynamic Match Configuration in Matches Service
+- **Files Changed**:
+  - `src/services/matches.js` (Modified)
+- **Details**:
+  - Forwarded `seatCount` and `mapId` from the room document to `game.engine.createState(...)`.
+
+### [2026-09-12] - Support Dynamic Seats and Map IDs in Room Creation
+- **Files Changed**:
+  - `src/services/rooms.js` (Modified)
+- **Details**:
+  - Extended `createRoom` to accept `seatCount` and `mapId`, clamping seats to the game's min/max bounds and storing them on the room document.
+
+### [2026-09-12] - Add Pioneer Unpublished Default Site Configuration
+- **Files Changed**:
+  - `src/lib/defaults.js` (Modified)
+- **Details**:
+  - Added default configuration for Pioneer with `published: false` to ensure it remains hidden from public home shelves until published by the owner.
+
+### [2026-09-12] - Register Pioneer in Games Registry
+- **Files Changed**:
+  - `src/games/registry.js` (Modified)
+- **Details**:
+  - Registered Pioneer module bundle (`meta`, `engine`, `ai`, `rules`, `Board`) alongside Tic-Tac-Toe, Connect Four, and Citadels.
+
+### [2026-09-12] - Create Pioneer Top-Level Board Component
+- **Files Changed**:
+  - `src/games/pioneer/Board.jsx` (Created)
+- **Details**:
+  - Orchestrated Pioneer table layout with contextual map-click construction, action bar (Roll, Play Breakthrough, Trade, Bank, End turn), Hand Dock, Seat Panels, and win announcements without proprietary symbols.
+
+### [2026-09-12] - Create Pioneer SVG HexBoard View
+- **Files Changed**:
+  - `src/games/pioneer/views/HexBoard.jsx` (Created)
+- **Details**:
+  - Rendered complete 19-hex pointy-top island with pan/zoom controls, frequency pip tokens, coastal trading post piers, and $\ge 44$px touch targets for roads and settlements.
+
+### [2026-09-12] - Create Pioneer Bandit Modal Component
+- **Files Changed**:
+  - `src/games/pioneer/views/BanditModal.jsx` (Created)
+- **Details**:
+  - Added interactive dialog for 7-roll resource discarding and targeted random card plunder from adjacent opponents.
+
+### [2026-09-12] - Create Pioneer Trade Modal Component
+- **Files Changed**:
+  - `src/games/pioneer/views/TradeModal.jsx` (Created)
+- **Details**:
+  - Added interactive maritime Bank Trading view with dynamic harbour rates (2:1/3:1/4:1) and domestic trading desk with open offers and counters.
+
+### [2026-09-12] - Create Pioneer BuildPicker Contextual Action Component
+- **Files Changed**:
+  - `src/games/pioneer/views/BuildPicker.jsx` (Created)
+- **Details**:
+  - Implemented map-click contextual confirmation dialog for road construction, settlement founding, and city upgrades without an action bar build button.
+
+### [2026-09-12] - Create Pioneer Hand Dock Component
+- **Files Changed**:
+  - `src/games/pioneer/views/HandDock.jsx` (Created)
+- **Details**:
+  - Built player resource docks (wood, clay, sheep, wheat, stone), Breakthrough card holders, and a permanent Pioneer build costs strip.
+
+### [2026-09-12] - Create Pioneer Player Seat Panel Component
+- **Files Changed**:
+  - `src/games/pioneer/views/SeatPanel.jsx` (Created)
+- **Details**:
+  - Rendered compact seat cards with color-blind symbols, public VP, card counts, played Guards, route lengths, and award badges.
+
+### [2026-09-12] - Create Pioneer In-Game Log Component
+- **Files Changed**:
+  - `src/games/pioneer/views/Log.jsx` (Created)
+- **Details**:
+  - Added real-time scrollable match activity log with automated scroll snapping for rolls, yields, trades, and builds.
+
+### [2026-09-12] - Create Pioneer Rules Copy
+- **Files Changed**:
+  - `src/games/pioneer/rules.js` (Created)
+- **Details**:
+  - Authored original, trademark-free rulebook copy for the How to Play and Details modals covering the spacing rule, trading rates, breakthroughs, and 45s disconnects.
+
+### [2026-09-12] - Fix Discard Phase Actor Sequencing in Pioneer Engine
+- **Files Changed**:
+  - `src/games/pioneer/engine.js` (Modified)
+- **Details**:
+  - Dynamically routed `state.actorSeat` through all pending players requiring 7-roll discards before advancing to the Bandit relocation phase.
+
+### [2026-09-12] - Create Pioneer Bot AI
+- **Files Changed**:
+  - `src/games/pioneer/ai.js` (Created)
+- **Details**:
+  - Implemented AI bot heuristics across three difficulty tiers (Easy, Medium, Hard).
+  - Added pip probability weighting, wood/clay setup bias, intelligent Bandit relocation, and build priority trees.
+
+### [2026-09-12] - Create Pioneer Game Engine
+- **Files Changed**:
+  - `src/games/pioneer/engine.js` (Created)
+- **Details**:
+  - Implemented the complete Pioneer state lifecycle (`createState`, `applyAction`, `legalActions`, `publicView`, `status`, `applyMove`).
+  - Added multi-phase state machine (setup, rolling, discarding, bandit, main, gameover) with full rules enforcement.
+
+### [2026-09-12] - Create Pioneer Board Setup Logic
+- **Files Changed**:
+  - `src/games/pioneer/setup.js` (Created)
+- **Details**:
+  - Implemented printed starts and opening resources distribution for Balanced Isle.
+  - Added two-round snake draft placement for Random Isle with second-settlement resource yield.
+
+### [2026-09-12] - Create Pioneer Victory Point System
+- **Files Changed**:
+  - `src/games/pioneer/victory.js` (Created)
+- **Details**:
+  - Implemented public and hidden Victory Point calculations (settlements, cities, awards, charters).
+  - Enforced active turn win declaration requirement at 10+ points.
+
+### [2026-09-12] - Create Pioneer Dice and Resource Production Logic
+- **Files Changed**:
+  - `src/games/pioneer/production.js` (Created)
+- **Details**:
+  - Implemented 2d6 dice rolls and per-hex production yields (1 per settlement, 2 per city).
+  - Added Bandit production blocking and bank shortage resolution.
+
+### [2026-09-12] - Create Pioneer Bandit and Discard Mechanics
+- **Files Changed**:
+  - `src/games/pioneer/bandit.js` (Created)
+- **Details**:
+  - Implemented roll of 7 discard calculations (half rounded down for 8+ cards).
+  - Added Bandit relocation, adjacent opponent detection, random stealing, and Grand Garrison tracking.
+
+### [2026-09-12] - Create Pioneer Trading Engine
+- **Files Changed**:
+  - `src/games/pioneer/trade.js` (Created)
+- **Details**:
+  - Added bank trading rate calculations (4:1 baseline, 3:1 generic post, 2:1 specialized post).
+  - Implemented structured domestic trade offers with counter-offers, inventory verification, and trade validations.
+
+### [2026-09-12] - Create Pioneer Longest Route Calculation
+- **Files Changed**:
+  - `src/games/pioneer/route.js` (Created)
+- **Details**:
+  - Implemented continuous road graph traversal calculating maximum non-repeating simple path length.
+  - Handled enemy settlement road splits, ties, and Longest Route card reassignment ($\ge 5$ roads).
+
+### [2026-09-12] - Create Pioneer Building Rules and Validation
+- **Files Changed**:
+  - `src/games/pioneer/build.js` (Created)
+- **Details**:
+  - Added building costs for roads, settlements, cities, and Breakthrough cards.
+  - Implemented piece inventory tracking (15 roads, 5 settlements, 4 cities).
+  - Enforced the spacing rule and network connectivity with enemy settlement road blocks.
+
+### [2026-09-12] - Create Pioneer Breakthrough Cards System
+- **Files Changed**:
+  - `src/games/pioneer/cards.js` (Created)
+- **Details**:
+  - Defined the 25 Breakthrough cards deck (14 Guard, 2 Rich Yield, 2 Trade Dominance, 2 Road Building, and 5 hidden Charters).
+  - Implemented card ID parsers and deck shuffling routines.
+
+### [2026-09-12] - Create Random Isle Map Generator
+- **Files Changed**:
+  - `src/games/pioneer/maps/random.js` (Created)
+- **Details**:
+  - Implemented procedural Random Isle generator with spiral token distribution, desert skipping, and automated token swapping to prevent adjacent 6 and 8 red numbers.
+
+### [2026-09-12] - Create Balanced Isle Fixed Map Definition
+- **Files Changed**:
+  - `src/games/pioneer/maps/balanced.js` (Created)
+- **Details**:
+  - Encoded fixed 19-hex terrain, 18 number tokens, 9 trading posts, and 4 starter pairs for Balanced Isle with starter spacing guarantees.
+
+### [2026-09-12] - Create Pioneer Metadata and Preview State
+- **Files Changed**:
+  - `src/games/pioneer/meta.js` (Created)
+- **Details**:
+  - Defined Pioneer metadata with 3-4 seats, 45-second disconnect timeout, color-blind friendly piece symbols, and sample match preview state.
+
+### [2026-09-12] - Create Pioneer Hex Grid Topology and Board Coordinates
+- **Files Changed**:
+  - `src/games/pioneer/board.js` (Created)
+- **Details**:
+  - Implemented axial geometry and SVG coordinates for the 19-hex pointy-top island grid (3-4-5-4-3 layout).
+  - Derived canonical tables and deterministic lookup graphs for 54 intersections, 72 paths, and 9 perimeter trading post slots.
+
 ### [2026-09-12] - Extract and Add Citadels Card Artwork from Demo Cards PDF
 - **Files Changed**:
   - `docs/SITE.md` (Modified)

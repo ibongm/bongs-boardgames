@@ -47,5 +47,17 @@ export const defaultSite = {
       rulesDetails: '',
       order: 3,
     },
+    pioneer: {
+      title: 'Pioneer',
+      blurb: 'Settle an island rich with wood, clay, sheep, wheat, and stone. Build roads, trade with posts, and vie for the longest route.',
+      similarTo: 'island settlement',
+      published: false,
+      featured: false,
+      releasedAt: '',
+      newUntil: '',
+      howToPlay: '',
+      rulesDetails: '',
+      order: 4,
+    },
   },
 };

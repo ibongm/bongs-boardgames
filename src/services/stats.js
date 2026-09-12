@@ -11,12 +11,21 @@ function bump(stats, key) {
 function nextRating(match, uid, won, lost) {
   const snapshot = match.ratingSnapshot || {};
   const playerIds = match.playerIds || [];
-  const oppId = playerIds.find((id) => id !== uid);
+  const otherHumanIds = playerIds.filter((id) => id !== uid);
+  if (otherHumanIds.length === 0) return snapshot[uid] ?? 1000;
+
   const mine = snapshot[uid] ?? 1000;
-  const opp = snapshot[oppId] ?? 1000;
-  if (match.result?.draw) return mine + ratingDelta(mine, opp, true);
-  if (won) return mine + ratingDelta(mine, opp, false);
-  if (lost) return mine - ratingDelta(opp, mine, false);
+  const meanOpp = Math.round(
+    otherHumanIds.reduce((sum, id) => sum + (snapshot[id] ?? 1000), 0) / otherHumanIds.length
+  );
+
+  if (match.result?.draw) return mine + ratingDelta(mine, meanOpp, true);
+  if (won) return mine + ratingDelta(mine, meanOpp, false);
+  if (lost) {
+    const rawDelta = ratingDelta(meanOpp, mine, false);
+    const lossDelta = otherHumanIds.length > 1 ? Math.max(1, Math.round(rawDelta / otherHumanIds.length)) : rawDelta;
+    return mine - lossDelta;
+  }
   return mine;
 }
 

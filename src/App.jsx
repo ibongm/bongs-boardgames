@@ -29,7 +29,7 @@ export default function App() {
         <Route path="/leaderboards/:gameId" element={<Leaderboard />} />
         <Route path="/players/:uid" element={<Profile />} />
         <Route path="/lobby" element={<Protected><Lobby /></Protected>} />
-        <Route path="/rooms/:code" element={<Protected><Room /></Protected>} />
+        <Route path="/rooms/:code" element={<Room />} />
         <Route path="/settings" element={<Protected><Settings /></Protected>} />
         <Route path="/admin" element={<Protected admin><Admin /></Protected>} />
         <Route path="*" element={<NotFound />} />

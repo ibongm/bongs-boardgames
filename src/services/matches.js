@@ -47,7 +47,7 @@ export async function createMatch(room) {
     playerSeats,
     ratingSnapshot,
     statsAppliedBy: {},
-    state: game.engine.createState(),
+    state: game.engine.createState({ seatCount: seats.length, mapId: room.mapId, map: room.mapId }),
     result: null,
     createdAt: serverTimestamp(),
   };

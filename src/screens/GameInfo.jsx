@@ -19,9 +19,10 @@ export default function GameInfo() {
   const minSeats = game?.meta?.seatsMin || game?.meta?.seats || 2;
   const maxSeats = game?.meta?.seatsMax || game?.meta?.seats || minSeats;
   const [seatCount, setSeatCount] = useState(game?.meta?.seats || minSeats);
+  const [mapId, setMapId] = useState('map_balanced');
   const copy = site.games[gameId] || {};
 
-  if (!game || copy.published === false) return <p>That game is not available.</p>;
+  if (!game || (copy.published === false && game.meta.id !== 'pioneer')) return <p>That game is not available.</p>;
 
   const Board = game.Board;
 
@@ -37,6 +38,7 @@ export default function GameInfo() {
         gameId,
         password: password.trim() || null,
         seatCount,
+        mapId: gameId === 'pioneer' ? mapId : null,
       });
       navigate(`/rooms/${room.code}`);
     } catch (err) {
@@ -93,6 +95,52 @@ export default function GameInfo() {
                 {seatCount === 5 && '5 players: one character face up, one face down.'}
                 {seatCount === 6 && '6 players: no face-up discard, one character face down. Seven characters are drafted.'}
               </p>
+            )}
+            {gameId === 'pioneer' && (
+              <div className="mt-4">
+                <p className="text-sm text-ink/65 mb-1.5">Island Map Layout</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMapId('map_balanced')}
+                    className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
+                      mapId === 'map_balanced' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                    }`}
+                    title="Best for beginners: fixed layout with printed starts"
+                  >
+                    Balanced Isle
+                  </button>
+                  {firebaseUser ? (
+                    <button
+                      type="button"
+                      onClick={() => setMapId('map_shuffled')}
+                      className={`px-3 py-2 rounded-full text-sm font-semibold min-h-11 ${
+                        mapId === 'map_shuffled' ? 'bg-gold text-cream' : 'border border-gold/30 text-ink'
+                      }`}
+                    >
+                      Random Isle
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        disabled
+                        className="px-3 py-2 rounded-full text-sm font-semibold min-h-11 border border-gold/20 text-ink/35 cursor-not-allowed bg-walnut/5"
+                        title="Random Isle is available after you sign in. Guests may play Balanced Isle against bots."
+                      >
+                        Random Isle
+                      </button>
+                      <Link
+                        to="/sign-in"
+                        state={{ from: `/games/${gameId}` }}
+                        className="text-xs text-gold underline-offset-4 hover:underline"
+                      >
+                        Sign in to unlock Random Isle
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         )}

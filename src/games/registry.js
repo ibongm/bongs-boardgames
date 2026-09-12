@@ -13,11 +13,17 @@ import * as citadelsEngine from './citadels/engine.js';
 import * as citadelsAi from './citadels/ai.js';
 import { rules as citadelsRules } from './citadels/rules.js';
 import CitadelsBoard from './citadels/Board.jsx';
+import { meta as pioneerMeta } from './pioneer/meta.js';
+import * as pioneerEngine from './pioneer/engine.js';
+import * as pioneerAi from './pioneer/ai.js';
+import { rules as pioneerRules } from './pioneer/rules.js';
+import PioneerBoard from './pioneer/Board.jsx';
 
 export const games = {
   'tic-tac-toe': { meta: tttMeta, engine: tttEngine, ai: tttAi, rules: tttRules, Board: TicTacToeBoard },
   'connect-four': { meta: c4Meta, engine: c4Engine, ai: c4Ai, rules: c4Rules, Board: ConnectFourBoard },
   citadels: { meta: citadelsMeta, engine: citadelsEngine, ai: citadelsAi, rules: citadelsRules, Board: CitadelsBoard },
+  pioneer: { meta: pioneerMeta, engine: pioneerEngine, ai: pioneerAi, rules: pioneerRules, Board: PioneerBoard },
 };
 
 export function listGames() {

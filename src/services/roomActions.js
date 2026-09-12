@@ -162,9 +162,9 @@ export async function replaceStaleHumans(roomId) {
 export async function startRoom(roomId) {
   const room = await getRoom(roomId);
   if (!room) throw new Error('Room not found');
-  const needed = (room.seats || []).length;
+  const needed = room.seatCount || (room.seats || []).length;
   const filled = occupiedSeats(room).length;
-  if (needed > 2 && filled < needed) throw new Error('Fill every seat before starting');
+  if (filled < needed) throw new Error('Fill every seat before starting');
   if (filled < 2) throw new Error('Need two seats filled');
   if (room.status !== 'waiting') throw new Error('Game already started');
   const match = await createMatch(room);
