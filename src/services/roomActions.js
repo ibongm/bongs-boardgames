@@ -4,7 +4,19 @@ import { emptySeat, getRoom, withRoom } from './rooms.js';
 import { commitMove, createMatch } from './matches.js';
 import { getGame } from '../games/registry.js';
 
-const DISCONNECT_MS = 30_000;
+const DEFAULT_DISCONNECT_MS = 30_000;
+
+function disconnectMsFor(room) {
+  const game = getGame(room?.gameId);
+  return game?.meta?.disconnectMs || DEFAULT_DISCONNECT_MS;
+}
+
+function actorIndex(match) {
+  const state = match?.state;
+  if (!state) return 0;
+  if (state.actorSeat !== undefined && state.actorSeat !== null) return state.actorSeat;
+  return state.turn;
+}
 
 export function occupiedSeats(room) {
   return (room.seats || []).filter((seat) => seat.type !== 'empty');
@@ -82,19 +94,28 @@ export async function heartbeat(roomId, uid) {
   });
 }
 
+export async function setRoomTestMode(roomId, testMode) {
+  return withRoom(roomId, (room) => {
+    if (room.testMode === Boolean(testMode)) return null;
+    return { testMode: Boolean(testMode) };
+  });
+}
+
 export async function replaceStaleHumans(roomId) {
   return withRoom(roomId, (room) => {
     if (room.status !== 'playing') return null;
+    if (room.testMode) return null;
     const now = Date.now();
     let changed = false;
     const seats = room.seats.map((seat) => {
       if (seat.type !== 'human' || !seat.lastSeen) return { ...seat };
-      if (now - seat.lastSeen < DISCONNECT_MS) return { ...seat };
+      const wait = disconnectMsFor(room);
+      if (now - seat.lastSeen < wait) return { ...seat };
       if (!seat.disconnectedAt) {
         changed = true;
         return { ...seat, disconnectedAt: seat.lastSeen };
       }
-      if (now - seat.disconnectedAt < DISCONNECT_MS) return { ...seat };
+      if (now - seat.disconnectedAt < wait) return { ...seat };
       changed = true;
       return {
         uid: `bot-replace-${seat.uid}`,
@@ -112,7 +133,10 @@ export async function replaceStaleHumans(roomId) {
 export async function startRoom(roomId) {
   const room = await getRoom(roomId);
   if (!room) throw new Error('Room not found');
-  if (occupiedSeats(room).length < 2) throw new Error('Need two seats filled');
+  const needed = (room.seats || []).length;
+  const filled = occupiedSeats(room).length;
+  if (needed > 2 && filled < needed) throw new Error('Fill every seat before starting');
+  if (filled < 2) throw new Error('Need two seats filled');
   if (room.status !== 'waiting') throw new Error('Game already started');
   const match = await createMatch(room);
   await runTransaction(db, async (tx) => {
@@ -127,8 +151,8 @@ export async function startRoom(roomId) {
 
 export async function playMove(match, room, move, actorUid) {
   const game = getGame(match.gameId);
-  const current = match.seats[match.state.turn];
-  if (current.type === 'human' && current.uid !== actorUid) throw new Error('Not your turn');
+  const current = match.seats[actorIndex(match)];
+  if (current?.type === 'human' && current.uid !== actorUid) throw new Error('Not your turn');
   const nextState = game.engine.applyMove(match.state, move);
   const result = game.engine.status(nextState).over
     ? { winner: nextState.winner, draw: nextState.draw }
@@ -146,7 +170,7 @@ export async function playMove(match, room, move, actorUid) {
 export async function playBotIfNeeded(match, room) {
   if (!match || match.result) return match;
   const game = getGame(match.gameId);
-  const current = match.seats[match.state.turn];
+  const current = match.seats[actorIndex(match)];
   if (current?.type !== 'bot') return match;
   const move = game.ai.chooseMove(match.state, current.difficulty || 'medium');
   if (move === null || move === undefined) return match;
