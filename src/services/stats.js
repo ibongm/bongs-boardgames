@@ -2,6 +2,7 @@ import { doc, runTransaction, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase.js';
 import { emptyGameStats, emptyLifetime, ratingDelta } from '../lib/codes.js';
 import { publicProfilePayload } from './users.js';
+import { recordFinishedMatch } from './aggregates.js';
 
 function bump(stats, key) {
   return { ...stats, [key]: (stats[key] || 0) + 1, played: (stats.played || 0) + 1 };
@@ -47,10 +48,13 @@ export async function applyOwnMatchResult(match, uid) {
     const winnerSeat = live.result.draw ? null : live.result.winner;
     const won = winnerSeat === mySeat;
     const lost = winnerSeat !== null && winnerSeat !== mySeat;
+    const firstTime = (perGame.played || 0) === 0;
     const nextLife = bump(life, won ? 'wins' : lost ? 'losses' : 'draws');
     const nextGame = bump(perGame, won ? 'wins' : lost ? 'losses' : 'draws');
     if (won) nextGame.winsVsHumans = (nextGame.winsVsHumans || 0) + 1;
     nextGame.rating = nextRating(live, uid, won, lost);
+    nextGame.lastPlayedAt = Date.now();
+    const popularityNeeded = !live.popularityCounted;
 
     published = {
       displayName: data.displayName,
@@ -59,8 +63,11 @@ export async function applyOwnMatchResult(match, uid) {
       games: { ...(data.games || {}), [gameId]: nextGame },
     };
 
+    const matchPatch = { [`statsAppliedBy.${uid}`]: true };
+    if (popularityNeeded) matchPatch.popularityCounted = true;
     tx.update(userRef, { stats: nextLife, [`games.${gameId}`]: nextGame });
-    tx.update(matchRef, { [`statsAppliedBy.${uid}`]: true });
+    tx.update(matchRef, matchPatch);
+    published = { ...published, firstTime, countPopularity: popularityNeeded, gameId };
   });
 
   if (published) {
@@ -68,6 +75,16 @@ export async function applyOwnMatchResult(match, uid) {
       await setDoc(doc(db, 'publicProfiles', uid), publicProfilePayload(published), { merge: true });
     } catch {
       /* ignore until public profile rules are live */
+    }
+    if (published.countPopularity || published.firstTime) {
+      try {
+        await recordFinishedMatch(published.gameId, {
+          countMatch: published.countPopularity,
+          firstTimeForPlayer: published.firstTime,
+        });
+      } catch {
+        /* stats doc rules may not be live yet */
+      }
     }
   }
 }

@@ -34,6 +34,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /stats/{id} {
+      allow read: if true;
+      allow write: if signedIn();
+    }
+
     match /rooms/{id} {
       allow read: if signedIn();
       allow create: if signedIn() && request.resource.data.hostId == request.auth.uid;
