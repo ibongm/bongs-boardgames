@@ -15,15 +15,8 @@ service cloud.firestore {
     function bootstrapAdmin() {
       return signedIn() && request.auth.token.email == 'ivanm.ploce@gmail.com';
     }
-    function roomIdentityIntact() {
-      return request.resource.data.hostId == resource.data.hostId
-        && request.resource.data.code == resource.data.code
-        && request.resource.data.gameId == resource.data.gameId
-        && request.resource.data.passwordHash == resource.data.passwordHash
-        && request.resource.data.createdAt == resource.data.createdAt;
-    }
-    function ownerUserSafe() {
-      return isOwner(userId)
+    function ownerUserSafe(uid) {
+      return isOwner(uid)
         && request.resource.data.role == resource.data.role
         && request.resource.data.disabled == resource.data.disabled
         && request.resource.data.stats == resource.data.stats
@@ -34,13 +27,20 @@ service cloud.firestore {
           || request.resource.data.email == request.auth.token.email
         );
     }
-    function ownerBootstrapRole() {
-      return isOwner(userId)
+    function ownerBootstrapRole(uid) {
+      return isOwner(uid)
         && bootstrapAdmin()
         && request.resource.data.role == 'admin'
         && request.resource.data.disabled == resource.data.disabled
         && request.resource.data.stats == resource.data.stats
         && request.resource.data.games == resource.data.games;
+    }
+    function roomIdentityIntact() {
+      return request.resource.data.hostId == resource.data.hostId
+        && request.resource.data.code == resource.data.code
+        && request.resource.data.gameId == resource.data.gameId
+        && request.resource.data.passwordHash == resource.data.passwordHash
+        && request.resource.data.createdAt == resource.data.createdAt;
     }
     function matchIdentityFrozen() {
       return request.resource.data.gameId == resource.data.gameId
@@ -70,7 +70,7 @@ service cloud.firestore {
           request.resource.data.role == 'player'
           || (request.resource.data.role == 'admin' && bootstrapAdmin())
         );
-      allow update: if isAdmin() || ownerUserSafe() || ownerBootstrapRole();
+      allow update: if isAdmin() || ownerUserSafe(userId) || ownerBootstrapRole(userId);
     }
 
     match /publicProfiles/{uid} {
